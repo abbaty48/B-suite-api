@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.warehouseModel = void 0;
 const mongoose_1 = require("mongoose");
 const WarehouseSchema = new mongoose_1.Schema({
-    warehouseID: { type: 'string', _id: true, required: true },
+    warehouseID: { type: mongoose_1.Types.ObjectId, _id: true, required: true },
     name: { type: 'string', required: false },
     address: { type: 'string', required: true },
     staffs: { type: [{ staffID: 'string' }], default: [] },

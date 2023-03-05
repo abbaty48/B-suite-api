@@ -34,9 +34,11 @@ exports.StaffResolver = {
                 const { staffID, firstName, lastName, warehouseID } = searchFilter;
                 const staff = yield schema_staff_1.staffModel.findOne({
                     $or: [
-                        { staffID: { $regex: (0, helpers_1.escapeRegExp)(staffID), $options: 'su' } },
-                        { firstName: { $eq: (0, helpers_1.escapeRegExp)(firstName), $options: 'si' } },
-                        { lastName: { $eq: (0, helpers_1.escapeRegExp)(lastName), $options: 'si' } },
+                        { staffID: { $regex: (0, helpers_1.escapeRegExp)(staffID), $options: 'si' } },
+                        {
+                            firstName: { $regex: (0, helpers_1.escapeRegExp)(firstName), $options: 'si' },
+                        },
+                        { lastName: { $regex: (0, helpers_1.escapeRegExp)(lastName), $options: 'si' } },
                         warehouseID
                             ? {
                                 warehouse: {
@@ -45,7 +47,7 @@ exports.StaffResolver = {
                             }
                             : {},
                     ],
-                }, {}, { populate: 'user' });
+                }, {}, { populate: 'warehouse' });
                 resolve({
                     error: null,
                     staff,

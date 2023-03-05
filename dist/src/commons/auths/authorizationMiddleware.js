@@ -146,7 +146,7 @@ const staffRoleAuthorization = (req, res, privateKey, previlege) => __awaiter(vo
         if (staffPrevileges[authenticatedStaff.role].includes(previlege)) {
             return authenticatedStaff;
         }
-        throw new Error('UnAuthorized Operation, you are not authorized to perform this operation.');
+        throw new Error(`[UNAUTHORIZED]: you are not authorized to "${RolePrevilage_1.RolePrevileges[previlege].replace('_', ' ')}".`);
     }
     catch (error) {
         throw new Error(error.message);

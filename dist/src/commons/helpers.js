@@ -4,7 +4,7 @@ exports.genRandom = exports.extractToken = exports.decodeRSAKey = exports.string
 const mongodb_1 = require("mongodb");
 const escapeRegExp = (s) => s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 exports.escapeRegExp = escapeRegExp;
-const stringToID = (s) => mongodb_1.ObjectId.isValid(s) ? new mongodb_1.ObjectId(s) : null;
+const stringToID = (s) => mongodb_1.ObjectId.isValid(s) ? new mongodb_1.ObjectId(s) : new mongodb_1.ObjectId();
 exports.stringToID = stringToID;
 const decodeRSAKey = (s) => {
     return Buffer.from(s, 'base64').toString('ascii');
