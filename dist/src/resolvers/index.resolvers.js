@@ -10,10 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resolvers = void 0;
+const sale_resolver_1 = require("./sale.resolver");
 const staff_resolver_1 = require("./staff.resolver");
+const product_resolver_1 = require("./product.resolver");
 const category_resolver_1 = require("./category.resolver");
 const warehouse_resolver_1 = require("./warehouse.resolver");
-const product_resolver_1 = require("./product.resolver");
 exports.resolvers = {
     Query: {
         // STAFF
@@ -34,6 +35,9 @@ exports.resolvers = {
         warehouses: (_, args, context) => __awaiter(void 0, void 0, void 0, function* () {
             return yield warehouse_resolver_1.WarehouseResolver.warehouses(context);
         }),
+        // SALE
+        sale: (_, { searchFilter }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield sale_resolver_1.SaleResolver.sale(searchFilter, context); }),
+        sales: (_, { searchFilter, filters }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield sale_resolver_1.SaleResolver.sales(searchFilter, filters, context); }),
     },
     Mutation: {
         // STAFF
@@ -88,5 +92,9 @@ exports.resolvers = {
                 config,
             });
         }),
+        // SALE
+        addSale: (_, { addSaleInput }, context) => __awaiter(void 0, void 0, void 0, function* () { return sale_resolver_1.SaleResolver.addSale(addSaleInput, context); }),
+        editSale: (_, { editSaleInput }, context) => __awaiter(void 0, void 0, void 0, function* () { return sale_resolver_1.SaleResolver.editSale(editSaleInput, context); }),
+        deleteSale: (_, { saleID, warehouseID }, context) => __awaiter(void 0, void 0, void 0, function* () { return sale_resolver_1.SaleResolver.deleteSale(saleID, warehouseID, context); }),
     },
 };

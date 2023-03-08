@@ -14,10 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductResolver = void 0;
 const schema_product_1 = require("../databases/mongodb/schema_product");
+const helpers_1 = require("../commons/helpers");
 const RolePrevilage_1 = require("../databases/mongodb/enums/RolePrevilage");
 const IFilter_1 = require("../databases/mongodb/interfaces/IFilter");
 const authorizationMiddleware_1 = __importDefault(require("../commons/auths/authorizationMiddleware"));
-const helpers_1 = require("../commons/helpers");
 exports.ProductResolver = {
     product: (searchFilter, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
@@ -117,11 +117,6 @@ exports.ProductResolver = {
                     .sort({ firstName: sort })
                     .skip(limit * pageIndex)
                     .limit(limit);
-                // POPULATE THE PRODUCT WITH WAREHOUSE
-                // const products = await productModel.populate(
-                //   paginatedProducts,
-                //   'category warehouse'
-                // );
                 resolve({
                     error: null,
                     products,

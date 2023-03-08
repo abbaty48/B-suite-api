@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productModel = void 0;
+const helpers_1 = require("../../commons/helpers");
 const mongoose_1 = require("mongoose");
 const schema_category_1 = require("./schema_category");
-const helpers_1 = require("../../commons/helpers");
 const productSchema = new mongoose_1.Schema({
     productID: { type: 'string', _id: true, required: true, index: true },
     name: { type: 'string', required: true, unique: true, index: true },
@@ -46,6 +46,10 @@ const productSchema = new mongoose_1.Schema({
         required: false,
         ref: 'warehouse',
         type: mongoose_1.Types.ObjectId,
+        validate: {
+            validator: (value) => schema_category_1.categoryModel.exists({ _id: (0, helpers_1.stringToID)(value.id) }),
+            msg: `[VALIDATION ERROR]: The provided warehouse does not exist in the wareehouse table, please add the warehouse data first and try again.`,
+        },
     },
 }, {
     toJSON: { virtuals: true },

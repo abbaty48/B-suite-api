@@ -40,6 +40,16 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       wholesalePrice: Float
    }
 
+   input searchSaleInput {
+      saleID: ID
+      date: String
+      time: String
+      staffID: ID 
+      productID: ID
+      productName: String
+      paidPrice: Float
+   }
+
    input addProductInput {
       name: String!
       quantity: Int!
@@ -96,6 +106,43 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       name: String
    }
 
+   input saleProductMetaInput {
+      productID: ID!
+      quantity: Int!
+   }
+
+   input addSaleProfitInput {
+      percentage: Float!
+      status: String!
+   }
+   input addSaleInput {
+      date: String,
+      time: String,
+      paid: Float,
+      discount: Float,
+      balance: Float
+      profit: addSaleProfitInput
+      totalPrice: Float,
+      #customerID: ID!
+      warehouseID: ID,
+      productMetas: [saleProductMetaInput!]!
+   }
+
+   input editSaleInput {
+      saleID: ID!
+      date: String,
+      time: String,
+      paid: Float,
+      balance: Float
+      discount: Float,
+      profit: addSaleProfitInput
+      totalPrice: Float,
+      #customerID: ID!
+      warehouseID: ID,
+      productMetas: [saleProductMetaInput!]
+   }
+   
+
    ####### PAYLOADS ######
    type categoryPayload {
       error: String
@@ -104,8 +151,9 @@ const typeDef = (0, apollo_server_express_1.gql)(`
 
    ## Filter
    type Filters {
-      total: Int
       sort: String
+      totalFilter: Int 
+      totalDocuments: Int
       nextPageIndex: Int
       currentPageIndex: Int
    }
@@ -230,18 +278,67 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       error: String
       added: Boolean!
    }
+   ## SALE
+   type Sale {
+      saleID: ID!
+      date: String!
+      time: String!
+      discount: Float
+      profit: SaleProfit
+      paid: Float!
+      balance: Float!
+      totalPrice: Float!
+      staff: Staff!
+      staffID: ID!
+      products: [Product!]!
+      productIDs: [String]
+      #customer: Customer!,
+      #customerID: ID!
+      warehouse: Warehouse
+      warehouseID: ID
+   }
+   type SaleProfit {
+      percentage: Float!
+      status: String!
+   }
+   type SalePayload {
+      error: String
+      sale: Sale
+   }
+   type SalesPayload {
+      error: String
+      sales: [Sale!]!
+      filters: Filters
+   }
+   type AddSalePayload {
+      error: String
+      added: Boolean
+      newAdded: Sale
+   }
+   type EditSalePayload {
+      error: String
+      edited: Boolean
+      newEdited: Sale
+   }
+   type DeleteSalePayload {
+      error: String
+      deleted: Boolean!
+   }
    ## 
    type Query {
       ##STAFF
       staff(searchFilter: searchStaffInput!): StaffPayload
       staffs(searchFilter: searchStaffInput, filters: filterInput) : StaffsPayload
       ##PRODUCT
-      product(searchFilter: searchProductInput): ProductPayload
+      product(searchFilter: searchProductInput!): ProductPayload
       products(searchFilter: searchProductInput, filters: filterInput): ProductsPayload
       ##CATEGORY
       categories: [Category!]!
       ##WAREHOUSE
       warehouses: [Warehouse!]!
+      ##SALE
+      sale(searchFilter: searchSaleInput!): SalePayload
+      sales(searchFilter: searchSaleInput, filters: filterInput): SalesPayload
    }
    type Mutation {
       ###STAFF
@@ -260,6 +357,10 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       addWarehouse(name: String, address: String!, staffs: [addStaffInput!], products: [addProductInput!]): AddWarehousePayload
       editWarehouse(warehouseID: ID!, name: String, address: String, staffs: [editStaffInput!], products: [addProductInput!]): EditWarehousePayload
       deleteWarehouse(warehouseID: ID!): DeleteWarehousePayload
+      ###SALE
+      addSale(addSaleInput: addSaleInput!): AddSalePayload
+      editSale(editSaleInput: editSaleInput!): EditSalePayload
+      deleteSale(saleID: ID!, warehouseID: ID): DeleteSalePayload
    }
 `);
 exports.default = typeDef;
