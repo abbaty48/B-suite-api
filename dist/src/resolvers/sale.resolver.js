@@ -17,8 +17,8 @@ const helpers_1 = require("../commons/helpers");
 const schema_sale_1 = require("../databases/mongodb/schema_sale");
 const schema_product_1 = require("../databases/mongodb/schema_product");
 const RolePrevilage_1 = require("../databases/mongodb/enums/RolePrevilage");
-const authorizationMiddleware_1 = __importDefault(require("../commons/auths/authorizationMiddleware"));
 const IFilter_1 = require("../databases/mongodb/interfaces/IFilter");
+const authorizationMiddleware_1 = __importDefault(require("../commons/auths/authorizationMiddleware"));
 exports.SaleResolver = {
     sale: (searchFilter, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
@@ -26,11 +26,11 @@ exports.SaleResolver = {
                 // AUTHENTICATE
                 yield (0, authorizationMiddleware_1.default)(request, response, config.get('jwt.private'), RolePrevilage_1.RolePrevileges.READ_SALE); // end staffRoleAuthorization
                 // SEARCH FILTER
-                const { date, time, saleID, staffID, paidPrice, productID, productName, } = searchFilter !== null && searchFilter !== void 0 ? searchFilter : {};
+                const { date, time, saleID, staffID, paidPrice, productID, customerID, productName, } = searchFilter !== null && searchFilter !== void 0 ? searchFilter : {};
                 // PAGINATE THE PRODUCTS
                 let sale = null;
                 if (productName) {
-                    sale = (yield schema_sale_1.saleModel.find({}, {}, { populate: 'staff products' })).find((s) => s.products.find((p) => p.name === productName));
+                    sale = (yield schema_sale_1.saleModel.find({}, {}, { populate: 'staff customer products' })).find((s) => s.products.find((p) => p.name === productName));
                 }
                 else {
                     sale = yield schema_sale_1.saleModel.findOne({
@@ -48,8 +48,13 @@ exports.SaleResolver = {
                                     productIDs: productID,
                                 }
                                 : {},
+                            customerID
+                                ? {
+                                    customerID: { $eq: customerID },
+                                }
+                                : {},
                         ],
-                    }, {}, { populate: 'staff products' });
+                    }, {}, { populate: 'staff customer products' });
                 }
                 resolve({
                     error: null,
@@ -71,7 +76,7 @@ exports.SaleResolver = {
                 // AUTHENTICATE
                 yield (0, authorizationMiddleware_1.default)(request, response, config.get('jwt.private'), RolePrevilage_1.RolePrevileges.READ_SALE);
                 // SEARCH FILTER
-                const { date, time, saleID, staffID, paidPrice, productID, productName, } = searchFilter !== null && searchFilter !== void 0 ? searchFilter : {};
+                const { date, time, saleID, staffID, paidPrice, productID, customerID, productName, } = searchFilter !== null && searchFilter !== void 0 ? searchFilter : {};
                 // PAGINATE THE PRODUCTS
                 const sort = (_a = filter.sort) !== null && _a !== void 0 ? _a : IFilter_1.Filter.sort, limit = (_b = filter.limit) !== null && _b !== void 0 ? _b : IFilter_1.Filter.limit, pageIndex = (_c = filter.pageIndex) !== null && _c !== void 0 ? _c : IFilter_1.Filter.pageIndex;
                 let sales = [];
@@ -79,7 +84,7 @@ exports.SaleResolver = {
                     const _index = pageIndex <= 0 ? 1 : pageIndex;
                     const _start = (_index - 1) * limit;
                     const _end = _start + limit;
-                    sales = (yield schema_sale_1.saleModel.find({}, {}, { populate: 'staff products' }))
+                    sales = (yield schema_sale_1.saleModel.find({}, {}, { populate: 'staff customer products' }))
                         .filter((s) => s.products.find((p) => p.name === productName))
                         .slice(_start, _end);
                 }
@@ -100,8 +105,13 @@ exports.SaleResolver = {
                                     productIDs: productID,
                                 }
                                 : {},
+                            customerID
+                                ? {
+                                    customerID: { $eq: customerID },
+                                }
+                                : {},
                         ],
-                    }, {}, { populate: 'staff products' })
+                    }, {}, { populate: 'staff customer products' })
                         .sort({ time: sort })
                         .skip(limit * pageIndex)
                         .limit(limit);
@@ -155,7 +165,7 @@ exports.SaleResolver = {
                             error: `[ERROR ADDING PRODUCT]: ${error.message}`,
                         });
                     }
-                    const newAdded = Object.assign(yield _newAdded.populate('staff'), {
+                    const newAdded = Object.assign(yield _newAdded.populate('staff customer'), {
                         products: yield products,
                     });
                     resolve({
@@ -198,7 +208,11 @@ exports.SaleResolver = {
                     }
                 } // end editSaleInput.productMetas
                 // UPDATE
-                const newEdited = yield schema_sale_1.saleModel.findOneAndUpdate({ saleID: editSaleInput.saleID }, Object.assign({}, editSaleInput), { new: true, runValidators: true, populate: 'staff products' });
+                const newEdited = yield schema_sale_1.saleModel.findOneAndUpdate({ saleID: editSaleInput.saleID }, Object.assign({}, editSaleInput), {
+                    new: true,
+                    runValidators: true,
+                    populate: 'staff products customer',
+                });
                 resolve({
                     edited: true,
                     error: null,

@@ -46,6 +46,7 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       time: String
       staffID: ID 
       productID: ID
+      customerID: ID
       productName: String
       paidPrice: Float
    }
@@ -123,7 +124,7 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       balance: Float
       profit: addSaleProfitInput
       totalPrice: Float,
-      #customerID: ID!
+      customerID: ID!
       warehouseID: ID,
       productMetas: [saleProductMetaInput!]!
    }
@@ -137,7 +138,7 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       discount: Float,
       profit: addSaleProfitInput
       totalPrice: Float,
-      #customerID: ID!
+      customerID: ID!
       warehouseID: ID,
       productMetas: [saleProductMetaInput!]
    }
@@ -292,8 +293,8 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       staffID: ID!
       products: [Product!]!
       productIDs: [String]
-      #customer: Customer!,
-      #customerID: ID!
+      customer: Customer!,
+      customerID: ID!
       warehouse: Warehouse
       warehouseID: ID
    }
@@ -324,6 +325,93 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       error: String
       deleted: Boolean!
    }
+   ## CUSTOMER
+   type Customer {
+      customerID: ID!,
+      warehouseID: ID,
+      name: String!,
+      email: String,
+      address: String,
+      phoneNumber: String,
+      beneficiary: Boolean,
+      purchases: [Sale!]!,
+      warehouse: Warehouse,
+      metas: CustomerMetaData
+   }
+   type CustomerSocialMedia {
+      facebook: String,
+      twitter: String,
+      instagram: String
+   }
+   type CustomerMetaData {
+      avatarURL: String,
+      dateOfBirth: String,
+      socialMedia: CustomerSocialMedia
+   }
+   type AddCustomerPayload {
+      error: String,
+      added: Boolean,
+      newAdded: Customer
+   }
+   type EditCustomerPayload {
+      error: String,
+      edited: Boolean,
+      newEdited: Customer
+   }
+   type DeleteCustomerPayload {
+      error: String,
+      deleted: Boolean!
+   }
+   type CustomerPayload {
+      error: String,
+      customer: Customer
+   }
+   type CustomersPayload {
+      error: String,
+      customers: [Customer!]!,
+      filters: Filters
+   }
+   input searchCustomerInput {
+      name: String,
+      customerID: ID,
+      email: String,
+      address: String,
+      dateOfBirth: String,
+      beneficiaries: Boolean
+   }
+   input customerSocialMediaInput {
+      facebook: String,
+      twitter: String,
+      instagram: String,
+   }
+   input customerMetasInput {
+      avatarURL: String,
+      dateOfBirth: String,
+      socialMedia: customerSocialMediaInput
+   }
+   input addCustomerInput {
+      name: String!,
+      email: String,
+      address: String,
+      phoneNumber: String,
+      beneficiary: Boolean,
+      saleIDs: [ID!]!,
+      metas: customerMetasInput,
+      warehouseID: ID
+   }
+   input editCustomerInput {
+      customerID: ID!,
+      warehouseID: ID,
+      name: String,
+      email: String,
+      address: String,
+      phoneNumber: String,
+      dateOfBirth: String,
+      beneficiary: Boolean,
+      saleIDs: [ID!],
+      metas: customerMetasInput
+   }
+  
    ## 
    type Query {
       ##STAFF
@@ -339,6 +427,9 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       ##SALE
       sale(searchFilter: searchSaleInput!): SalePayload
       sales(searchFilter: searchSaleInput, filters: filterInput): SalesPayload
+      ##CUSTOMER
+      customer(searchFilter: searchCustomerInput!): CustomerPayload
+      customers(searchFilter: searchCustomerInput, filters: filterInput): CustomersPayload
    }
    type Mutation {
       ###STAFF
@@ -361,6 +452,10 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       addSale(addSaleInput: addSaleInput!): AddSalePayload
       editSale(editSaleInput: editSaleInput!): EditSalePayload
       deleteSale(saleID: ID!, warehouseID: ID): DeleteSalePayload
+      ###CUSTOMER
+      addCustomer(addCustomerInput: addCustomerInput!) : AddCustomerPayload
+      editCustomer(editCustomerInput: editCustomerInput!) : EditCustomerPayload
+      deleteCustomer(customerID: ID!, warehouseID: ID) : DeleteCustomerPayload
    }
 `);
 exports.default = typeDef;

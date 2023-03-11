@@ -13,6 +13,7 @@ exports.resolvers = void 0;
 const sale_resolver_1 = require("./sale.resolver");
 const staff_resolver_1 = require("./staff.resolver");
 const product_resolver_1 = require("./product.resolver");
+const customer_resolver_1 = require("./customer.resolver");
 const category_resolver_1 = require("./category.resolver");
 const warehouse_resolver_1 = require("./warehouse.resolver");
 exports.resolvers = {
@@ -38,6 +39,9 @@ exports.resolvers = {
         // SALE
         sale: (_, { searchFilter }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield sale_resolver_1.SaleResolver.sale(searchFilter, context); }),
         sales: (_, { searchFilter, filters }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield sale_resolver_1.SaleResolver.sales(searchFilter, filters, context); }),
+        // CUSTOMER
+        customer: (_, { searchFilter }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.customer(searchFilter, context); }),
+        customers: (_, { searchFilter, filters }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.customers(searchFilter, filters, context); }),
     },
     Mutation: {
         // STAFF
@@ -96,5 +100,9 @@ exports.resolvers = {
         addSale: (_, { addSaleInput }, context) => __awaiter(void 0, void 0, void 0, function* () { return sale_resolver_1.SaleResolver.addSale(addSaleInput, context); }),
         editSale: (_, { editSaleInput }, context) => __awaiter(void 0, void 0, void 0, function* () { return sale_resolver_1.SaleResolver.editSale(editSaleInput, context); }),
         deleteSale: (_, { saleID, warehouseID }, context) => __awaiter(void 0, void 0, void 0, function* () { return sale_resolver_1.SaleResolver.deleteSale(saleID, warehouseID, context); }),
+        // CUSTOMER
+        addCustomer: (_, { addCustomerInput }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.addCustomers(addCustomerInput, context); }),
+        editCustomer: (_, { editCustomerInput }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.editCustomers(editCustomerInput, context); }),
+        deleteCustomer: (_, { customerID, warehouseID }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.deleteCustomers(customerID, warehouseID, context); }),
     },
 };

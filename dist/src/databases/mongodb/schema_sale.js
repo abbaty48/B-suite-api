@@ -3,14 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.saleModel = void 0;
 const mongoose_1 = require("mongoose");
 const SaleSchema = new mongoose_1.Schema({
-    saleID: { type: 'string', _id: true, required: true },
+    saleID: { type: 'string', required: true },
     staffID: { type: 'string', required: true },
-    // customerID: {
-    //   type: 'string',
-    //   ref: 'customer',
-    //   refPath: 'customerID',
-    //   required: true,
-    // },
+    customerID: {
+        type: 'string',
+        required: true,
+    },
     productIDs: {
         type: ['string'],
         required: true,
@@ -44,6 +42,12 @@ SaleSchema.virtual('staff', {
     justOne: true,
     localField: 'staffID',
     foreignField: 'staffID',
+});
+SaleSchema.virtual('customer', {
+    ref: 'customer',
+    justOne: true,
+    localField: 'customerID',
+    foreignField: 'customerID',
 });
 SaleSchema.virtual('products', {
     ref: 'product',
