@@ -36,6 +36,7 @@ export interface ICustomer extends Document {
   name: string;
   email?: string;
   address?: string;
+  balance?: number;
   phoneNumber?: string;
   beneficiary?: boolean;
   purchases: ISale[];

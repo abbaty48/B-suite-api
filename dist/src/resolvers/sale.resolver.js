@@ -19,6 +19,7 @@ const schema_product_1 = require("../databases/mongodb/schema_product");
 const RolePrevilage_1 = require("../databases/mongodb/enums/RolePrevilage");
 const IFilter_1 = require("../databases/mongodb/interfaces/IFilter");
 const authorizationMiddleware_1 = __importDefault(require("../commons/auths/authorizationMiddleware"));
+const schema_customer_1 = require("../databases/mongodb/schema_customer");
 exports.SaleResolver = {
     sale: (searchFilter, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
@@ -141,8 +142,9 @@ exports.SaleResolver = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 const authStaff = yield (0, authorizationMiddleware_1.default)(request, response, config.get('jwt.private'), RolePrevilage_1.RolePrevileges.ADD_SALE);
-                //
+                // SALEID
                 const saleID = `SALE${(0, helpers_1.genRandom)(10)}`;
+                /** PRODUCTS */
                 const products = addSaleInput.productMetas.reduce((accumulator, meta) => __awaiter(void 0, void 0, void 0, function* () {
                     const product = yield schema_product_1.productModel.findOne({ productID: meta.productID }, {}, { populate: 'category' });
                     if (product !== null) {
@@ -154,17 +156,43 @@ exports.SaleResolver = {
                     return resolve({
                         added: false,
                         newAdded: null,
-                        error: "[ERROR ADDING PRODUCT]: The product(`s) you're about to sell does not exist in the products records.",
+                        error: "[ERROR ADDING PRODUCT]: The product(`s) you're about to sell does not exist in the products stock records.",
                     });
                 }
-                schema_sale_1.saleModel.create(Object.assign(Object.assign({}, addSaleInput), { saleID, staffID: authStaff.staffID, productIDs: (yield products).map((product) => product.productID) }), (error, _newAdded) => __awaiter(void 0, void 0, void 0, function* () {
+                /** CUSTOMER */
+                let _customer = null;
+                if (addSaleInput.customerID) {
+                    // get the customer
+                    _customer = yield schema_customer_1.customerModel.findOne({
+                        customerID: addSaleInput.customerID,
+                    });
+                    _customer.saleIDs.push(saleID);
+                }
+                else if (addSaleInput.addCustomer) {
+                    // create the new customer
+                    const customerID = `CIN${(0, helpers_1.genRandom)().slice(0, 5).toUpperCase()}`;
+                    _customer = new schema_customer_1.customerModel(Object.assign(Object.assign({}, addSaleInput.addCustomer), { customerID, saleIDs: [saleID] })); // end new customerModel
+                }
+                else {
+                    return resolve({
+                        added: false,
+                        newAdded: null,
+                        error: `[ERROR ADDING SALE]: A customer must exist to make a sale, either provide a customerID or add a new customer.`,
+                    });
+                }
+                /** CREATE THE SALEMODEL */
+                schema_sale_1.saleModel.create(Object.assign(Object.assign({}, addSaleInput), { saleID, products: yield products, staffID: authStaff.staffID, customerID: _customer.customerID }), (error, _newAdded) => __awaiter(void 0, void 0, void 0, function* () {
                     if (error) {
                         return resolve({
                             added: false,
                             newAdded: null,
-                            error: `[ERROR ADDING PRODUCT]: ${error.message}`,
+                            error: `[ERROR SAVING SELL RECORD]: ${error.message}`,
                         });
                     }
+                    // SAVE the Customer
+                    _customer.balance = addSaleInput.balance;
+                    yield _customer.save();
+                    // CREATE A NEW SALE OBJECT
                     const newAdded = Object.assign(yield _newAdded.populate('staff customer'), {
                         products: yield products,
                     });

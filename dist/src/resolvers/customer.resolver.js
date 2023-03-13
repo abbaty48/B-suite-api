@@ -23,7 +23,7 @@ exports.CustomerResolver = {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 yield (0, authorizationMiddleware_1.default)(request, response, config.get('jwt.private'), RolePrevilage_1.RolePrevileges.READ_CUSTOMER); //end staffRoleAuthorization
-                // SEARCH A STAFF BY EITHER (staffID, firstName, lastName, warehouse)
+                // SEARCH A CUSTOMER BY EITHER (name, email, customerID, address, dateOfBirth)
                 //AND POPULATE THE STAFF WITH WAREHOUSE
                 const { name, email, customerID, address, dateOfBirth, beneficiaries } = searchFilter !== null && searchFilter !== void 0 ? searchFilter : {};
                 const customer = yield schema_customer_1.customerModel.findOne({
@@ -83,7 +83,7 @@ exports.CustomerResolver = {
             }
             catch (error) {
                 resolve({
-                    error: `[INTERVAL ERROR]: ${error.message}`,
+                    error: `[INTERNAL ERROR]: ${error.message}`,
                     customer: null,
                 }); // end resolve
             } // end catch
@@ -95,7 +95,7 @@ exports.CustomerResolver = {
             try {
                 yield (0, authorizationMiddleware_1.default)(request, response, config.get('jwt.private'), RolePrevilage_1.RolePrevileges.READ_CUSTOMER); //end staffRoleAuthorization
                 const { name, email, customerID, address, dateOfBirth, beneficiaries } = searchFilter !== null && searchFilter !== void 0 ? searchFilter : {};
-                // PAGINATE THE STAFFS
+                // PAGINATE THE CUSTOMER
                 const sort = (_a = filter === null || filter === void 0 ? void 0 : filter.sort) !== null && _a !== void 0 ? _a : IFilter_1.Filter.sort, limit = (_b = filter === null || filter === void 0 ? void 0 : filter.limit) !== null && _b !== void 0 ? _b : IFilter_1.Filter.limit, pageIndex = (_c = filter === null || filter === void 0 ? void 0 : filter.pageIndex) !== null && _c !== void 0 ? _c : IFilter_1.Filter.pageIndex;
                 const customers = yield schema_customer_1.customerModel
                     .find({
@@ -154,8 +154,7 @@ exports.CustomerResolver = {
                     .sort({ name: sort })
                     .skip(limit * pageIndex)
                     .limit(limit);
-                console.log('CUSTOMERS: ', customers);
-                // POPULATE THE STAFF WITH WAREHOUSE
+                //
                 resolve({
                     error: null,
                     customers,
@@ -170,7 +169,7 @@ exports.CustomerResolver = {
             }
             catch (error) {
                 resolve({
-                    error: `[INTERVAL ERROR]: ${error.message}`,
+                    error: `[INTERNAL ERROR]: ${error.message}`,
                     customers: null,
                     filters: null,
                 }); // end resolve
@@ -196,7 +195,7 @@ exports.CustomerResolver = {
                 resolve({
                     added: false,
                     newAdded: null,
-                    error: `[INTERVAL ERROR]: ${error.message}`,
+                    error: `[INTERNAL ERROR]: ${error.message}`,
                 }); // end resolve
             } // end catch
         })); // end Promise
@@ -225,7 +224,7 @@ exports.CustomerResolver = {
                 resolve({
                     edited: false,
                     newEdited: null,
-                    error: `[INTERVAL ERROR]: ${error.message}`,
+                    error: `[INTERNAL ERROR]: ${error.message}`,
                 }); // end resolve
             } // end catch
         })); // end Promise
@@ -250,7 +249,7 @@ exports.CustomerResolver = {
             catch (error) {
                 resolve({
                     deleted: false,
-                    error: `[INTERVAL ERROR]: ${error.message}`,
+                    error: `[INTERNAL ERROR]: ${error.message}`,
                 }); // end resolve
             } // end catch
         })); // end Promise

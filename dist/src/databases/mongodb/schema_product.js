@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.productModel = void 0;
+exports.productModel = exports.productSchema = void 0;
 const helpers_1 = require("../../commons/helpers");
 const mongoose_1 = require("mongoose");
 const schema_category_1 = require("./schema_category");
-const productSchema = new mongoose_1.Schema({
+exports.productSchema = new mongoose_1.Schema({
     productID: { type: 'string', _id: true, required: true, index: true },
-    name: { type: 'string', required: true, unique: true, index: true },
+    name: { type: 'string', required: true, index: true },
     inStock: {
         index: true,
         type: 'boolean',
@@ -48,18 +48,39 @@ const productSchema = new mongoose_1.Schema({
         type: mongoose_1.Types.ObjectId,
         validate: {
             validator: (value) => schema_category_1.categoryModel.exists({ _id: (0, helpers_1.stringToID)(value.id) }),
-            msg: `[VALIDATION ERROR]: The provided warehouse does not exist in the wareehouse table, please add the warehouse data first and try again.`,
+            msg: `[VALIDATION ERROR]: The provided warehouse does not exist in the warehouse table, please add the warehouse data first and try again.`,
         },
     },
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
+    collection: 'products',
+    timestamps: {
+        createdAt: true,
+        updatedAt: true,
+        currentTime: () => new Date().getTime(),
+    },
 });
-productSchema.pre('findOneAndUpdate', function () {
-    const _update = JSON.parse(JSON.stringify(this.getUpdate()));
-    if (_update.quantity !== undefined) {
-        this.set({ inStock: _update.quantity > 0 });
+exports.productSchema.pre('save', function () {
+    updateInStock(this, 'SAVE');
+});
+exports.productSchema.pre('findOneAndUpdate', function () {
+    updateInStock(this, 'FIND_ONE_AND_UPDATE');
+});
+const updateInStock = (_this, action) => {
+    let _update;
+    //
+    switch (action) {
+        case 'FIND_ONE_AND_UPDATE':
+            _update = _this.getUpdate().$set;
+            break;
+        case 'SAVE':
+            _update = _this.getChanges().$set;
+            break;
     }
-});
+    if (_update.quantity !== undefined) {
+        _this.set({ inStock: _update.quantity > 0 });
+    }
+};
 exports.productModel = mongoose_1.models.product ||
-    (0, mongoose_1.model)('product', productSchema);
+    (0, mongoose_1.model)('product', exports.productSchema);

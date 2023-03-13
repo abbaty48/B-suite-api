@@ -10,6 +10,7 @@ const CustomerSchema = new mongoose_1.Schema({
     address: { type: 'string', required: false },
     phoneNumber: { type: 'string', required: false },
     beneficiary: { type: 'boolean', required: false, default: false },
+    balance: { type: 'number', required: false, default: 0 },
     saleIDs: { type: ['string'], required: false, default: [] },
     metas: {
         type: {
@@ -22,6 +23,15 @@ const CustomerSchema = new mongoose_1.Schema({
             },
         },
         required: false,
+    },
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+    collection: 'customers',
+    timestamps: {
+        createdAt: true,
+        updatedAt: true,
+        currentTime: () => new Date().getTime(),
     },
 });
 CustomerSchema.virtual('warehouse', {
