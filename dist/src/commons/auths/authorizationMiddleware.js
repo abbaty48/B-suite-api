@@ -16,36 +16,48 @@ const staffRoleAuthorization = (req, res, privateKey, previlege) => __awaiter(vo
         const authenticatedStaff = yield (0, staffJWTAuthenticationMiddleware_1.staffVerifyToken)(req, res, privateKey);
         const staffPrevileges = {
             Accountant: [
+                // CATEGORY
                 RolePrevilage_1.RolePrevileges.ALL_CATEGORY_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_CATEGORY,
                 RolePrevilage_1.RolePrevileges.READ_CATEGORY,
                 RolePrevilage_1.RolePrevileges.UPDATE_CATEGORY,
                 RolePrevilage_1.RolePrevileges.DELETE_CATEGORY,
+                // PRODUCT
                 RolePrevilage_1.RolePrevileges.ALL_PRODUCT_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_PRODUCT,
                 RolePrevilage_1.RolePrevileges.READ_PRODUCT,
                 RolePrevilage_1.RolePrevileges.UPDATE_PRODUCT,
                 RolePrevilage_1.RolePrevileges.DELETE_PRODUCT,
+                // SALE
                 RolePrevilage_1.RolePrevileges.ALL_SALE_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_SALE,
                 RolePrevilage_1.RolePrevileges.READ_SALE,
                 RolePrevilage_1.RolePrevileges.UPDATE_SALE,
                 RolePrevilage_1.RolePrevileges.DELETE_SALE,
+                // WAREHOUSE
                 RolePrevilage_1.RolePrevileges.ALL_WAREHOUSE_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_WAREHOUSE,
                 RolePrevilage_1.RolePrevileges.READ_WAREHOUSE,
                 RolePrevilage_1.RolePrevileges.UPDATE_WAREHOUSE,
                 RolePrevilage_1.RolePrevileges.DELETE_WAREHOUSE,
+                // CUSTOMER
                 RolePrevilage_1.RolePrevileges.ALL_CUSTOMER_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_CUSTOMER,
                 RolePrevilage_1.RolePrevileges.READ_CUSTOMER,
                 RolePrevilage_1.RolePrevileges.UPDATE_CUSTOMER,
                 RolePrevilage_1.RolePrevileges.DELETE_CUSTOMER,
+                // STAFF
                 RolePrevilage_1.RolePrevileges.ALL_STAFF_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_STAFF,
                 RolePrevilage_1.RolePrevileges.READ_STAFF,
                 RolePrevilage_1.RolePrevileges.UPDATE_STAFF,
                 RolePrevilage_1.RolePrevileges.DELETE_STAFF,
+                // SUPPLY
+                RolePrevilage_1.RolePrevileges.ALL_SUPPLY_OPERATIONS,
+                RolePrevilage_1.RolePrevileges.ADD_SUPPLY,
+                RolePrevilage_1.RolePrevileges.READ_SUPPLY,
+                RolePrevilage_1.RolePrevileges.UPDATE_SUPPLY,
+                RolePrevilage_1.RolePrevileges.DELETE_SUPPLY,
             ],
             Manager: [
                 // CATEGORY
@@ -80,18 +92,27 @@ const staffRoleAuthorization = (req, res, privateKey, previlege) => __awaiter(vo
                 RolePrevilage_1.RolePrevileges.READ_STAFF,
                 RolePrevilage_1.RolePrevileges.UPDATE_STAFF,
                 RolePrevilage_1.RolePrevileges.DELETE_STAFF,
+                // SUPPLY
+                RolePrevilage_1.RolePrevileges.ALL_SUPPLY_OPERATIONS,
+                RolePrevilage_1.RolePrevileges.ADD_SUPPLY,
+                RolePrevilage_1.RolePrevileges.READ_SUPPLY,
+                RolePrevilage_1.RolePrevileges.UPDATE_SUPPLY,
+                RolePrevilage_1.RolePrevileges.DELETE_SUPPLY,
             ],
             Warehouse: [
+                // CATEGORY
                 RolePrevilage_1.RolePrevileges.ALL_CATEGORY_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_CATEGORY,
                 RolePrevilage_1.RolePrevileges.READ_CATEGORY,
                 RolePrevilage_1.RolePrevileges.UPDATE_CATEGORY,
                 RolePrevilage_1.RolePrevileges.DELETE_CATEGORY,
+                // PRODUCT
                 RolePrevilage_1.RolePrevileges.ALL_PRODUCT_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_PRODUCT,
                 RolePrevilage_1.RolePrevileges.READ_PRODUCT,
                 RolePrevilage_1.RolePrevileges.UPDATE_PRODUCT,
                 RolePrevilage_1.RolePrevileges.DELETE_PRODUCT,
+                // WAREHOUSE
                 RolePrevilage_1.RolePrevileges.ALL_WAREHOUSE_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_WAREHOUSE,
                 RolePrevilage_1.RolePrevileges.READ_WAREHOUSE,
@@ -99,12 +120,15 @@ const staffRoleAuthorization = (req, res, privateKey, previlege) => __awaiter(vo
                 RolePrevilage_1.RolePrevileges.DELETE_WAREHOUSE,
             ],
             Saller: [
+                // PRODUCT
                 RolePrevilage_1.RolePrevileges.READ_PRODUCT,
+                // SALE
                 RolePrevilage_1.RolePrevileges.ALL_SALE_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_SALE,
                 RolePrevilage_1.RolePrevileges.READ_SALE,
                 RolePrevilage_1.RolePrevileges.UPDATE_SALE,
                 RolePrevilage_1.RolePrevileges.DELETE_SALE,
+                // CUSTOMER
                 RolePrevilage_1.RolePrevileges.ALL_CUSTOMER_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_CUSTOMER,
                 RolePrevilage_1.RolePrevileges.READ_CUSTOMER,
@@ -112,11 +136,13 @@ const staffRoleAuthorization = (req, res, privateKey, previlege) => __awaiter(vo
                 RolePrevilage_1.RolePrevileges.DELETE_CUSTOMER,
             ],
             Admin: [
+                // CATEGORY
                 RolePrevilage_1.RolePrevileges.ALL_CATEGORY_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_CATEGORY,
                 RolePrevilage_1.RolePrevileges.READ_CATEGORY,
                 RolePrevilage_1.RolePrevileges.UPDATE_CATEGORY,
                 RolePrevilage_1.RolePrevileges.DELETE_CATEGORY,
+                // PRODUCT
                 RolePrevilage_1.RolePrevileges.ALL_PRODUCT_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_PRODUCT,
                 RolePrevilage_1.RolePrevileges.READ_PRODUCT,
@@ -126,21 +152,30 @@ const staffRoleAuthorization = (req, res, privateKey, previlege) => __awaiter(vo
                 RolePrevilage_1.RolePrevileges.READ_SALE,
                 RolePrevilage_1.RolePrevileges.UPDATE_SALE,
                 RolePrevilage_1.RolePrevileges.DELETE_SALE,
+                // WAREHOUSE
                 RolePrevilage_1.RolePrevileges.ALL_WAREHOUSE_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_WAREHOUSE,
                 RolePrevilage_1.RolePrevileges.READ_WAREHOUSE,
                 RolePrevilage_1.RolePrevileges.UPDATE_WAREHOUSE,
                 RolePrevilage_1.RolePrevileges.DELETE_WAREHOUSE,
+                // CUSTOMER
                 RolePrevilage_1.RolePrevileges.ALL_CUSTOMER_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_CUSTOMER,
                 RolePrevilage_1.RolePrevileges.READ_CUSTOMER,
                 RolePrevilage_1.RolePrevileges.UPDATE_CUSTOMER,
                 RolePrevilage_1.RolePrevileges.DELETE_CUSTOMER,
+                // STAFF
                 RolePrevilage_1.RolePrevileges.ALL_STAFF_OPERATIONS,
                 RolePrevilage_1.RolePrevileges.ADD_STAFF,
                 RolePrevilage_1.RolePrevileges.READ_STAFF,
                 RolePrevilage_1.RolePrevileges.UPDATE_STAFF,
                 RolePrevilage_1.RolePrevileges.DELETE_STAFF,
+                // SUPPLY
+                RolePrevilage_1.RolePrevileges.ALL_SUPPLY_OPERATIONS,
+                RolePrevilage_1.RolePrevileges.ADD_SUPPLY,
+                RolePrevilage_1.RolePrevileges.READ_SUPPLY,
+                RolePrevilage_1.RolePrevileges.UPDATE_SUPPLY,
+                RolePrevilage_1.RolePrevileges.DELETE_SUPPLY,
             ],
         };
         if (staffPrevileges[authenticatedStaff.role].includes(previlege)) {

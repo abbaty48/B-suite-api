@@ -16,6 +16,7 @@ const product_resolver_1 = require("./product.resolver");
 const customer_resolver_1 = require("./customer.resolver");
 const category_resolver_1 = require("./category.resolver");
 const warehouse_resolver_1 = require("./warehouse.resolver");
+const supply_resolver_1 = require("./supply.resolver");
 exports.resolvers = {
     Query: {
         // STAFF
@@ -42,6 +43,9 @@ exports.resolvers = {
         // CUSTOMER
         customer: (_, { searchFilter }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.customer(searchFilter, context); }),
         customers: (_, { searchFilter, filters }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.customers(searchFilter, filters, context); }),
+        // PURCHASE
+        supply: (_, { searchFilter }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield supply_resolver_1.SupplyResolver.supply(searchFilter, context); }),
+        supplies: (_, { searchFilter, filters }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield supply_resolver_1.SupplyResolver.supplies(searchFilter, filters, context); }),
     },
     Mutation: {
         // STAFF
@@ -104,5 +108,11 @@ exports.resolvers = {
         addCustomer: (_, { addCustomerInput }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.addCustomers(addCustomerInput, context); }),
         editCustomer: (_, { editCustomerInput }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.editCustomers(editCustomerInput, context); }),
         deleteCustomer: (_, { customerID, warehouseID }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.deleteCustomers(customerID, warehouseID, context); }),
+        // PURCHASE
+        makeSupply: (_, { addSupplyInput, warehouseID }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield supply_resolver_1.SupplyResolver.makeSupply(addSupplyInput, context, warehouseID); }),
+        editSupply: (_, { supplyID, editSupplyInput, warehouseID }, context) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield supply_resolver_1.SupplyResolver.editSupply(supplyID, editSupplyInput, context, warehouseID);
+        }),
+        deleteSupply: (_, { supplyID, warehouseID }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield supply_resolver_1.SupplyResolver.deleteSupply(supplyID, context, warehouseID); }),
     },
 };

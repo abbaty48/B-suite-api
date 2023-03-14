@@ -1,31 +1,40 @@
-/** PRODUCTS */
-const products = addSaleInput.productMetas.reduce(
-  async (
-    accumulator: any[],
-    meta: { productID: string; quantity: number }
-  ) => {
-    const product = await productModel.findOne(
-      { productID: meta.productID },
-      {},
-      { populate: 'category' }
-    );
-    if (product !== null) {
-      (await Promise.resolve(accumulator)).push({
-        ...product._doc,
-        quantity: meta.quantity,
-        subTotal: meta.quantity * product.retailPrice,
-      });
-    } // end  product
-    return await accumulator;
-  },
-  []
-);
+ ## STORE
+   type Store {
+      totalSales: number,
+      totalStaffs: number,
+      totalProducts: number,
+      totalCustomers: number,
+      totalWarehouses: numbers,
+      totalExpiredProducts: number,
+      enterprise: Enterprise
+   }
 
-if ((await products).length <= 0) {
-  return resolve({
-    added: false,
-    newAdded: null,
-    error:
-      "[ERROR ADDING PRODUCT]: The product(`s) you're about to sell does not exist in the products stock records.",
-  });
-}
+   ## ENTERPRISE
+   type EnterpriseSocialAccounts {
+      facebook: String
+      twitter: String
+      youtube: String
+      instagram: String
+   }
+   type EnterpriseOwner {
+      name: String!,
+      email: String,
+      about: String,
+      picture: String,
+      phoneNumber: String,
+      website: String,
+      socialAccounts: EnterpriseSocialAccounts
+   }
+   type Enterprise {
+      name: String!,
+      slogon: String,
+      title: String,
+      staffs: [Staffs!]!,
+      warehouses: [Warehouse!],
+      address: String,
+      about: String,
+      socialAccounts: EnterpriseSocialAccounts,
+      website: String,
+      email: String,
+      owner: EnterpriseOwner!,
+   }
