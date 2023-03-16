@@ -98,6 +98,11 @@ const staffRoleAuthorization = (req, res, privateKey, previlege) => __awaiter(vo
                 RolePrevilage_1.RolePrevileges.READ_SUPPLY,
                 RolePrevilage_1.RolePrevileges.UPDATE_SUPPLY,
                 RolePrevilage_1.RolePrevileges.DELETE_SUPPLY,
+                // ENTERPRISE
+                RolePrevilage_1.RolePrevileges.ADD_ENTERPRISE,
+                RolePrevilage_1.RolePrevileges.UPDATE_ENTERPRISE,
+                // INITIALIZED_SYSTEM
+                RolePrevilage_1.RolePrevileges.INITIALIZED_SYSTEM,
             ],
             Warehouse: [
                 // CATEGORY
@@ -176,6 +181,11 @@ const staffRoleAuthorization = (req, res, privateKey, previlege) => __awaiter(vo
                 RolePrevilage_1.RolePrevileges.READ_SUPPLY,
                 RolePrevilage_1.RolePrevileges.UPDATE_SUPPLY,
                 RolePrevilage_1.RolePrevileges.DELETE_SUPPLY,
+                // ENTERPRISE
+                RolePrevilage_1.RolePrevileges.ADD_ENTERPRISE,
+                RolePrevilage_1.RolePrevileges.UPDATE_ENTERPRISE,
+                // INITIALIZED_SYSTEM
+                RolePrevilage_1.RolePrevileges.INITIALIZED_SYSTEM,
             ],
         };
         if (staffPrevileges[authenticatedStaff.role].includes(previlege)) {

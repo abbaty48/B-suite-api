@@ -1,0 +1,12 @@
+
+
+// TIPS
+
+1. add last login to staff data to determine how long the user didn't login, so that he/she will have change password again
+
+// FIX
+
+1. fix staff bcrypt.genHash when creating a new staff
+2. fix the product addProduct
+3. change warehouse schema to use string as the type instead of Types.ObjectId
+4. Make the staff phoneNumber required

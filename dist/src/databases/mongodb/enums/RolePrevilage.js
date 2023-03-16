@@ -38,4 +38,9 @@ var RolePrevileges;
     RolePrevileges[RolePrevileges["READ_SUPPLY"] = 32] = "READ_SUPPLY";
     RolePrevileges[RolePrevileges["UPDATE_SUPPLY"] = 33] = "UPDATE_SUPPLY";
     RolePrevileges[RolePrevileges["DELETE_SUPPLY"] = 34] = "DELETE_SUPPLY";
+    // ENTERPRISE
+    RolePrevileges[RolePrevileges["ADD_ENTERPRISE"] = 35] = "ADD_ENTERPRISE";
+    RolePrevileges[RolePrevileges["UPDATE_ENTERPRISE"] = 36] = "UPDATE_ENTERPRISE";
+    // SYSTEM
+    RolePrevileges[RolePrevileges["INITIALIZED_SYSTEM"] = 37] = "INITIALIZED_SYSTEM";
 })(RolePrevileges = exports.RolePrevileges || (exports.RolePrevileges = {}));
