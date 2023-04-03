@@ -44,4 +44,5 @@ CustomerSchema.virtual('purchases', {
     foreignField: 'saleID',
     localField: 'saleIDs',
 });
-exports.customerModel = mongoose_1.models.customer || (0, mongoose_1.model)('customer', CustomerSchema);
+exports.customerModel = mongoose_1.models.customer ||
+    (0, mongoose_1.model)('customer', CustomerSchema);

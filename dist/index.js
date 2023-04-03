@@ -16,6 +16,7 @@ exports.pubsub = void 0;
 const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 const config_1 = __importDefault(require("config"));
+const express_1 = __importDefault(require("express"));
 const http_1 = require("http");
 const ws_1 = require("ws");
 const schema_1 = __importDefault(require("./src/models/schema"));
@@ -23,8 +24,10 @@ const graphql_subscriptions_1 = require("graphql-subscriptions");
 const ws_2 = require("graphql-ws/lib/use/ws");
 const apollo_server_express_1 = require("apollo-server-express");
 const schema_2 = require("@graphql-tools/schema");
+const mongodb_1 = require("./src/datasources/mongodb");
 const index_resolvers_1 = require("./src/resolvers/index.resolvers");
-const express_1 = __importDefault(require("express"));
+const error_1 = require("./src/commons/middlewares/error");
+const assets_1 = require("./src/commons/middlewares/assets");
 const apollo_server_core_1 = require("apollo-server-core");
 exports.pubsub = new graphql_subscriptions_1.PubSub();
 /**
@@ -77,22 +80,21 @@ function Main() {
         // Hand in the schema we just created and have the
         // WebSocketServer start listening.
         const serverCleanup = (0, ws_2.useServer)({ schema }, wsServer);
+        // IMAGE REQUEST
+        // serve static image assets
         app.use('*', (request, response, next) => __awaiter(this, void 0, void 0, function* () {
             // set the res and req to context object for all resovers to leverage
             _apolloServer.requestOptions.context = { request, response, config: config_1.default };
             next(); // makes the middleware move next
         }));
-        // ERROR HANDLER
-        app.use((err, req, res, next) => {
-            if (res.headersSent) {
-                return next(err);
-            }
-            const { status } = err;
-            console.log('Error in server: ', status, err.message);
-            res.status(status).json(err);
-        });
+        // ASSET MIDDLEWARES
+        (0, assets_1.assetMiddlwares)(app, __dirname);
+        // ERROR HANDLE
+        (0, error_1.errorMiddlwares)(app, __dirname);
         // start the mongodb server
         try {
+            // start mongodb Server
+            (0, mongodb_1.mongodbService)();
             // start the apollo server
             yield _apolloServer.start();
             // apply express app as middleware to the apollo server

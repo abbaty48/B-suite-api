@@ -21,7 +21,7 @@ const staffVerifyToken = (request, response, privateKey) => __awaiter(void 0, vo
         // check the Authorization key existence
         const authorizationKey = request.get('Authorization');
         if (!authorizationKey) {
-            throw new Error('Authorization bearer not found, authentication is required, provide your token.');
+            throw new Error('[UNAUTHENTICATED] Authorization bearer not found, authentication is required, provide your token.');
         }
         // check the token validity
         const token = authorizationKey.split(' ')[1];

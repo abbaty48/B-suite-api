@@ -7,6 +7,7 @@ import {
   ISupply,
 } from '@/src/databases/mongodb/interfaces/ISupply';
 import { genRandom } from '@server-commons/helpers';
+import { Pagin } from '@server-databases/mongodb/interfaces/IPagin';
 import { supplyModel } from '@server-databases/mongodb/schema_supply';
 import { productModel } from '@server-databases/mongodb/schema_product';
 import { RolePrevileges } from '@server-databases/mongodb/enums/RolePrevilage';
@@ -54,7 +55,7 @@ export const SupplyResolver = {
       } catch (error) {
         resolve({
           supply: null,
-          error: `[INTERNAL ERROR]: ${error.message}`,
+          error: `[EXCEPTION]: ${error.message}`,
         }); // end resolve
       } // end catch
     }); // end promise
@@ -66,7 +67,7 @@ export const SupplyResolver = {
       staffID?: string;
       supplyID?: string;
     },
-    filters: any,
+    pagin: any,
     { request, response, config }: IResolverContext
   ) => {
     return new Promise<ISupplysPayload>(async (resolve) => {
@@ -80,6 +81,10 @@ export const SupplyResolver = {
         );
         //
         const { supplyID, staffID, date, time } = searchFilter;
+        // PAGINATE THE PRODUCTS
+        const sort = pagin.sort ?? Pagin.sort,
+          limit = pagin.limit ?? Pagin.limit,
+          pageIndex = pagin.pageIndex ?? Pagin.pageIndex;
         //
         const supplies = await supplyModel.find<ISupply>(
           {
@@ -91,16 +96,28 @@ export const SupplyResolver = {
             ],
           },
           {},
-          { populate: 'staff products' }
+          {
+            sort: { date: sort },
+            skip: limit * pageIndex,
+            limit,
+            populate: 'staff products',
+          } // end options
         );
         resolve({
           error: null,
           supplies,
-        });
+          pagins: {
+            sort,
+            currentPageIndex: pageIndex,
+            nextPageIndex: pageIndex + 1,
+            totalPaginated: supplies.length,
+            totalDocuments: await supplyModel.count(),
+          },
+        }); // end resolve
       } catch (error) {
         resolve({
           supplies: null,
-          error: `[INTERNAL ERROR]: ${error.message}`,
+          error: `[EXCEPTION]: ${error.message}`,
         }); // end resolve
       } // end catch
     }); // end promise
@@ -164,7 +181,7 @@ export const SupplyResolver = {
         resolve({
           added: false,
           newAdded: null,
-          error: `[INTERNAL ERROR]: ${error.message}`,
+          error: `[EXCEPTION]: ${error.message}`,
         }); // end resolve
       } // end catch
     }); // end promise
@@ -230,7 +247,7 @@ export const SupplyResolver = {
         resolve({
           edited: false,
           newEdited: null,
-          error: `[INTERNAL ERROR]: ${error.message}`,
+          error: `[EXCEPTION]: ${error.message}`,
         }); // end resolve
       } // end catch
     }); // end promise
@@ -261,7 +278,7 @@ export const SupplyResolver = {
       } catch (error) {
         resolve({
           deleted: false,
-          error: `[INTERNAL ERROR]: ${error.message}`,
+          error: `[EXCEPTION]: ${error.message}`,
         }); // end resolve
       } // end catch
     }); // end promise

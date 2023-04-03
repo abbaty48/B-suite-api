@@ -10,9 +10,10 @@ export interface IStaffPayload {
 export interface IStaffsPayload {
   error: string | null;
   staffs: IStaff[];
-  filters?: {
+  pagins?: {
     sort: string;
-    total: number;
+    totalDocuments: number;
+    totalPaginated: number;
     nextPageIndex: number;
     currentPageIndex: number;
   };
@@ -55,6 +56,7 @@ export interface IStaff extends Document {
   password: string;
   token: string;
   customerID: string;
+  warehouseID: string;
   warehouse: IWarehouse;
   _doc: IStaff;
 }

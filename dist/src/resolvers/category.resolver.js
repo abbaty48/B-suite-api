@@ -8,103 +8,82 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryResolver = void 0;
-const index_datasources_1 = require("../datasources/index.datasources");
 const schema_category_1 = require("../databases/mongodb/schema_category");
 const schema_product_1 = require("../databases/mongodb/schema_product");
-(0, index_datasources_1.mongodbService)();
+const RolePrevilage_1 = require("../databases/mongodb/enums/RolePrevilage");
+const authorizationMiddleware_1 = __importDefault(require("../commons/auths/authorizationMiddleware"));
 exports.CategoryResolver = {
     categories: () => __awaiter(void 0, void 0, void 0, function* () {
         return yield schema_category_1.categoryModel.find();
     }),
-    addCategory: (category) => __awaiter(void 0, void 0, void 0, function* () {
+    addCategory: (addCategoryInput, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
-                if (yield schema_category_1.categoryModel.exists({ name: category })) {
-                    return resolve({
-                        error: `Category with the name "${category}" already exist, please provide a new one.`,
-                        added: false,
-                    });
-                } // end if-exists
-                schema_category_1.categoryModel.create((error, result) => {
-                    if (error) {
-                        return resolve({
-                            error: 'Error adding a new category, REASON: ' + error.message,
-                            added: false,
-                        });
-                    }
-                    resolve({
-                        error: null,
-                        added: true,
-                    });
+                yield (0, authorizationMiddleware_1.default)(request, response, config.get('jwt.private'), RolePrevilage_1.RolePrevileges.ADD_CATEGORY);
+                //
+                const newAdded = (yield schema_category_1.categoryModel.create({ name: addCategoryInput.name })).name;
+                resolve({
+                    error: null,
+                    added: true,
+                    newAdded,
                 });
             }
             catch (error) {
                 resolve({
-                    error: error.message,
+                    error: `[EXCEPTION]: ${error.message}`,
                     added: false,
+                    newAdded: null,
                 });
             } // end catch
         })); // end promise
     }),
-    editCategory: (oldCategory, newCategory) => __awaiter(void 0, void 0, void 0, function* () {
+    editCategory: (editCategoryInput, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
-            if (yield schema_category_1.categoryModel.exists({ name: newCategory })) {
-                return resolve({
-                    error: `Category with the name "${newCategory}" already exist, please provide a new one.`,
-                    edited: false,
-                    newValue: null,
+            try {
+                yield (0, authorizationMiddleware_1.default)(request, response, config.get('jwt.private'), RolePrevilage_1.RolePrevileges.UPDATE_CATEGORY);
+                //
+                const { newCategory, oldCategory } = editCategoryInput;
+                //
+                yield schema_category_1.categoryModel.findOneAndUpdate({ name: oldCategory }, { name: newCategory }, { new: true, runValidators: true, context: 'query' }); // end findOneAndUpdate
+                resolve({
+                    edited: true,
+                    error: null,
+                    newValue: newCategory,
                     oldValue: oldCategory,
                 });
-            } // end if-exists
-            schema_category_1.categoryModel.findOneAndUpdate({ name: oldCategory }, { name: newCategory }, (error, updatedCategory) => __awaiter(void 0, void 0, void 0, function* () {
-                // if error
-                if (error) {
-                    return resolve({
-                        edited: false,
-                        newValue: null,
-                        error: error.message,
-                        oldValue: oldCategory,
-                    });
-                } // end error
-                // update all products under the oldCategory to a newCategory
-                try {
-                    yield schema_product_1.productModel.updateMany({ category: oldCategory }, { $rename: { category: newCategory } });
-                    resolve({
-                        edited: true,
-                        error: null,
-                        newValue: newCategory,
-                        oldValue: oldCategory,
-                    });
-                }
-                catch (error) {
-                    resolve({
-                        edited: false,
-                        error: error.message,
-                        newValue: null,
-                        oldValue: oldCategory,
-                    });
-                } // end catch
-            }) // end callback
-            ); // end findOneAndUpdate
+            }
+            catch (error) {
+                resolve({
+                    edited: false,
+                    newValue: null,
+                    oldValue: editCategoryInput.oldCategory,
+                    error: `[EXCEPTION]: ${error.message}`,
+                }); // end resolve
+            } // end catch
         })); // end Promise
     }),
-    deleteCategory: (category) => __awaiter(void 0, void 0, void 0, function* () {
-        return new Promise((resolve) => {
-            schema_category_1.categoryModel.findOneAndRemove({ name: category }, (error, deletedCategory) => __awaiter(void 0, void 0, void 0, function* () {
-                if (error) {
-                    return resolve({ deleted: false, error: error.message });
-                } // end if
-                try {
-                    yield schema_product_1.productModel.updateMany({ category: category }, { $rename: { category: 'UNCATEGORIZE' } });
-                    resolve({ deleted: true, error: null });
-                }
-                catch (error) {
-                    resolve({ error: error.message, deleted: false });
-                } // end catch
-            }) // end  callback
-            ); // end findOneAndRemove
-        }); // end Promise
+    deleteCategory: (category, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
+        return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                // Authenticate and Authorize action user
+                (0, authorizationMiddleware_1.default)(request, response, config.get('jwt.private'), RolePrevilage_1.RolePrevileges.DELETE_CATEGORY);
+                // FIND AND REMOVE THE CATEGORY AND RENAME ALL THE PRODUCT USING IT TO [UNCATEGORIZE]
+                yield schema_category_1.categoryModel.findOneAndRemove({ name: category });
+                //
+                yield schema_product_1.productModel.updateMany({ 'category.name': category }, { $set: { name: 'UNCATEGORIZED' } });
+                resolve({ deleted: true, error: null });
+            }
+            catch (error) {
+                resolve({
+                    deleted: false,
+                    error: `[EXCEPTION]: ${error.message}`,
+                }); // end resolve
+            } // end catch
+        })); // end Promise
     }), // end deleteCategory
 }; // end CategoryResolver

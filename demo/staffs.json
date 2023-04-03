@@ -1,0 +1,45 @@
+[{
+  "_id": {
+    "$oid": "63ffc4046abf365624edb6a3"
+  },
+  "staffID": "IDA6IFK",
+  "firstName": "ManagerStaff",
+  "lastName": "staff",
+  "role": "Manager",
+  "password": "$2b$10$hzHA/8yTpNIUGFpcATBpSu1J/2tlCTR7pcp5D38U2fniTZcZwgJYG",
+  "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdGFmZklEIjoiSURBNklGSyIsImZpcnN0TmFtZSI6Ik1hbmFnZXJTdGFmZiIsImxhc3ROYW1lIjoic3RhZmYiLCJwYXNzd29yZCI6ImFiYmF0eTQ4Iiwicm9sZSI6Ik1hbmFnZXIiLCJpYXQiOjE2Nzc3MDYyNDR9.ZjHL854qF679QzExf56cRmY3HzIhwzSF7LL8hpQF6GZ4Me_vAr0trlrAC0iKSmu_mh9NxUxt14sgsTklQnOhEw",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64004f7152cd730fb2464df3"
+  },
+  "staffID": "IDHR8DH",
+  "firstName": "AStaff",
+  "lastName": "Astaff",
+  "role": "Saller",
+  "password": "$2b$10$kQ6WPgJS7WV3NDBWBypfJumq2kcVcfbe0bKJM4MczTtBoemcK/2VG",
+  "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdGFmZklEIjoiSURIUjhESCIsImZpcnN0TmFtZSI6IkFTdGFmZiIsImxhc3ROYW1lIjoiQXN0YWZmIiwicm9sZSI6IlNhbGxlciIsImlhdCI6MTY3Nzc0MTkzN30.e5FCQd6fEO15NvSAYrORrIO-pDQWlxbqZGghFelY5w5cYgdlp1tL94xHusPUrmXLxNxvzFybQxZiPUsrShwMpA",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64004f9c52cd730fb2464df6"
+  },
+  "staffID": "ID8UHP3",
+  "firstName": "BStaff",
+  "lastName": "StaffB",
+  "role": "Saller",
+  "password": "$2b$10$NdfI3jJU5lVWVkQJAGdcFuhwAjiu3.ktOKtvGTNracmICrfHGsIBG",
+  "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdGFmZklEIjoiSUQ4VUhQMyIsImZpcnN0TmFtZSI6IkJTdGFmZiIsImxhc3ROYW1lIjoiQnN0YWZmIiwicm9sZSI6IlNhbGxlciIsImlhdCI6MTY3Nzc0MTk4MH0.qZYbOlvUu-cpMpz9boVIxG3QUBUqoWeuMR_Wr8NKIPHEcZm94MnJG-UBw1A9UB_PaLzvL0J6BWfITiYYMTa4ag",
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64004fa552cd730fb2464df9"
+  },
+  "staffID": "IDH6LE1",
+  "firstName": "CStaff",
+  "lastName": "Cstaff",
+  "role": "Saller",
+  "password": "$2b$10$VUiGFO0GxV8KIEHniPD55uNbYr8Lsjux65S4U0jo.LV1z2YGVSzwq",
+  "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdGFmZklEIjoiSURINkxFMSIsImZpcnN0TmFtZSI6IkNTdGFmZiIsImxhc3ROYW1lIjoiQ3N0YWZmIiwicm9sZSI6IlNhbGxlciIsImlhdCI6MTY3Nzc0MjUxNH0.N908luiafijbBY2ayHQwaIVK0WGWF32LdQiSkmaaZUjeD3quMnt_x8g3hq9bSbHNnt5T7pRDA1uUfV7cqB3SwQ",
+  "__v": 0
+}]

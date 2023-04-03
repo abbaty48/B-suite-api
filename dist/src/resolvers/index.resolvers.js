@@ -24,13 +24,13 @@ exports.resolvers = {
         staff: (_, { searchFilter }, context) => __awaiter(void 0, void 0, void 0, function* () {
             return yield staff_resolver_1.StaffResolver.staff(searchFilter, context);
         }),
-        staffs: (_, { searchFilter, filters }, context) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield staff_resolver_1.StaffResolver.staffs(searchFilter, filters, context);
+        staffs: (_, { searchFilter, pagin }, context) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield staff_resolver_1.StaffResolver.staffs(searchFilter, pagin, context);
         }),
         //#endregion STAFFS
         //#region PRODUCT
         product: (_, { searchFilter }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield product_resolver_1.ProductResolver.product(searchFilter, context); }),
-        products: (_, { searchFilter, filters }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield product_resolver_1.ProductResolver.products(searchFilter, filters, context); }),
+        products: (_, { searchFilter, pagin }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield product_resolver_1.ProductResolver.products(searchFilter, pagin, context); }),
         //#endregion PRODUCT
         //#region CATEGORY
         categories: (_) => __awaiter(void 0, void 0, void 0, function* () {
@@ -38,32 +38,31 @@ exports.resolvers = {
         }),
         //#endregion CATEGORY
         //#region WAREHOUSE
-        warehouses: (_, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield warehouse_resolver_1.WarehouseResolver.warehouses(context);
-        }),
+        warehouse: (_, { searchFilter }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield warehouse_resolver_1.WarehouseResolver.warehouse(searchFilter, context); }),
+        warehouses: (_, { searchFilter, pagin }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield warehouse_resolver_1.WarehouseResolver.warehouses(searchFilter, pagin, context); }),
         //#endregion WARHOUSE
         //#region SALE
         sale: (_, { searchFilter }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield sale_resolver_1.SaleResolver.sale(searchFilter, context); }),
-        sales: (_, { searchFilter, filters }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield sale_resolver_1.SaleResolver.sales(searchFilter, filters, context); }),
+        sales: (_, { searchFilter, pagin }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield sale_resolver_1.SaleResolver.sales(searchFilter, pagin, context); }),
         //#endregion SALE
         //#region CUSTOMER
         customer: (_, { searchFilter }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.customer(searchFilter, context); }),
-        customers: (_, { searchFilter, filters }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.customers(searchFilter, filters, context); }),
+        customers: (_, { searchFilter, pagin }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield customer_resolver_1.CustomerResolver.customers(searchFilter, pagin, context); }),
         //#endregion CUSTOMER
-        //#region PURCHASE
+        //#region SUPPLY
         supply: (_, { searchFilter }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield supply_resolver_1.SupplyResolver.supply(searchFilter, context); }),
-        supplies: (_, { searchFilter, filters }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield supply_resolver_1.SupplyResolver.supplies(searchFilter, filters, context); }),
+        supplies: (_, { searchFilter, pagin }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield supply_resolver_1.SupplyResolver.supplies(searchFilter, pagin, context); }),
         //#endregion PURCHASE
         // STORE
         store: (_, _args, context) => __awaiter(void 0, void 0, void 0, function* () { return yield store_resolver_1.StoreResolver.store(context); }),
     },
     Mutation: {
         //#region STAFF
-        addStaff: (_, inputs, context) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield staff_resolver_1.StaffResolver.addStaff(inputs, context);
+        addStaff: (_, { addStaffInput }, context) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield staff_resolver_1.StaffResolver.addStaff(addStaffInput, context);
         }),
-        editStaff: (_, inputs, context) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield staff_resolver_1.StaffResolver.editStaff(inputs, context);
+        editStaff: (_, { editStaffInput }, context) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield staff_resolver_1.StaffResolver.editStaff(editStaffInput, context);
         }),
         deleteStaff: (_, { staffID }, context) => __awaiter(void 0, void 0, void 0, function* () {
             return yield staff_resolver_1.StaffResolver.deleteStaff(staffID, context);
@@ -75,32 +74,26 @@ exports.resolvers = {
         deleteProduct: (_, { productID, warehouseID }, context) => __awaiter(void 0, void 0, void 0, function* () { return yield product_resolver_1.ProductResolver.deleteProduct(productID, warehouseID, context); }),
         //#endregion
         //#region CATEGORY
-        addCategory: (_, { category }) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield category_resolver_1.CategoryResolver.addCategory(category);
+        addCategory: (_, { addCategoryInput }, context) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield category_resolver_1.CategoryResolver.addCategory(addCategoryInput, context);
         }),
-        editCategory: (_, { oldCategory, newCategory }) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield category_resolver_1.CategoryResolver.editCategory(oldCategory, newCategory);
+        editCategory: (_, { editCategoryInput }, context) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield category_resolver_1.CategoryResolver.editCategory(editCategoryInput, context);
         }),
-        deleteCategory: (_, { category }) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield category_resolver_1.CategoryResolver.deleteCategory(category);
+        deleteCategory: (_, { category }, context) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield category_resolver_1.CategoryResolver.deleteCategory(category, context);
         }),
         //#endregion
         //#region WAREHOUSE
-        addWarehouse: (_, { warehouseID, address, staffs, products }, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield warehouse_resolver_1.WarehouseResolver.addWarehouse({
-                warehouseID,
-                address,
-                staffs,
-                products,
-            }, { request, response, config });
+        addWarehouse: (_, { addWarehouseInput }, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield warehouse_resolver_1.WarehouseResolver.addWarehouse(addWarehouseInput, {
+                request,
+                response,
+                config,
+            });
         }),
-        editWarehouse: (_, { warehouseID, name, address, staffs, products }, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
-            return yield warehouse_resolver_1.WarehouseResolver.editWarehouse({
-                warehouseID,
-                address,
-                staffs,
-                products,
-            }, {
+        editWarehouse: (_, { editWarehouseInput }, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
+            return yield warehouse_resolver_1.WarehouseResolver.editWarehouse(editWarehouseInput, {
                 request,
                 response,
                 config,
@@ -136,5 +129,7 @@ exports.resolvers = {
         editEnterprise: (_, { editEnterpriseInput }, context) => __awaiter(void 0, void 0, void 0, function* () { return store_resolver_1.StoreResolver.editEnterprise(editEnterpriseInput, context); }),
         _initializeSys: (_, { _init }, context) => __awaiter(void 0, void 0, void 0, function* () { return store_resolver_1.StoreResolver._initializeSys(_init, context); }),
         //#endregion
+        //
+        uploadData: (_, { uploadDataInput }) => __awaiter(void 0, void 0, void 0, function* () { return yield product_resolver_1.ProductResolver.uploadData(uploadDataInput); }),
     },
 };

@@ -16,8 +16,8 @@ exports.SaleResolver = void 0;
 const helpers_1 = require("../commons/helpers");
 const schema_sale_1 = require("../databases/mongodb/schema_sale");
 const schema_product_1 = require("../databases/mongodb/schema_product");
+const IPagin_1 = require("../databases/mongodb/interfaces/IPagin");
 const RolePrevilage_1 = require("../databases/mongodb/enums/RolePrevilage");
-const IFilter_1 = require("../databases/mongodb/interfaces/IFilter");
 const authorizationMiddleware_1 = __importDefault(require("../commons/auths/authorizationMiddleware"));
 const schema_customer_1 = require("../databases/mongodb/schema_customer");
 exports.SaleResolver = {
@@ -70,7 +70,7 @@ exports.SaleResolver = {
             } // end catch
         })); // end  promise
     }),
-    sales: (searchFilter, filter, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
+    sales: (searchFilter, pagin, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             var _a, _b, _c;
             try {
@@ -79,7 +79,7 @@ exports.SaleResolver = {
                 // SEARCH FILTER
                 const { date, time, saleID, staffID, paidPrice, productID, customerID, productName, } = searchFilter !== null && searchFilter !== void 0 ? searchFilter : {};
                 // PAGINATE THE PRODUCTS
-                const sort = (_a = filter.sort) !== null && _a !== void 0 ? _a : IFilter_1.Filter.sort, limit = (_b = filter.limit) !== null && _b !== void 0 ? _b : IFilter_1.Filter.limit, pageIndex = (_c = filter.pageIndex) !== null && _c !== void 0 ? _c : IFilter_1.Filter.pageIndex;
+                const sort = (_a = pagin.sort) !== null && _a !== void 0 ? _a : IPagin_1.Pagin.sort, limit = (_b = pagin.limit) !== null && _b !== void 0 ? _b : IPagin_1.Pagin.limit, pageIndex = (_c = pagin.pageIndex) !== null && _c !== void 0 ? _c : IPagin_1.Pagin.pageIndex;
                 let sales = [];
                 if (productName) {
                     const _index = pageIndex <= 0 ? 1 : pageIndex;
@@ -120,9 +120,9 @@ exports.SaleResolver = {
                 resolve({
                     error: null,
                     sales,
-                    filters: {
+                    pagins: {
                         sort,
-                        totalFilter: sales.length,
+                        totalPaginated: sales.length,
                         currentPageIndex: pageIndex,
                         totalDocuments: yield schema_sale_1.saleModel.count(),
                         nextPageIndex: sales.length ? pageIndex + 1 : 0,
@@ -132,7 +132,7 @@ exports.SaleResolver = {
             catch (error) {
                 resolve({
                     error: error.message,
-                    filters: null,
+                    pagins: null,
                     sales: [],
                 });
             }
@@ -205,9 +205,9 @@ exports.SaleResolver = {
             }
             catch (error) {
                 resolve({
-                    error: `[INTERNAL ERROR]: ${error.message}`,
                     added: false,
                     newAdded: null,
+                    error: `[EXCEPTION]: ${error.message}`,
                 });
             }
         })); // end promise
@@ -251,7 +251,7 @@ exports.SaleResolver = {
                 resolve({
                     edited: false,
                     newEdited: null,
-                    error: error.message,
+                    error: `[EXCEPTION]: ${error.message}`,
                 });
             }
         }));
@@ -276,7 +276,7 @@ exports.SaleResolver = {
             catch (error) {
                 resolve({
                     deleted: false,
-                    error: `[INTERNAL ERROR]: ${error.message}`,
+                    error: `[EXCEPTION]: ${error.message}`,
                 }); // end resolve
             } // end catch
         })); // end promise

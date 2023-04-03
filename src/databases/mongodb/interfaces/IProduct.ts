@@ -5,9 +5,10 @@ import { IWarehouse } from '@server-databases/mongodb/interfaces/IWarehouse';
 export interface IProductsPayload {
   error: string;
   products: IProduct[];
-  filters?: {
+  pagins?: {
     sort: string;
-    total: number;
+    totalPaginated: number;
+    totalDocuments: number;
     nextPageIndex: number;
     currentPageIndex: number;
   };
@@ -35,18 +36,27 @@ export interface IProductDeletePayload {
   deleted: boolean;
 }
 
+export interface IProductFeature {
+  url: string;
+  size: number;
+  fileName: string;
+  filePath: string;
+  extension: string;
+}
+
 export interface IProduct extends Document {
   productID: string;
   name: string;
-  images?: string[];
   inStock?: boolean;
   quantity: number;
   expired?: boolean;
   category: ICategory;
   expirationDate?: string;
-  wholesalePrice: number;
   retailPrice: number;
+  wholesalePrice: number;
+  features?: IProductFeature[];
   description?: string;
-  warehouse?: IWarehouse;
+  warehouses?: IWarehouse[];
+  warehouseIDs?: string[];
   _doc: IProduct;
 }

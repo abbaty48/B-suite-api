@@ -15,14 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StaffResolver = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const mongodb_1 = require("../datasources/mongodb");
 const Role_1 = require("../databases/mongodb/enums/Role");
 const schema_staff_1 = require("../databases/mongodb/schema_staff");
 const authorizationMiddleware_1 = __importDefault(require("../commons/auths/authorizationMiddleware"));
 const helpers_1 = require("../commons/helpers");
-const IFilter_1 = require("../databases/mongodb/interfaces/IFilter");
+const IPagin_1 = require("../databases/mongodb/interfaces/IPagin");
 const RolePrevilage_1 = require("../databases/mongodb/enums/RolePrevilage");
-(0, mongodb_1.mongodbService)();
 exports.StaffResolver = {
     staff: (searchFilter, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
@@ -61,7 +59,7 @@ exports.StaffResolver = {
             }
         }));
     }),
-    staffs: (searchFilter, filter, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
+    staffs: (searchFilter, pagin, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             var _a, _b, _c;
             try {
@@ -70,12 +68,17 @@ exports.StaffResolver = {
                 // SEARCH FILTER
                 const { staffID, firstName, lastName, warehouseID } = searchFilter !== null && searchFilter !== void 0 ? searchFilter : {};
                 // PAGINATE THE STAFFS
-                const sort = (_a = filter.sort) !== null && _a !== void 0 ? _a : IFilter_1.Filter.sort, limit = (_b = filter.limit) !== null && _b !== void 0 ? _b : IFilter_1.Filter.limit, pageIndex = (_c = filter.pageIndex) !== null && _c !== void 0 ? _c : IFilter_1.Filter.pageIndex;
-                const paginatedStaffs = yield schema_staff_1.staffModel
-                    .find({
+                const sort = (_a = pagin.sort) !== null && _a !== void 0 ? _a : IPagin_1.Pagin.sort, limit = (_b = pagin.limit) !== null && _b !== void 0 ? _b : IPagin_1.Pagin.limit, pageIndex = (_c = pagin.pageIndex) !== null && _c !== void 0 ? _c : IPagin_1.Pagin.pageIndex;
+                //
+                const staffs = yield schema_staff_1.staffModel.find({
                     $or: [
                         staffID
-                            ? { staffID: { $regex: (0, helpers_1.escapeRegExp)(staffID), $options: 'si' } }
+                            ? {
+                                staffID: {
+                                    $regex: (0, helpers_1.escapeRegExp)(staffID),
+                                    $options: 'si',
+                                },
+                            }
                             : {},
                         firstName
                             ? {
@@ -101,20 +104,22 @@ exports.StaffResolver = {
                             }
                             : {},
                     ],
-                })
-                    .sort({ firstName: sort })
-                    .skip(limit * pageIndex)
-                    .limit(limit);
+                }, {}, {
+                    sort: { firstName: sort },
+                    skip: limit * pageIndex,
+                    limit,
+                    populate: 'warehouse',
+                });
                 // POPULATE THE STAFF WITH WAREHOUSE
-                const staffs = yield schema_staff_1.staffModel.populate(paginatedStaffs, 'user');
                 resolve({
                     error: null,
                     staffs,
-                    filters: {
+                    pagins: {
                         sort,
-                        total: paginatedStaffs.length,
                         nextPageIndex: pageIndex + 1,
                         currentPageIndex: pageIndex,
+                        totalPaginated: staffs.length,
+                        totalDocuments: yield schema_staff_1.staffModel.count(),
                     },
                 });
             }
@@ -126,22 +131,25 @@ exports.StaffResolver = {
             }
         }));
     }),
-    addStaff: (inputs, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
+    addStaff: (addStaffInput, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 // AUTHORIZE ONLY A MANAGER/ACCOUTANT/ADMIN
                 yield (0, authorizationMiddleware_1.default)(request, response, config.get('jwt.private'), RolePrevilage_1.RolePrevileges.ADD_STAFF);
-                const { firstName, lastName, email, password, role } = inputs;
+                const { firstName, lastName, email, password, role } = addStaffInput;
                 // CHECK USER VALIDATION
                 if (role === Role_1.StaffRole.Manager || role === Role_1.StaffRole.Admin) {
                     // check for already manager
                     if (yield schema_staff_1.staffModel.exists({
-                        $or: [{ role: Role_1.StaffRole.Manager }, { role: Role_1.StaffRole.Admin }],
+                        $or: [
+                            role == Role_1.StaffRole.Manager ? { role: Role_1.StaffRole.Manager } : {},
+                            role == Role_1.StaffRole.Admin ? { role: Role_1.StaffRole.Admin } : {},
+                        ],
                     })) {
                         return resolve({
                             added: false,
                             newAdded: null,
-                            error: `A staff with a "${role}" role already exist, only one manager/admin is allowed, please provide a different role.`,
+                            error: `[VALIDATION ERROR]: A staff with a "${role}" role already exist, only one manager/admin is allowed, please provide a different role.`,
                         });
                     }
                 }
@@ -157,7 +165,7 @@ exports.StaffResolver = {
                     email,
                     role,
                 }, (0, helpers_1.decodeRSAKey)(config.get('jwt.private')), { algorithm: 'HS512' });
-                const newStaff = yield schema_staff_1.staffModel.create(Object.assign(Object.assign({}, inputs), { staffID,
+                const newStaff = yield schema_staff_1.staffModel.create(Object.assign(Object.assign({}, addStaffInput), { staffID,
                     token, password: passwordHash }));
                 resolve({
                     error: null,
@@ -174,17 +182,17 @@ exports.StaffResolver = {
             }
         })); // end Promise
     }),
-    editStaff: (inputs, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
+    editStaff: (editStaffInput, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             try {
                 // AUTHORIZE ONLY A MANAGER/ACCOUTANT/ADMIN
                 yield (0, authorizationMiddleware_1.default)(request, response, config.get('jwt.private'), RolePrevilage_1.RolePrevileges.UPDATE_STAFF);
                 // TARGET STAFF
-                const { staffID, firstName, lastName, email, role } = yield schema_staff_1.staffModel.findOne({ staffID: inputs.staffID });
+                const { staffID, firstName, lastName, email, role } = yield schema_staff_1.staffModel.findOne({ staffID: editStaffInput.staffID });
                 // CHECK USER VALIDATION
-                if (inputs.role) {
-                    if (inputs.role === Role_1.StaffRole.Manager ||
-                        inputs.role === Role_1.StaffRole.Admin) {
+                if (editStaffInput.role) {
+                    if (editStaffInput.role === Role_1.StaffRole.Manager ||
+                        editStaffInput.role === Role_1.StaffRole.Admin) {
                         // check for already manager
                         if (yield schema_staff_1.staffModel.exists({
                             $or: [{ role: Role_1.StaffRole.Manager }, { role: Role_1.StaffRole.Admin }],
@@ -192,16 +200,16 @@ exports.StaffResolver = {
                             return resolve({
                                 edited: false,
                                 newEdited: null,
-                                error: `A staff with a "${inputs.role}" role already exist, only one manager/admin is allowed, please provide a different role.`,
+                                error: `[VALIDATION ERROR]: A staff with a "${editStaffInput.role}" role already exist, only one manager/admin is allowed, please provide a different role.`,
                             });
                         }
                     }
                 } // end if input.role
                 // IF TO UPDATE THE PASSWORD
                 let passwordHash, token;
-                if (inputs.password) {
+                if (editStaffInput.password) {
                     //   BCRYPT STAFF PASSWORD
-                    passwordHash = yield bcrypt_1.default.hash(inputs.password, yield bcrypt_1.default.genSalt());
+                    passwordHash = yield bcrypt_1.default.hash(editStaffInput.password, yield bcrypt_1.default.genSalt());
                     //   GENERATE TOKEN
                     token = jsonwebtoken_1.default.sign({
                         staffID,
@@ -211,15 +219,15 @@ exports.StaffResolver = {
                         role,
                     }, (0, helpers_1.decodeRSAKey)(config.get('jwt.private')), { algorithm: 'HS512' });
                     // UPDATE WITH PASSWORD
-                    const newEdited = yield schema_staff_1.staffModel.findOneAndUpdate({ staffID: inputs.staffID }, Object.assign(Object.assign({}, inputs), { password: passwordHash, token }));
+                    const newEdited = yield schema_staff_1.staffModel.findOneAndUpdate({ staffID: editStaffInput.staffID }, Object.assign(Object.assign({}, editStaffInput), { password: passwordHash, token }));
                     return resolve({
                         edited: true,
                         error: null,
                         newEdited,
                     });
-                } // end inputs.password
+                } // end editStaffInput.password
                 // EDIT STAFF
-                const newEdited = yield schema_staff_1.staffModel.findOneAndUpdate({ staffID: inputs.staffID }, Object.assign({}, inputs));
+                const newEdited = yield schema_staff_1.staffModel.findOneAndUpdate({ staffID: editStaffInput.staffID }, Object.assign({}, editStaffInput));
                 // RESOLVE
                 resolve({
                     edited: true,
@@ -231,7 +239,7 @@ exports.StaffResolver = {
                 resolve({
                     edited: false,
                     newEdited: null,
-                    error: error.message,
+                    error: `[EXCEPTION]: ${error.message}`,
                 });
             }
         })); // end
@@ -251,7 +259,7 @@ exports.StaffResolver = {
                         case Role_1.StaffRole.Accountant:
                             return resolve({
                                 deleted: false,
-                                error: 'UNAUTHORIZED ACTION, only a admin/manager could delete an admin/manager account.',
+                                error: '[UNAUTHORIZED ACTION]: Only a admin/manager could delete an admin/manager account.',
                             });
                     } // end switch
                 } // end if role
@@ -267,7 +275,7 @@ exports.StaffResolver = {
                 // RESOLVE
                 resolve({
                     deleted: false,
-                    error: error.message,
+                    error: `[EXCEPTION]: ${error.message}`,
                 });
             }
         })); // end promise

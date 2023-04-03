@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CustomerResolver = void 0;
-const IFilter_1 = require("../databases/mongodb/interfaces/IFilter");
+const IPagin_1 = require("../databases/mongodb/interfaces/IPagin");
 const helpers_1 = require("../commons/helpers");
 const schema_customer_1 = require("../databases/mongodb/schema_customer");
 const RolePrevilage_1 = require("../databases/mongodb/enums/RolePrevilage");
@@ -89,16 +89,15 @@ exports.CustomerResolver = {
             } // end catch
         })); // end Promise
     }),
-    customers: (searchFilter, filter, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
+    customers: (searchFilter, pagin, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
             var _a, _b, _c;
             try {
                 yield (0, authorizationMiddleware_1.default)(request, response, config.get('jwt.private'), RolePrevilage_1.RolePrevileges.READ_CUSTOMER); //end staffRoleAuthorization
                 const { name, email, customerID, address, dateOfBirth, beneficiaries } = searchFilter !== null && searchFilter !== void 0 ? searchFilter : {};
                 // PAGINATE THE CUSTOMER
-                const sort = (_a = filter === null || filter === void 0 ? void 0 : filter.sort) !== null && _a !== void 0 ? _a : IFilter_1.Filter.sort, limit = (_b = filter === null || filter === void 0 ? void 0 : filter.limit) !== null && _b !== void 0 ? _b : IFilter_1.Filter.limit, pageIndex = (_c = filter === null || filter === void 0 ? void 0 : filter.pageIndex) !== null && _c !== void 0 ? _c : IFilter_1.Filter.pageIndex;
-                const customers = yield schema_customer_1.customerModel
-                    .find({
+                const sort = (_a = pagin === null || pagin === void 0 ? void 0 : pagin.sort) !== null && _a !== void 0 ? _a : IPagin_1.Pagin.sort, limit = (_b = pagin === null || pagin === void 0 ? void 0 : pagin.limit) !== null && _b !== void 0 ? _b : IPagin_1.Pagin.limit, pageIndex = (_c = pagin === null || pagin === void 0 ? void 0 : pagin.pageIndex) !== null && _c !== void 0 ? _c : IPagin_1.Pagin.pageIndex;
+                const customers = yield schema_customer_1.customerModel.find({
                     $or: [
                         customerID
                             ? {
@@ -146,32 +145,33 @@ exports.CustomerResolver = {
                             : {},
                     ],
                 }, {}, {
+                    sort: { name: sort },
+                    skip: limit * pageIndex,
+                    limit,
                     populate: {
                         path: 'warehouse purchases',
                         populate: 'staff products',
                     },
-                })
-                    .sort({ name: sort })
-                    .skip(limit * pageIndex)
-                    .limit(limit);
+                } // end options
+                ); // end find
                 //
                 resolve({
                     error: null,
                     customers,
-                    filters: {
+                    pagins: {
                         sort,
-                        totalFilter: customers.length,
-                        nextPageIndex: pageIndex + 1,
                         currentPageIndex: pageIndex,
+                        nextPageIndex: pageIndex + 1,
+                        totalPaginated: customers.length,
                         totalDocuments: yield schema_customer_1.customerModel.count(),
                     },
-                });
+                }); // end resolve
             }
             catch (error) {
                 resolve({
                     error: `[INTERNAL ERROR]: ${error.message}`,
                     customers: null,
-                    filters: null,
+                    pagins: null,
                 }); // end resolve
             } // end catch
         })); // end Promise
