@@ -79,7 +79,7 @@ exports.SaleResolver = {
                 // SEARCH FILTER
                 const { date, time, saleID, staffID, paidPrice, productID, customerID, productName, } = searchFilter !== null && searchFilter !== void 0 ? searchFilter : {};
                 // PAGINATE THE PRODUCTS
-                const sort = (_a = pagin.sort) !== null && _a !== void 0 ? _a : IPagin_1.Pagin.sort, limit = (_b = pagin.limit) !== null && _b !== void 0 ? _b : IPagin_1.Pagin.limit, pageIndex = (_c = pagin.pageIndex) !== null && _c !== void 0 ? _c : IPagin_1.Pagin.pageIndex;
+                const sort = (_a = pagin === null || pagin === void 0 ? void 0 : pagin.sort) !== null && _a !== void 0 ? _a : IPagin_1.Pagin.sort, limit = (_b = pagin === null || pagin === void 0 ? void 0 : pagin.limit) !== null && _b !== void 0 ? _b : IPagin_1.Pagin.limit, pageIndex = (_c = pagin === null || pagin === void 0 ? void 0 : pagin.pageIndex) !== null && _c !== void 0 ? _c : IPagin_1.Pagin.pageIndex;
                 let sales = [];
                 if (productName) {
                     const _index = pageIndex <= 0 ? 1 : pageIndex;

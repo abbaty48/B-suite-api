@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductResolver = void 0;
-const config_1 = __importDefault(require("config"));
 const schema_product_1 = require("../databases/mongodb/schema_product");
 const IPagin_1 = require("../databases/mongodb/interfaces/IPagin");
 const file_1 = require("../commons/file");
@@ -214,16 +213,14 @@ exports.ProductResolver = {
                                     config.get('server.domain'), 
                                     // DESTINATED FILE NAME
                                     `${newEdited.name}_${(0, helpers_1.genRandom)().toLowerCase()}`);
-                                    console.log('##');
                                     if (_feature) {
-                                        console.log('_F: ', _feature);
                                         newEdited.features.push(_feature);
                                         yield newEdited.save({ validateBeforeSave: false });
                                         // _features.push(_feature);
                                     }
                                 }
                                 catch (error) {
-                                    console.log('#ERROR: ', error);
+                                    // console.log('#ERROR: ', error);
                                 }
                             })); // end forEach
                         }
@@ -285,13 +282,5 @@ exports.ProductResolver = {
                 });
             }
         })); // end promise
-    }),
-    uploadData: (uploadDataInput) => __awaiter(void 0, void 0, void 0, function* () {
-        const { id, imagePath, name } = uploadDataInput;
-        const fileStats = yield (0, file_1.serverFileUploader)(imagePath, 
-        // `./public/uploads/features/products/${id.toUpperCase()}`,
-        `./public/uploads/${id.toUpperCase()}`, config_1.default.get('server.domain'));
-        console.log('RESULT FILESTATS: ', fileStats);
-        return Promise.resolve(fileStats);
-    }),
+    }), // end deleteProduct
 };

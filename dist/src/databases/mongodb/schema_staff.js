@@ -11,8 +11,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.staffModel = void 0;
 const mongoose_1 = require("mongoose");
-const Role_1 = require("./enums/Role");
+const schema_feature_1 = require("./schema_feature");
 const schema_warehouse_1 = require("./schema_warehouse");
+const Role_1 = require("./enums/Role");
 const StaffSchema = new mongoose_1.Schema({
     staffID: { type: 'string', _id: true, required: true },
     firstName: { type: 'string', required: true },
@@ -22,7 +23,7 @@ const StaffSchema = new mongoose_1.Schema({
     role: { type: 'string', enum: Role_1.StaffRole, required: true },
     phoneNumber: { type: 'string', required: false },
     address: { type: 'string', required: false },
-    passport: { type: 'string', required: false },
+    picture: { type: schema_feature_1.FeatureSchema, required: false },
     password: { type: 'string', required: true },
     token: { type: 'string', required: true },
     warehouseID: {

@@ -69,6 +69,7 @@ export const serverFileUploader = (
       ); // end readFile
       resolve(_fileStats);
     } catch (error) {
+      console.log('#ERROR IN FILE.ts: ', error);
       resolve(null);
     }
   }); // end promise
@@ -80,6 +81,7 @@ export const deleteFileUploader = (targetFilePath: string) => {
       fs.rmSync(targetFilePath, { recursive: true, force: true });
       resolve(true);
     } catch (error) {
+      console.log('#ERROR IN deleteFileUploader FUNCTION: ', error);
       resolve(false);
     } // end  catch
   }); // end promise
@@ -88,10 +90,20 @@ export const deleteFileUploader = (targetFilePath: string) => {
 export const deleteDirUploader = (targetDirectoryPath: string) => {
   return new Promise((resolve) => {
     try {
-      fs.rmdirSync(targetDirectoryPath, { recursive: true });
+      fs.rmSync(targetDirectoryPath, { recursive: true });
       resolve(true);
     } catch (error) {
       resolve(false);
     } // end  catch
   }); // end promise
 }; // end deleteFileUploader
+
+export const checkFileExistant = (targetFilePath: string) => {
+  return new Promise((resolve) => {
+    try {
+      resolve(fs.existsSync(targetFilePath));
+    } catch (error) {
+      resolve(false);
+    }
+  }); // end promise
+}; // end checkFileExistant

@@ -9,18 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.productModel = exports.productSchema = exports.productFeatureSchema = void 0;
+exports.productModel = exports.productSchema = void 0;
 const helpers_1 = require("../../commons/helpers");
 const mongoose_1 = require("mongoose");
+const schema_feature_1 = require("./schema_feature");
 const schema_category_1 = require("./schema_category");
 const schema_warehouse_1 = require("./schema_warehouse");
-exports.productFeatureSchema = new mongoose_1.Schema({
-    url: { type: 'string', required: true },
-    size: { type: 'number', required: true },
-    fileName: { type: 'string', required: true },
-    extension: { type: 'string', required: true },
-    filePath: { type: 'string', required: true },
-});
 exports.productSchema = new mongoose_1.Schema({
     productID: { type: 'string', _id: true, required: true, index: true },
     name: {
@@ -37,7 +31,7 @@ exports.productSchema = new mongoose_1.Schema({
                     return (yield exports.productModel.exists({ name })) ? false : true;
                 });
             },
-            msg: '[DUPLICATE ERROR]:  A product with the provided name already exist in the products record, please provide a different one and try again.',
+            message: (_prop) => `[DUPLICATE ERROR]:  A product with the provided name "${_prop.value}" already exist in the products record, please provide a different one and try again.`,
         },
     },
     inStock: {
@@ -72,7 +66,7 @@ exports.productSchema = new mongoose_1.Schema({
     retailPrice: { type: 'number', required: true },
     wholesalePrice: { type: 'number', required: true },
     expirationDate: { type: 'string', required: false },
-    features: { type: [exports.productFeatureSchema], required: false },
+    features: { type: [schema_feature_1.FeatureSchema], required: false },
     description: { type: 'string', required: false },
     warehouseIDs: ['string'],
 }, {
@@ -96,17 +90,13 @@ exports.productSchema.pre('save', function () {
 exports.productSchema.pre('findOneAndUpdate', function () {
     updateProperties(this, 'FIND_ONE_AND_UPDATE');
 });
-// productSchema.pre('findOneAndRemove', function (this: IProduct) {
-//   updateProperties(this, 'FIND_ONE_AND_UPDATE');
-// });
 const updateProperties = (_this, action) => {
-    var _a;
     let _update;
     //
     switch (action) {
         case 'FIND_ONE_AND_UPDATE':
             {
-                _update = (_a = _this.getUpdate()) === null || _a === void 0 ? void 0 : _a.$set;
+                _update = _this.getUpdate().$set;
                 // UPDATE PRODUCT_IDS IN WAREHOUSE
                 if ((_this === null || _this === void 0 ? void 0 : _this.getUpdate().warehouseIDs) !== undefined) {
                     _upsertProductID(_this.getUpdate().warehouseIDs, _this.getUpdate().productID);

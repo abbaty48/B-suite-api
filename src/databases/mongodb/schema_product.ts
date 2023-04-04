@@ -1,20 +1,10 @@
 import { stringToID } from '@/src/commons/helpers';
 import { Types, Model, Schema, model, models } from 'mongoose';
+import { IProduct } from '@server-databases/mongodb/interfaces/IProduct';
+import { FeatureSchema } from '@server-databases/mongodb/schema_feature';
 import { categoryModel } from '@server-databases/mongodb/schema_category';
 import { ICategory } from '@server-databases/mongodb/interfaces/ICategory';
 import { warehouseModel } from '@server-databases/mongodb/schema_warehouse';
-import {
-  IProduct,
-  IProductFeature,
-} from '@server-databases/mongodb/interfaces/IProduct';
-
-export const productFeatureSchema = new Schema<IProductFeature>({
-  url: { type: 'string', required: true },
-  size: { type: 'number', required: true },
-  fileName: { type: 'string', required: true },
-  extension: { type: 'string', required: true },
-  filePath: { type: 'string', required: true },
-});
 
 export const productSchema = new Schema<IProduct>(
   {
@@ -32,7 +22,8 @@ export const productSchema = new Schema<IProduct>(
           //
           return (await productModel.exists({ name })) ? false : true;
         },
-        msg: '[DUPLICATE ERROR]:  A product with the provided name already exist in the products record, please provide a different one and try again.',
+        message: (_prop) =>
+          `[DUPLICATE ERROR]:  A product with the provided name "${_prop.value}" already exist in the products record, please provide a different one and try again.`,
       },
     },
     inStock: {
@@ -68,7 +59,7 @@ export const productSchema = new Schema<IProduct>(
     retailPrice: { type: 'number', required: true },
     wholesalePrice: { type: 'number', required: true },
     expirationDate: { type: 'string', required: false },
-    features: { type: [productFeatureSchema], required: false },
+    features: { type: [FeatureSchema], required: false },
     description: { type: 'string', required: false },
     warehouseIDs: ['string'],
   },

@@ -129,7 +129,5 @@ exports.resolvers = {
         editEnterprise: (_, { editEnterpriseInput }, context) => __awaiter(void 0, void 0, void 0, function* () { return store_resolver_1.StoreResolver.editEnterprise(editEnterpriseInput, context); }),
         _initializeSys: (_, { _init }, context) => __awaiter(void 0, void 0, void 0, function* () { return store_resolver_1.StoreResolver._initializeSys(_init, context); }),
         //#endregion
-        //
-        uploadData: (_, { uploadDataInput }) => __awaiter(void 0, void 0, void 0, function* () { return yield product_resolver_1.ProductResolver.uploadData(uploadDataInput); }),
     },
 };

@@ -1,4 +1,5 @@
 import { Document } from 'mongoose';
+import { IFeature } from '@server-databases/mongodb/interfaces/IFeature';
 import { ICategory } from '@server-databases/mongodb/interfaces/ICategory';
 import { IWarehouse } from '@server-databases/mongodb/interfaces/IWarehouse';
 
@@ -36,14 +37,6 @@ export interface IProductDeletePayload {
   deleted: boolean;
 }
 
-export interface IProductFeature {
-  url: string;
-  size: number;
-  fileName: string;
-  filePath: string;
-  extension: string;
-}
-
 export interface IProduct extends Document {
   productID: string;
   name: string;
@@ -54,7 +47,7 @@ export interface IProduct extends Document {
   expirationDate?: string;
   retailPrice: number;
   wholesalePrice: number;
-  features?: IProductFeature[];
+  features?: IFeature[];
   description?: string;
   warehouses?: IWarehouse[];
   warehouseIDs?: string[];

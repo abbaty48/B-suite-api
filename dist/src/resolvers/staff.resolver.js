@@ -21,6 +21,7 @@ const authorizationMiddleware_1 = __importDefault(require("../commons/auths/auth
 const helpers_1 = require("../commons/helpers");
 const IPagin_1 = require("../databases/mongodb/interfaces/IPagin");
 const RolePrevilage_1 = require("../databases/mongodb/enums/RolePrevilage");
+const file_1 = require("../commons/file");
 exports.StaffResolver = {
     staff: (searchFilter, { request, response, config }) => __awaiter(void 0, void 0, void 0, function* () {
         return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
@@ -136,7 +137,7 @@ exports.StaffResolver = {
             try {
                 // AUTHORIZE ONLY A MANAGER/ACCOUTANT/ADMIN
                 yield (0, authorizationMiddleware_1.default)(request, response, config.get('jwt.private'), RolePrevilage_1.RolePrevileges.ADD_STAFF);
-                const { firstName, lastName, email, password, role } = addStaffInput;
+                const { firstName, lastName, email, password, role, featureURI } = addStaffInput;
                 // CHECK USER VALIDATION
                 if (role === Role_1.StaffRole.Manager || role === Role_1.StaffRole.Admin) {
                     // check for already manager
@@ -165,19 +166,30 @@ exports.StaffResolver = {
                     email,
                     role,
                 }, (0, helpers_1.decodeRSAKey)(config.get('jwt.private')), { algorithm: 'HS512' });
-                const newStaff = yield schema_staff_1.staffModel.create(Object.assign(Object.assign({}, addStaffInput), { staffID,
-                    token, password: passwordHash }));
-                resolve({
-                    error: null,
-                    added: true,
-                    newAdded: newStaff,
-                });
+                yield schema_staff_1.staffModel.create(Object.assign(Object.assign({}, addStaffInput), { staffID,
+                    token, password: passwordHash }), (error, newStaff) => __awaiter(void 0, void 0, void 0, function* () {
+                    // IF ADD A PICTURE
+                    if (featureURI) {
+                        // UPLOAD THE PICTURE
+                        const _feature = yield (0, file_1.serverFileUploader)(featureURI, `./public/uploads/features/staffs/${newStaff.staffID}`, config.get('server.domain'), `${newStaff.staffID}`);
+                        if (_feature) {
+                            newStaff.picture = _feature;
+                            yield newStaff.save({ validateBeforeSave: false });
+                        }
+                    } // end if featureURI
+                    //
+                    resolve({
+                        error: null,
+                        added: true,
+                        newAdded: newStaff,
+                    });
+                }));
             }
             catch (error) {
                 resolve({
-                    error: error.message,
                     added: false,
                     newAdded: null,
+                    error: `[EXCEPTION]: ${error.message}`,
                 });
             }
         })); // end Promise
@@ -227,13 +239,59 @@ exports.StaffResolver = {
                     });
                 } // end editStaffInput.password
                 // EDIT STAFF
-                const newEdited = yield schema_staff_1.staffModel.findOneAndUpdate({ staffID: editStaffInput.staffID }, Object.assign({}, editStaffInput));
-                // RESOLVE
-                resolve({
-                    edited: true,
-                    error: null,
-                    newEdited,
-                });
+                schema_staff_1.staffModel.findOneAndUpdate({ staffID: editStaffInput.staffID }, Object.assign({}, editStaffInput), { runValidators: true, new: true, populate: 'warehouse' }, (error, newEdited) => __awaiter(void 0, void 0, void 0, function* () {
+                    var _d;
+                    //
+                    if (editStaffInput.editFeature) {
+                        const { action, addFeatureURI, removeFeatureByName } = editStaffInput.editFeature;
+                        if (action == 'ADD') {
+                            // CHECK IF PICTURE ALREADY EXIST, REJECT, OTHERWISE ADD
+                            if (newEdited.picture &&
+                                (yield (0, file_1.checkFileExistant)(`.${(_d = newEdited.picture) === null || _d === void 0 ? void 0 : _d.filePath}`))) {
+                                return resolve({
+                                    edited: true,
+                                    error: null,
+                                    newEdited,
+                                }); // end resolve;
+                            }
+                            else {
+                                addFeatureURI.forEach((uri) => __awaiter(void 0, void 0, void 0, function* () {
+                                    try {
+                                        // upload each each
+                                        const _feature = yield (0, file_1.serverFileUploader)(
+                                        // IMAGEPATH
+                                        uri, 
+                                        // UPLOAD PATH
+                                        `./public/uploads/features/staffs/${newEdited.staffID}`, 
+                                        // SERVER URL
+                                        config.get('server.domain'), 
+                                        // DESTINATED FILE NAME
+                                        `${newEdited.staffID}`);
+                                        if (_feature) {
+                                            newEdited.picture = _feature;
+                                            yield newEdited.save({ validateBeforeSave: false });
+                                        }
+                                    }
+                                    catch (error) { }
+                                })); // end forEach
+                            } // end
+                        }
+                        else if (action == 'REMOVE') {
+                            if ((0, file_1.deleteFileUploader)(`./public/uploads/features/staffs/${editStaffInput.staffID}`)) {
+                                // delete the file the product feature array
+                                newEdited.picture = undefined;
+                                yield newEdited.save({ validateBeforeSave: false });
+                            }
+                        } // end if EDIT
+                    } // end editFeature
+                    // RESOLVE
+                    resolve({
+                        edited: true,
+                        error: null,
+                        newEdited,
+                    }); // end resolve
+                }) // end callback
+                ); // end fineOneAndUpdate
             }
             catch (error) {
                 resolve({
@@ -265,6 +323,8 @@ exports.StaffResolver = {
                 } // end if role
                 // DELETE THE TARGET
                 yield schema_staff_1.staffModel.findOneAndRemove({ staffID });
+                // DELETE STAFF PICTURE
+                yield (0, file_1.deleteDirUploader)(`./public/uploads/features/staffs/${staffID}`);
                 // RESOLVE
                 resolve({
                     deleted: true,

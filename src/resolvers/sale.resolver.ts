@@ -122,9 +122,9 @@ export const SaleResolver = {
           productName,
         } = searchFilter ?? {};
         // PAGINATE THE PRODUCTS
-        const sort = pagin.sort ?? Pagin.sort,
-          limit = pagin.limit ?? Pagin.limit,
-          pageIndex = pagin.pageIndex ?? Pagin.pageIndex;
+        const sort = pagin?.sort ?? Pagin.sort,
+          limit = pagin?.limit ?? Pagin.limit,
+          pageIndex = pagin?.pageIndex ?? Pagin.pageIndex;
 
         let sales: ISale[] = [];
 
@@ -205,7 +205,6 @@ export const SaleResolver = {
           config.get('jwt.private'),
           RolePrevileges.ADD_SALE
         );
-
         // SALEID
         const saleID = `SALE${genRandom(10)}`;
         /** PRODUCTS */

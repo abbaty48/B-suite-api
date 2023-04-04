@@ -13,6 +13,8 @@ import { productModel } from '@server-databases/mongodb/schema_product';
 import { RolePrevileges } from '@server-databases/mongodb/enums/RolePrevilage';
 import staffRoleAuthorization from '@server-commons/auths/authorizationMiddleware';
 import { IResolverContext } from '@server-commons/models/interfaces/IResolverContext';
+import { IProduct } from '../databases/mongodb/interfaces/IProduct';
+import { CallbackError } from 'mongoose';
 
 export const SupplyResolver = {
   supply: async (
@@ -82,9 +84,9 @@ export const SupplyResolver = {
         //
         const { supplyID, staffID, date, time } = searchFilter;
         // PAGINATE THE PRODUCTS
-        const sort = pagin.sort ?? Pagin.sort,
-          limit = pagin.limit ?? Pagin.limit,
-          pageIndex = pagin.pageIndex ?? Pagin.pageIndex;
+        const sort = pagin?.sort ?? Pagin.sort,
+          limit = pagin?.limit ?? Pagin.limit,
+          pageIndex = pagin?.pageIndex ?? Pagin.pageIndex;
         //
         const supplies = await supplyModel.find<ISupply>(
           {
@@ -170,7 +172,6 @@ export const SupplyResolver = {
           supplyID: `SPID${genRandom().toUpperCase()}`,
           warehouseID: warehouseID ?? null,
         });
-
         // resolve
         resolve({
           added: true,

@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import JWT from 'jsonwebtoken';
+import { CallbackError } from 'mongoose';
 import { StaffRole } from '@server-databases/mongodb/enums/Role';
 import { staffModel } from '@server-databases/mongodb/schema_staff';
 import staffRoleAuthorization from '@server-commons/auths/authorizationMiddleware';
@@ -16,10 +17,17 @@ import {
   IStaffEditPayload,
   IStaffDeletePayload,
   IStaffSearchFilter,
+  IStaff,
 } from '@server-databases/mongodb/interfaces/IStaff';
 import { IPagin, Pagin } from '@/src/databases/mongodb/interfaces/IPagin';
 import { RolePrevileges } from '@server-databases/mongodb/enums/RolePrevilage';
 import { IResolverContext } from '@server-commons/models/interfaces/IResolverContext';
+import {
+  checkFileExistant,
+  deleteDirUploader,
+  deleteFileUploader,
+  serverFileUploader,
+} from '@server-commons/file';
 
 export const StaffResolver = {
   staff: async (
@@ -170,7 +178,8 @@ export const StaffResolver = {
           RolePrevileges.ADD_STAFF
         );
 
-        const { firstName, lastName, email, password, role } = addStaffInput;
+        const { firstName, lastName, email, password, role, featureURI } =
+          addStaffInput;
 
         // CHECK USER VALIDATION
         if (role === StaffRole.Manager || role === StaffRole.Admin) {
@@ -210,23 +219,41 @@ export const StaffResolver = {
           { algorithm: 'HS512' }
         );
 
-        const newStaff = await staffModel.create({
-          ...addStaffInput,
-          staffID,
-          token,
-          password: passwordHash,
-        });
-
-        resolve({
-          error: null,
-          added: true,
-          newAdded: newStaff,
-        });
+        await staffModel.create(
+          {
+            ...addStaffInput,
+            staffID,
+            token,
+            password: passwordHash,
+          },
+          async (error: CallbackError, newStaff: IStaff) => {
+            // IF ADD A PICTURE
+            if (featureURI) {
+              // UPLOAD THE PICTURE
+              const _feature = await serverFileUploader(
+                featureURI,
+                `./public/uploads/features/staffs/${newStaff.staffID}`,
+                config.get('server.domain'),
+                `${newStaff.staffID}`
+              );
+              if (_feature) {
+                newStaff.picture = _feature;
+                await newStaff.save({ validateBeforeSave: false });
+              }
+            } // end if featureURI
+            //
+            resolve({
+              error: null,
+              added: true,
+              newAdded: newStaff,
+            });
+          }
+        );
       } catch (error) {
         resolve({
-          error: error.message,
           added: false,
           newAdded: null,
+          error: `[EXCEPTION]: ${error.message}`,
         });
       }
     }); // end Promise
@@ -302,16 +329,67 @@ export const StaffResolver = {
           });
         } // end editStaffInput.password
         // EDIT STAFF
-        const newEdited = await staffModel.findOneAndUpdate(
+        staffModel.findOneAndUpdate(
           { staffID: editStaffInput.staffID },
-          { ...editStaffInput }
-        );
-        // RESOLVE
-        resolve({
-          edited: true,
-          error: null,
-          newEdited,
-        });
+          { ...editStaffInput },
+          { runValidators: true, new: true, populate: 'warehouse' },
+          async (error: CallbackError, newEdited: IStaff) => {
+            //
+            if (editStaffInput.editFeature) {
+              const { action, addFeatureURI, removeFeatureByName } =
+                editStaffInput.editFeature;
+              if (action == 'ADD') {
+                // CHECK IF PICTURE ALREADY EXIST, REJECT, OTHERWISE ADD
+                if (
+                  newEdited.picture &&
+                  (await checkFileExistant(`.${newEdited.picture?.filePath}`))
+                ) {
+                  return resolve({
+                    edited: true,
+                    error: null,
+                    newEdited,
+                  }); // end resolve;
+                } else {
+                  addFeatureURI.forEach(async (uri: string) => {
+                    try {
+                      // upload each each
+                      const _feature = await serverFileUploader(
+                        // IMAGEPATH
+                        uri,
+                        // UPLOAD PATH
+                        `./public/uploads/features/staffs/${newEdited.staffID}`,
+                        // SERVER URL
+                        config.get('server.domain'),
+                        // DESTINATED FILE NAME
+                        `${newEdited.staffID}`
+                      );
+                      if (_feature) {
+                        newEdited.picture = _feature;
+                        await newEdited.save({ validateBeforeSave: false });
+                      }
+                    } catch (error) {}
+                  }); // end forEach
+                } // end
+              } else if (action == 'REMOVE') {
+                if (
+                  deleteFileUploader(
+                    `./public/uploads/features/staffs/${editStaffInput.staffID}`
+                  )
+                ) {
+                  // delete the file the product feature array
+                  newEdited.picture = undefined;
+                  await newEdited.save({ validateBeforeSave: false });
+                }
+              } // end if EDIT
+            } // end editFeature
+            // RESOLVE
+            resolve({
+              edited: true,
+              error: null,
+              newEdited,
+            }); // end resolve
+          } // end callback
+        ); // end fineOneAndUpdate
       } catch (error) {
         resolve({
           edited: false,
@@ -351,6 +429,8 @@ export const StaffResolver = {
         } // end if role
         // DELETE THE TARGET
         await staffModel.findOneAndRemove({ staffID });
+        // DELETE STAFF PICTURE
+        await deleteDirUploader(`./public/uploads/features/staffs/${staffID}`);
         // RESOLVE
         resolve({
           deleted: true,

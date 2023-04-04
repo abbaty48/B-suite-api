@@ -1,7 +1,9 @@
-import { Model, Schema, Types, UpdateQuery, model, models } from 'mongoose';
+import { Model, Schema, UpdateQuery, model, models } from 'mongoose';
+import { FeatureSchema } from '@server-databases/mongodb/schema_feature';
+import { warehouseModel } from '@server-databases/mongodb/schema_warehouse';
+
 import { StaffRole } from '@server-databases/mongodb/enums/Role';
 import { IStaff } from '@server-databases/mongodb/interfaces/IStaff';
-import { warehouseModel } from './schema_warehouse';
 
 const StaffSchema = new Schema<IStaff>(
   {
@@ -13,7 +15,7 @@ const StaffSchema = new Schema<IStaff>(
     role: { type: 'string', enum: StaffRole, required: true },
     phoneNumber: { type: 'string', required: false },
     address: { type: 'string', required: false },
-    passport: { type: 'string', required: false },
+    picture: { type: FeatureSchema, required: false },
     password: { type: 'string', required: true },
     token: { type: 'string', required: true },
     warehouseID: {

@@ -285,15 +285,13 @@ export const ProductResolver = {
                       // DESTINATED FILE NAME
                       `${newEdited.name}_${genRandom().toLowerCase()}`
                     );
-                    console.log('##');
                     if (_feature) {
-                      console.log('_F: ', _feature);
                       newEdited.features.push(_feature);
                       await newEdited.save({ validateBeforeSave: false });
                       // _features.push(_feature);
                     }
                   } catch (error) {
-                    console.log('#ERROR: ', error);
+                    // console.log('#ERROR: ', error);
                   }
                 }); // end forEach
               } else if (action == 'REMOVE') {
@@ -375,20 +373,4 @@ export const ProductResolver = {
       }
     }); // end promise
   }, // end deleteProduct
-  uploadData: async (uploadDataInput: {
-    id: string;
-    name: string;
-    imagePath: string;
-  }) => {
-    const { id, imagePath, name } = uploadDataInput;
-    const fileStats = await serverFileUploader(
-      imagePath,
-      // `./public/uploads/features/products/${id.toUpperCase()}`,
-      `./public/uploads/${id.toUpperCase()}`,
-      config.get('server.domain')
-    );
-
-    console.log('RESULT FILESTATS: ', fileStats);
-    return Promise.resolve(fileStats);
-  },
 };

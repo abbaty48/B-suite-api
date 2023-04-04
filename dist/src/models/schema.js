@@ -11,7 +11,7 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       Accountant
    }
    ##################################### GLOBAL ###################################
-   type timestamps {
+   type Timestamps {
       createdAt: String!
       updatedAt: String!
       currentTime: Int
@@ -42,7 +42,7 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       ADD,
       REMOVE
    }
-   input editProductFeatures {
+   input editFeature {
       action: FeatureEditAction!,
       addFeatureURI: [String!],
       removeFeatureByName: String
@@ -53,7 +53,7 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       firstName: String!
       lastName: String!
       otherName: String
-      passport: String
+      picture: Feature
       email: String
       phoneNumber: String
       role: StaffRole!
@@ -89,7 +89,7 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       firstName: String!,
       lastName: String!,
       otherName: String,
-      passport: String,
+      featureURI: String,
       email: String,
       role: StaffRole!, 
       address: String, 
@@ -102,13 +102,13 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       firstName: String, 
       lastName: String, 
       otherName: String,
-      passport: String, 
       email: String, 
       role: StaffRole, 
       address: String, 
       phoneNumber: String,
       password: String, 
       warehouseID: ID
+      editFeature: editFeature, 
    }
     input searchStaffInput {
       staffID: ID
@@ -169,14 +169,13 @@ const typeDef = (0, apollo_server_express_1.gql)(`
    input editProductInput {
       productID: ID!
       name: String
-      quantity: Int
       expirationDate: String
       warehouseIDs: [ID!]
       categoryID: ID
       retailPrice: Float
       wholesalePrice: Float
       description: String
-      editFeatures: editProductFeatures
+      editFeatures: editFeature
    }
   
    input searchProductInput {
@@ -464,7 +463,7 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       saleIDs: [ID!],
       metas: customerMetasInput
    }
-   ###################################### PURCHASE ##########################################
+   ###################################### SUPPLY ##########################################
    type Supply {
       supplyID: ID!,
       staffID: ID!,
@@ -474,6 +473,7 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       totalQuantity: Int!,
       totalPrice: Float!,
       date: String,
+      timestamps: Timestamps
    }
    type AddSupplyPayload {
       error: String,
@@ -641,20 +641,6 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       _initialized: Boolean!
    }
 
-   type uploadDataPayload {
-      url: String!,
-      size: Int,
-      fileName: String,
-      filePath: String,
-      extension: String,
-   }
-
-   input uploadDataInput {
-      id: ID!,
-      name: String!,
-      imagePath: String
-   }
-
    ##################################### QUERIES ########################################
    type Query {
       ################################## STAFF ##########################################
@@ -729,9 +715,6 @@ const typeDef = (0, apollo_server_express_1.gql)(`
       addEnterprise(addEnterpriseInput: addEnterpriseInput!): addEnterprisePayload!
       editEnterprise(editEnterpriseInput: editEnterpriseInput!): editEnterprisePayload!
       _initializeSys(_init: Boolean!): initPayload!
-
-
-      uploadData(uploadDataInput: uploadDataInput!): uploadDataPayload
    }
 `);
 exports.default = typeDef;
