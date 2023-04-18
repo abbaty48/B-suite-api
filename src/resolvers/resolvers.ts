@@ -1,11 +1,11 @@
-import { SaleResolver } from '@server-resolvers/sale.resolver';
-import { StoreResolver } from '@server-resolvers/store.resolver';
-import { StaffResolver } from '@server-resolvers/staff.resolver';
-import { SupplyResolver } from '@server-resolvers/supply.resolver';
-import { ProductResolver } from '@server-resolvers/product.resolver';
-import { CustomerResolver } from '@server-resolvers/customer.resolver';
-import { CategoryResolver } from '@server-resolvers/category.resolver';
-import { WarehouseResolver } from '@server-resolvers/warehouse.resolver';
+import { SaleResolver } from '@/src/controllers/sale.controller';
+import { StoreResolver } from '@/src/controllers/store.controller';
+import { StaffResolver } from '@/src/controllers/staff.controller';
+import { SupplyResolver } from '@/src/controllers/supply.controller';
+import { ProductResolver } from '@/src/controllers/product.controller';
+import { CustomerResolver } from '@/src/controllers/customer.controller';
+import { CategoryResolver } from '@/src/controllers/category.controller';
+import { WarehouseResolver } from '@/src/controllers/warehouse.controller';
 
 import { ICategory } from '@server-databases/mongodb/interfaces/ICategory';
 import { IResolverContext } from '@server-commons/models/interfaces/IResolverContext';
@@ -276,9 +276,7 @@ export const resolvers = {
   },
   Subscription: {
     //#region Product
-    productAddEvent: {
-      
-    }
+    productAddEvent: {},
     //#endregion
-  }
+  },
 };

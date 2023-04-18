@@ -22,8 +22,8 @@
       "@server-models/*": ["src/models/*"],
       "@server-commons/*": ["src/commons/*"],
       "@server-databases/*": ["src/databases/*"],
-      "@server-resolvers/*": ["src/resolvers/*"],
-      "@server-datasources/*": ["src/datasources/*"],
+      "@server-resolvers/*": ["src/controllers/*"],
+      "@server-datasources/*": ["src/services/*"],
     },
     "plugins": [
       {
