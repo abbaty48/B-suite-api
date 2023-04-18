@@ -4,21 +4,17 @@ import config from 'config';
 import express from 'express';
 import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
+import bodyParser from 'body-parser';
 import typeDefs from '@server-models/schema';
-import { PubSub } from 'graphql-subscriptions';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { mongodbService } from '@server-datasources/mongodb';
 import { resolvers } from '@server-resolvers/index.resolvers';
 import { errorMiddlwares } from '@server-commons/middlewares/error';
 import { assetMiddlwares } from '@server-commons/middlewares/assets';
-import {
-  ApolloServerPluginDrainHttpServer,
-  ApolloServerPluginLandingPageLocalDefault,
-} from 'apollo-server-core';
-
-export const pubsub = new PubSub();
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 
 /**
  * Main Entry point for the server,
@@ -27,9 +23,9 @@ export const pubsub = new PubSub();
 async function Main() {
   const app = express();
   // MIDDLEWARES
-  app.use(cors());
+  app.use(cors<cors.CorsRequest>({ origin: ['http://localhost:3000'] }));
   app.use(morgan('combined'));
-  app.use(express.json());
+  app.use(bodyParser.json());
   app.use(express.urlencoded({ extended: false }));
   // This `app` is the returned value from `express()`
   const httpServer = createServer(app);
@@ -37,12 +33,10 @@ async function Main() {
   const schema = makeExecutableSchema({ typeDefs, resolvers });
   const _apolloServer = new ApolloServer({
     schema,
-    csrfPrevention: true,
     cache: 'bounded',
     plugins: [
       // Proper shutdown for the HTTP server.
       ApolloServerPluginDrainHttpServer({ httpServer }),
-
       // Proper shutdown for the WebSocket server.
       {
         async serverWillStart() {
@@ -53,7 +47,6 @@ async function Main() {
           };
         },
       },
-      ApolloServerPluginLandingPageLocalDefault({ embed: true }),
     ],
   });
   // Creating the WebSocket server
@@ -62,7 +55,7 @@ async function Main() {
     server: httpServer,
     // Pass a different path here if your ApolloServer serves at
     // a different path.
-    path: '/graphql',
+    path: '/v2',
   });
 
   // Hand in the schema we just created and have the
@@ -73,7 +66,7 @@ async function Main() {
 
   app.use('*', async (request, response, next) => {
     // set the res and req to context object for all resovers to leverage
-    _apolloServer.requestOptions.context = { request, response, config };
+    // _apolloServer.requestOptions.context = { request, response, config };
     next(); // makes the middleware move next
   });
 
@@ -89,7 +82,6 @@ async function Main() {
     // start the apollo server
     await _apolloServer.start();
     // apply express app as middleware to the apollo server
-    _apolloServer.applyMiddleware({ app, path: '/graphql' });
     // start the express server
     httpServer.listen(config.get('server.port'), async () => {
       console.log(

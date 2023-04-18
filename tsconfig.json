@@ -1,15 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES6",
     "allowJs": true,
-    "module": "commonjs",
+    "baseUrl": "./",
+    "rootDir": "./",
+    "outDir": "dist",
+    "types": ["node"],
+    "lib": ["es2020"],
+    "target": "es2020",
+    "module": "esnext",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
     "sourceMap": false,
-    "baseUrl": "./",
-    "rootDir": "./",
-    "outDir": "dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "paths": {
