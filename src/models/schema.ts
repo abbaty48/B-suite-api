@@ -716,6 +716,34 @@ const typeDef = gql(
       editEnterprise(editEnterpriseInput: editEnterpriseInput!): editEnterprisePayload!
       _initializeSys(_init: Boolean!): initPayload!
    }
+   ########################################### SUBSCRIBE ###################################
+   type Subscription {
+
+      # -- subscription when a sale is make
+
+      # -- subscription when a sale is edited
+      # -- subscription when a sale is deleted
+      
+      # -- subscription when a product is added
+      productAddEvent {
+         error: String
+         added: Boolean!
+         product: Product!
+         timestamp: Timestamp!
+      }
+      # -- subscription when a product is edited
+      # -- subscription when a product is deleted
+      
+      # -- subscription when a new staff is added
+      # -- subscription when a new staff is deleted
+      
+      # -- subscription when a supply is added
+      # -- subscription when a supply is edited
+      # -- subscription when a supply is deleted
+      # -- subscription when a supply is deleted
+   
+      # -- subscription when a supply is deleted
+   }
 `
 );
 

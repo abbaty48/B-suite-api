@@ -96,9 +96,9 @@ export const StaffResolver = {
         const { staffID, firstName, lastName, warehouseID } =
           searchFilter ?? {};
         // PAGINATE THE STAFFS
-        const sort = pagin.sort ?? Pagin.sort,
-          limit = pagin.limit ?? Pagin.limit,
-          pageIndex = pagin.pageIndex ?? Pagin.pageIndex;
+        const sort = pagin?.sort ?? Pagin.sort,
+          limit = pagin?.limit ?? Pagin.limit,
+          pageIndex = pagin?.pageIndex ?? Pagin.pageIndex;
         //
         const staffs = await staffModel.find(
           {

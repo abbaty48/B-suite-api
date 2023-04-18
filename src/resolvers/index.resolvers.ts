@@ -274,4 +274,11 @@ export const resolvers = {
       StoreResolver._initializeSys(_init, context),
     //#endregion
   },
+  Subscription: {
+    //#region Product
+    productAddEvent: {
+      
+    }
+    //#endregion
+  }
 };
