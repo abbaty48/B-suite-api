@@ -6,26 +6,19 @@ mongoose.set('strictQuery', true);
 /**
  * MongodbService uses the mongoose to connect to MongoDB and  returns a Mongo instance.
  */
-
-interface IConnectionResult {
-  error: {
-    message: string;
-    name: string;
-  } | null;
-  connected: boolean;
-}
-export const mongodbService = () => {
-  connect(
-    config.get('databases.mongodb.schemaUri'),
-    config.get('databases.mongodb.options'),
-    (error) => {
-      if (error) {
-        console.log(`ERROR MONGO SERVER CONNECTION, REASON: ${error.message}`);
-        return;
-      }
+export const mongodbService = () =>
+  new Promise<typeof mongoose>(async (resolve, reject) => {
+    try {
+      const mongoose = await connect(
+        config.get('databases.mongodb.schemaUri'),
+        config.get('databases.mongodb.options')
+      );
       console.info(
         `${mongoose.connection.db.databaseName} DATABASE CONNECTED. `
-      );
-    }
-  );
-}; // end mongodbService()
+      ); // end console.info
+      resolve(mongoose);
+    } catch (error) {
+      console.log(`ERROR MONGO SERVER CONNECTION, REASON: ${error.message}`);
+      reject(null);
+    } // end catch
+  }); // end mongodbService()

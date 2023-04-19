@@ -14,8 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.staffVerifyToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const helpers_1 = require("../helpers");
-const schema_staff_1 = require("../../databases/mongodb/schema_staff");
+const commons_helpers_1 = require("../commons.helpers");
+const schema_staff_1 = require("../../models/databases/mongodb/schema_staff");
 const staffVerifyToken = (request, response, privateKey) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // check the Authorization key existence
@@ -31,7 +31,7 @@ const staffVerifyToken = (request, response, privateKey) => __awaiter(void 0, vo
         // sign the token
         // let verifyToken: any;
         try {
-            jsonwebtoken_1.default.verify(token, (0, helpers_1.decodeRSAKey)(privateKey), {
+            jsonwebtoken_1.default.verify(token, (0, commons_helpers_1.decodeRSAKey)(privateKey), {
                 algorithms: ['HS512'],
             });
         }

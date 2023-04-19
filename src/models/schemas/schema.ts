@@ -1,49 +1,75 @@
-####################################  ENUMS  ###################################
-enum StaffRole {
-  Admin
-  Saller
-  Manager
-  Warehouse
-  Accountant
-}
-##################################### GLOBAL ###################################
-type Timestamps {
-  createdAt: String!
-  updatedAt: String!
-  currentTime: Int
-}
+import { buildSchema } from 'graphql';
 
-input paginInput {
-  limit: Int
-  sort: String
-  pageIndex: Int
-}
-type Pagins {
-  sort: String
-  totalPaginated: Int
-  totalDocuments: Int
-  nextPageIndex: Int
-  currentPageIndex: Int
-}
+const Enums = `#graphql
+  "Sorting order in ascending or descending"
+  enum Sort {
+    Asc
+    Desc
+  }
 
-################################# FEATURES ######################################
-type Feature {
-  size: Int
-  url: String
-  fileName: String
-  filePath: String
-  extension: String
-}
-enum FeatureEditAction {
-  ADD
-  REMOVE
-}
-input editFeature {
-  action: FeatureEditAction!
-  addFeatureURI: [String!]
-  removeFeatureByName: String
-}
-################################# STAFF ######################################
+   "Staff Roles previleges this includes Admin, Saller, Manager, Warehouse, Accountant"
+   enum StaffRole {
+      "Admin Role : Admin has every previlege to ADD,READ,DELETE,EDIT"
+      Admin
+      "Saller Role : A saller has only the previlege to ADD,READ,EDIT a Sale only."
+      Saller
+      "Manage Role : Manager has every previlege to ADD,READ,DELETE,EDIT except can not make a sale"
+      Manager
+      "Warehouse Role : A warehouse staff has every previlege to ADD,READ,DELETE,EDIT on Warehouse only."
+      Warehouse
+      "Accountant Role : Accountant staff has every previlege to ADD,READ,DELETE,EDIT except to delete a Admin/Manager staff."
+      Accountant
+   }
+`;
+
+const Commons = `#graphql
+   "Timestamps of an action."
+   type Timestamps {
+      "An Iso created date of an action: YYYY:MM:DDTHH:MM:SS.MILISECONDS+00:00"
+      createdAt: String!
+      "An Iso updated date of an action: YYYY:MM:DDTHH:MM:SS.MILISECONDS+00:00"
+      updatedAt: String!
+      "A unix number representing date of an action"
+      currentTime: Int
+   }
+   "Pagination inputs"
+   input paginInput {
+      "Limit: maximum number of data to return"
+      limit: Int
+      "Sort: sort the result in Asc (ascending) or Desc (descending) order"
+      sort: Sort
+      "PageIndex: page index "
+      pageIndex: Int
+   }
+   type Pagins {
+      sort: String
+      totalPaginated: Int
+      totalDocuments: Int
+      nextPageIndex: Int
+      currentPageIndex: Int
+   }
+`;
+
+const Feature = `#graphql 
+   type Feature {
+      size: Int
+      url: String
+      fileName: String
+      filePath: String
+      extension: String
+   }
+   enum FeatureEditAction {
+      ADD
+      REMOVE
+   }
+   input editFeature {
+      action: FeatureEditAction!
+      addFeatureURI: [String!]
+      removeFeatureByName: String
+   }
+`;
+
+const Staff = `#graphql
 type Staff {
   staffID: ID!
   firstName: String!
@@ -67,21 +93,21 @@ type StaffsPayload {
   staffs: [Staff!]!
   pagin: Pagins
 }
-type AddStaffPayload {
+type StaffAddPayload {
   error: String
   added: Boolean!
   newAdded: Staff
 }
-type EditStaffPayload {
+type StaffEditPayload {
   error: String
   edited: Boolean!
   newEdited: Staff
 }
-type DeleteStaffPayload {
+type StaffDeletePayload {
   error: String
   deleted: Boolean!
 }
-input addStaffInput {
+input staffAddInput {
   firstName: String!
   lastName: String!
   otherName: String
@@ -93,7 +119,7 @@ input addStaffInput {
   password: String!
   warehouseID: ID
 }
-input editStaffInput {
+input staffEditInput {
   staffID: ID!
   firstName: String
   lastName: String
@@ -112,7 +138,9 @@ input searchStaffInput {
   lastName: String
   warehouseID: ID
 }
-################################## PRODUCT ###################################
+`;
+
+const Product = `#graphql
 type Product {
   productID: ID!
   name: String!
@@ -133,24 +161,24 @@ type ProductPayload {
 }
 type ProductsPayload {
   error: String
-  products: [Product!]!
   pagins: Pagins
+  products: [Product!]!
 }
-type AddProductPayload {
+type ProductAddPayload {
   error: String
   added: Boolean
   newAdded: Product
 }
-type EditProductPayload {
+type ProductEditPayload {
   error: String
   edited: Boolean!
   newEdited: Product
 }
-type DeleteProductPayload {
+type ProductDeletePayload {
   error: String
   deleted: Boolean!
 }
-input addProductInput {
+input productAddInput {
   name: String!
   quantity: Int!
   expirationDate: String
@@ -162,7 +190,7 @@ input addProductInput {
   description: String
 }
 
-input editProductInput {
+input productEditInput {
   productID: ID!
   name: String
   expirationDate: String
@@ -186,36 +214,40 @@ input searchProductInput {
   retailPrice: Float
   wholesalePrice: Float
 }
-##################################### CATEGORY #####################################
+`;
+
+const Category = `#graphql
 type Category {
   name: String!
 }
-type AddCategoryPayload {
+type CategoryAddPayload {
   error: String
   added: Boolean!
   newAdded: String
 }
-type EditCategoryPayload {
+type CategoryEditPayload {
   error: String
   edited: Boolean!
   newValue: String
   oldValue: String!
 }
-type DeleteCategoryPayload {
+type CategoryDeletePayload {
   error: String
   deleted: Boolean!
 }
-input addCategoryInput {
+input categoryAddInput {
   name: String
 }
-input editCategoryInput {
+input categoryEditInput {
   oldCategory: String!
   newCategory: String!
 }
 type categoryPayload {
   error: String
 }
-################################### WAREHOUSE ######################################
+`;
+
+const Warehouse = `#graphql
 type Warehouse {
   warehouseID: ID!
   name: String
@@ -233,17 +265,17 @@ type WarehousesPayload {
   error: String
   warehouses: [Warehouse!]!
 }
-type AddWarehousePayload {
+type WarehouseAddPayload {
   error: String
   added: Boolean!
   newAdded: Warehouse
 }
-type EditWarehousePayload {
+type WarehouseEditPayload {
   error: String
   edited: Boolean!
   newEdited: Warehouse
 }
-type DeleteWarehousePayload {
+type WarehouseDeletePayload {
   error: String
   deleted: Boolean!
 }
@@ -252,13 +284,13 @@ type AddWarehouseStaffPayload {
   added: Boolean!
 }
 
-input addWarehouseInput {
+input warehouseAddInput {
   name: String!
   address: String!
   staffIDs: [ID!]
   productIDs: [ID!]
 }
-input editWarehouseInput {
+input warehouseEditInput {
   warehouseID: ID!
   name: String
   address: String
@@ -270,7 +302,9 @@ input warehouseSearchInput {
   name: String
   address: String
 }
-############################# SALE #######################################
+`;
+
+const Sale = `#graphql
 type Sale {
   saleID: ID!
   staffID: ID!
@@ -319,17 +353,17 @@ type SalesPayload {
   sales: [Sale!]!
   pagins: Pagins
 }
-type AddSalePayload {
+type SaleAddPayload {
   error: String
   added: Boolean
   newAdded: Sale
 }
-type EditSalePayload {
+type SaleEditPayload {
   error: String
   edited: Boolean
   newEdited: Sale
 }
-type DeleteSalePayload {
+type SaleDeletePayload {
   error: String
   deleted: Boolean!
 }
@@ -341,7 +375,7 @@ input addSaleProfitInput {
   percentage: Float!
   status: String!
 }
-input addSaleInput {
+input saleAddInput {
   date: String
   time: String
   paid: Float
@@ -350,9 +384,9 @@ input addSaleInput {
   customerID: ID
   warehouseID: ID
   productMetas: [saleProductMetaInput!]!
-  addCustomer: addCustomerInput
+  addCustomer: customerAddInput
 }
-input editSaleInput {
+input saleEditInput {
   saleID: ID!
   date: String
   time: String
@@ -373,7 +407,9 @@ input searchSaleInput {
   productName: String
   paidPrice: Float
 }
-#################################### CUSTOMER #############################################
+`;
+
+const Customer = `#graphql
 type Customer {
   customerID: ID!
   warehouseID: ID
@@ -396,17 +432,17 @@ type CustomerMetaData {
   dateOfBirth: String
   socialMedia: CustomerSocialMedia
 }
-type AddCustomerPayload {
+type CustomerAddPayload {
   error: String
   added: Boolean
   newAdded: Customer
 }
-type EditCustomerPayload {
+type CustomerEditPayload {
   error: String
   edited: Boolean
   newEdited: Customer
 }
-type DeleteCustomerPayload {
+type CustomerDeletePayload {
   error: String
   deleted: Boolean!
 }
@@ -437,7 +473,7 @@ input customerMetasInput {
   dateOfBirth: String
   socialMedia: customerSocialMediaInput
 }
-input addCustomerInput {
+input customerAddInput {
   name: String!
   email: String
   address: String
@@ -447,7 +483,7 @@ input addCustomerInput {
   metas: customerMetasInput
   warehouseID: ID
 }
-input editCustomerInput {
+input customerEditInput {
   customerID: ID!
   warehouseID: ID
   name: String
@@ -459,7 +495,9 @@ input editCustomerInput {
   saleIDs: [ID!]
   metas: customerMetasInput
 }
-###################################### SUPPLY ##########################################
+`;
+
+const Supply = `#graphql
 type Supply {
   supplyID: ID!
   staffID: ID!
@@ -471,17 +509,17 @@ type Supply {
   date: String
   timestamps: Timestamps
 }
-type AddSupplyPayload {
+type SupplyAddPayload {
   error: String
   added: Boolean!
   newAdded: Supply
 }
-type EditSupplyPayload {
+type SupplyEditPayload {
   error: String
   edited: Boolean!
   newEdited: Supply
 }
-type DeleteSupplyPayload {
+type SupplyDeletePayload {
   error: String
   deleted: Boolean!
 }
@@ -494,13 +532,13 @@ type SupplysPayload {
   supplies: [Supply!]
   pagins: Pagins
 }
-input addSupplyInput {
+input supplyAddInput {
   productID: ID!
   quantity: Int!
   retailPrice: Float!
   wholesalePrice: Float!
 }
-input editSupplyInput {
+input supplyEditInput {
   productID: ID!
   quantity: Int
   retailPrice: Float
@@ -514,8 +552,9 @@ input searchSupplyInput {
   staffID: ID
   warehouseID: ID
 }
+`;
 
-#################################### STORE #########################################
+const Store = `#graphql
 type StorePayload {
   error: String
   result: Int!
@@ -528,14 +567,14 @@ type Store {
   totalCustomers: StorePayload
   totalWarehouses: StorePayload
   totalExpiredProducts: StorePayload
-  enterPrise: enterPrisePayload
+  enterPrise: enterprisePayload
   _sysInitialized: Boolean!
   _enterpriseInitialized: Boolean!
 }
+`;
 
-######################################## ENTERPRISE ########################################
-
-type EnterpriseSocialAccounts {
+const Enterprice = `#graphql
+   type EnterpriseSocialAccounts {
   facebook: String
   twitter: String
   youtube: String
@@ -593,7 +632,7 @@ input editOwnerInput {
   socialAccounts: addSocialAccountInput
 }
 
-input addEnterpriseInput {
+input enterpriseAddInput {
   name: String!
   slogan: String
   title: String
@@ -606,7 +645,7 @@ input addEnterpriseInput {
   socialAccounts: addSocialAccountInput
 }
 
-input editEnterpriseInput {
+input enterpriseEditInput {
   name: String
   title: String
   slogan: String
@@ -618,16 +657,16 @@ input editEnterpriseInput {
   owners: [editOwnerInput!]
   socialAccounts: addSocialAccountInput
 }
-type enterPrisePayload {
+type enterprisePayload {
   error: String
   result: Enterprise
 }
-type addEnterprisePayload {
+type EnterpriseAddPayload {
   error: String
   added: Boolean!
   newAdded: Enterprise
 }
-type editEnterprisePayload {
+type EnterpriseEditPayload {
   error: String
   edited: Boolean!
   newEdited: Enterprise
@@ -636,124 +675,120 @@ type initPayload {
   error: String
   _initialized: Boolean!
 }
+`;
 
-##################################### QUERIES ########################################
-type Query {
+const Query = `#graphql
+
+  type Query {
   ################################## STAFF ##########################################
-  staff(searchFilter: searchStaffInput!): StaffPayload!
-  staffs(searchFilter: searchStaffInput, pagin: paginInput): StaffsPayload!
+    staff(searchFilter: searchStaffInput!): StaffPayload!
+    staffs(searchFilter: searchStaffInput, pagin: paginInput): StaffsPayload!
 
-  ################################## PRODUCT #########################################
-  product(searchFilter: searchProductInput!): ProductPayload!
-  products(
-    searchFilter: searchProductInput
-    pagin: paginInput
-  ): ProductsPayload!
+    ################################## PRODUCT #########################################
+    product(searchFilter: searchProductInput!): ProductPayload!
+    products(
+      searchFilter: searchProductInput
+      pagin: paginInput
+    ): ProductsPayload!
 
-  ################################## CATEGORY ########################################
-  categories: [Category!]!
+    ################################## CATEGORY ########################################
+    categories: [Category!]!
 
-  ################################## WAREHOUSE #######################################
-  warehouse(searchFilter: warehouseSearchInput!): WarehousePayload!
-  warehouses(
-    searchFilter: warehouseSearchInput
-    pagin: paginInput
-  ): WarehousesPayload!
+    ################################## WAREHOUSE #######################################
+    warehouse(searchFilter: warehouseSearchInput!): WarehousePayload!
+    warehouses(
+      searchFilter: warehouseSearchInput
+      pagin: paginInput
+    ): WarehousesPayload!
 
-  ################################## SALE ############################################
-  sale(searchFilter: searchSaleInput!): SalePayload!
-  sales(searchFilter: searchSaleInput, pagin: paginInput): SalesPayload!
+    ################################## SALE ############################################
+    sale(searchFilter: searchSaleInput!): SalePayload!
+    sales(searchFilter: searchSaleInput, pagin: paginInput): SalesPayload!
 
-  ################################## CUSTOMER ########################################
-  customer(searchFilter: searchCustomerInput!): CustomerPayload!
-  customers(
-    searchFilter: searchCustomerInput
-    pagin: paginInput
-  ): CustomersPayload!
+    ################################## CUSTOMER ########################################
+    customer(searchFilter: searchCustomerInput!): CustomerPayload!
+    customers(
+      searchFilter: searchCustomerInput
+      pagin: paginInput
+    ): CustomersPayload!
 
-  ################################## PURCHASE ########################################
-  supply(searchFilter: searchSupplyInput!): SupplyPayload!
-  supplies(searchFilter: searchSupplyInput, pagin: paginInput): SupplysPayload!
+    ################################## PURCHASE ########################################
+    supply(searchFilter: searchSupplyInput!): SupplyPayload!
+    supplies(searchFilter: searchSupplyInput, pagin: paginInput): SupplysPayload!
 
-  ################################## STORE ###########################################
-  store: Store!
-}
-######################################## MUTATONS #####################################
-type Mutation {
-  ################################## STAFF ###########################################
-  addStaff(addStaffInput: addStaffInput!): AddStaffPayload!
-  editStaff(editStaffInput: editStaffInput!): EditStaffPayload!
-  deleteStaff(staffID: ID!): DeleteStaffPayload!
+    ################################## STORE ###########################################
+    store: Store!
+  }
+`;
 
-  ################################## PRODUCT #########################################
-  addProduct(addProductInput: addProductInput!): AddProductPayload!
-  editProduct(editProductInput: editProductInput!): EditProductPayload!
-  deleteProduct(productID: ID!, warehouseID: ID): DeleteProductPayload!
+const Mutation = `#graphql
+  type Mutation {
+      ################################## STAFF ###########################################
+      staffDelete(staffID: ID!): StaffDeletePayload!
+      staffAdd(staffAddInput: staffAddInput!): StaffAddPayload!
+      staffEdit(staffEditInput: staffEditInput!): StaffEditPayload!
 
-  ################################## CATEGORY ########################################
-  addCategory(addCategoryInput: addCategoryInput!): AddCategoryPayload!
-  editCategory(editCategoryInput: editCategoryInput!): EditCategoryPayload!
-  deleteCategory(category: String!): DeleteCategoryPayload!
+      ################################## PRODUCT ########################################
+      productAdd(productAddInput: productAddInput!): ProductAddPayload!
+      productEdit(productEditInput: productEditInput!): ProductEditPayload!
+      productDelete(productID: ID!, warehouseID: ID): ProductDeletePayload!
 
-  ################################## WAREHOUSE #######################################
-  addWarehouse(addWarehouseInput: addWarehouseInput!): AddWarehousePayload!
-  editWarehouse(editWarehouseInput: editWarehouseInput!): EditWarehousePayload!
-  deleteWarehouse(warehouseID: ID!): DeleteWarehousePayload!
+      ################################## CATEGORY ########################################
+      categoryDelete(category: String!): CategoryDeletePayload!
+      categoryAdd(categoryAddInput: categoryAddInput!): CategoryAddPayload!
+      categoryEdit(categoryEditInput: categoryEditInput!): CategoryAddPayload!
 
-  ################################## SALE ############################################
-  addSale(addSaleInput: addSaleInput!): AddSalePayload!
-  editSale(editSaleInput: editSaleInput!): EditSalePayload!
-  deleteSale(saleID: ID!, warehouseID: ID): DeleteSalePayload!
+      ################################## WAREHOUSE #######################################
+      warehouseDelete(warehouseID: ID!): WarehouseDeletePayload!
+      warehouseAdd(warehouseAddInput: warehouseAddInput!): WarehouseAddPayload!
+      warehouseEdit(warehouseEditInput: warehouseEditInput!): WarehouseEditPayload!
 
-  ################################## CUSTOMER #########################################
-  addCustomer(addCustomerInput: addCustomerInput!): AddCustomerPayload!
-  editCustomer(editCustomerInput: editCustomerInput!): EditCustomerPayload!
-  deleteCustomer(customerID: ID!, warehouseID: ID): DeleteCustomerPayload!
+      ################################## SALE ############################################
+      saleAdd(saleAddInput: saleAddInput!): SaleAddPayload!
+      saleDelete(saleID: ID!, warehouseID: ID): SaleDeletePayload!
+      saleEdit(saleEditInput: saleEditInput!): SaleEditPayload!
 
-  ################################# PURCHASE ##########################################
-  makeSupply(
-    addSupplyInput: [addSupplyInput!]!
-    warehouseID: ID
-  ): AddSupplyPayload!
-  editSupply(
-    supplyID: ID!
-    editSupplyInput: [editSupplyInput!]!
-    warehouseID: ID
-  ): EditSupplyPayload!
-  deleteSupply(supplyID: ID!, warehouseID: ID): DeleteSupplyPayload!
+      ################################## CUSTOMER #########################################
+      customerAdd(customerAddInput: customerAddInput!): CustomerAddPayload!
+      customerEdit(customerEditInput: customerEditInput!): CustomerEditPayload!
+      customerDelete(customerID: ID!, warehouseID: ID): CustomerDeletePayload!
 
-  ################################# ENTERPRISE ########################################
-  addEnterprise(addEnterpriseInput: addEnterpriseInput!): addEnterprisePayload!
-  editEnterprise(
-    editEnterpriseInput: editEnterpriseInput!
-  ): editEnterprisePayload!
-  _initializeSys(_init: Boolean!): initPayload!
-}
-########################################### SUBSCRIBE ###################################
-# type Subscription {
+      ################################# PURCHASE ##########################################
+      makeSupply(
+        supplyAddInput: [supplyAddInput!]!
+        warehouseID: ID
+      ): SupplyAddPayload!
+      supplyEdit(
+        supplyID: ID!
+        supplyEditInput: [supplyEditInput!]!
+        warehouseID: ID
+      ): SupplyEditPayload!
+      supplyDelete(supplyID: ID!, warehouseID: ID): SupplyDeletePayload!
 
-# -- subscription when a sale is make
+      ################################# ENTERPRISE ########################################
+      enterpriseAdd(enterpriseAddInput: enterpriseAddInput!): EnterpriseAddPayload!
+      enterpriseEdit(
+        enterpriseEditInput: enterpriseEditInput!
+      ): EnterpriseEditPayload!
+      _initializeSys(_init: Boolean!): initPayload!
+  }
+`;
 
-# -- subscription when a sale is edited
-# -- subscription when a sale is deleted
+const schemas = `
+  ${Sale}
+  ${Enums}
+  ${Staff}
+  ${Store}
+  ${Supply}
+  ${Feature}
+  ${Product}
+  ${Commons}
+  ${Category}
+  ${Customer}
+  ${Warehouse}
+  ${Enterprice}
+  ${Mutation}
+  ${Query}
+`;
 
-# -- subscription when a product is added
-# productAddEvent {
-#    error: String
-#    added: Boolean!
-#    product: Product!
-#    timestamp: Timestamp!
-# }
-# -- subscription when a product is edited
-# -- subscription when a product is deleted
-
-# -- subscription when a new staff is added
-# -- subscription when a new staff is deleted
-
-# -- subscription when a supply is added
-# -- subscription when a supply is edited
-# -- subscription when a supply is deleted
-# -- subscription when a supply is deleted
-
-# -- subscription when a supply is deleted
-# }
+export const typeDefs = buildSchema(schemas);

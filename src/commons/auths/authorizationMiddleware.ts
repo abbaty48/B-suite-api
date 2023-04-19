@@ -1,5 +1,5 @@
 import { IStaff } from '@server-databases/mongodb/interfaces/IStaff';
-import { RolePrevileges } from '@server-databases/mongodb/enums/RolePrevilage';
+import { RolePrevileges } from '@/src/models/databases/mongodb/enums/RolePrevilege';
 import { staffVerifyToken } from '@server-commons/auths/staffJWTAuthenticationMiddleware';
 
 interface IStaffPrevilege {

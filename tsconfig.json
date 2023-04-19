@@ -4,14 +4,12 @@
     "baseUrl": "./",
     "rootDir": "./",
     "outDir": "dist",
-    "types": ["node"],
-    "lib": ["es2020"],
-    "target": "es2020",
-    "module": "esnext",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "noImplicitAny": true,
+    "target": "es6",
+    "module": "commonjs",
     "sourceMap": false,
+    "skipLibCheck": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "paths": {
@@ -27,13 +25,11 @@
       "@server-databases/*": ["src/models/databases/*"],
     },
     "plugins": [
-      {
-        "transform": "typescript-transform-paths"
-      },
+      {"transform": "typescript-transform-paths"},
       {
         "transform": "typescript-transform-paths",
         "afterDeclarations": true
-      }
+      },
     ],
   },
 }

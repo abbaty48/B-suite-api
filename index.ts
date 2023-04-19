@@ -10,8 +10,9 @@ import { GraphQLError } from 'graphql';
 import { Server, createServer } from 'http';
 import { ApolloServer } from '@apollo/server';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { resolvers } from '@/src/resolvers/resolvers';
-import { mongodbService } from '@/src/services/mongodb';
+import { resolvers } from '@server-resolvers/resolver';
+import { typeDefs } from '@server-models/schemas/schema';
+import { mongodbService } from '@server-services/mongodb';
 import { expressMiddleware } from '@apollo/server/express4';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { errorMiddlwares } from '@server-commons/middlewares/error';
@@ -30,9 +31,10 @@ async function Main() {
   const httpServer: Server = createServer(app);
   // Make an executable schema from the schema.graphql and resolver
   const schema = makeExecutableSchema({
-    typeDefs: fs.readFileSync('src/models/schemas/schema.graphql', {
+    /* typeDefs: fs.readFileSync('src/models/schemas/schema.graphql', {
       encoding: 'utf-8',
-    }),
+    }), */
+    typeDefs,
     resolvers,
   });
   // Creating the WebSocket server
@@ -65,31 +67,31 @@ async function Main() {
       },
     ],
   });
-  // MIDDLEWARES
-  app.use(
-    '/v2',
-    // SET UP CORS
-    cors<cors.CorsRequest>({ origin: ['http://localhost:3000'] }),
-    // BODYPARSER
-    bodyParser.json(),
-    // MORGAN
-    morgan('combined'),
-    // ASSET MIDDLEWARES
-    assetMiddlwares(__dirname),
-    // ERROR HANDLE
-    errorMiddlwares(__dirname),
-    // EXPRESSMIDDLWARE
-    expressMiddleware(apolloServer, {
-      context: async () => ({
-        models,
-        config,
-      }), // end context
-    }) // end expressMiddleware
-  ); // end MIDDLWARE
-  //
   try {
     // start the apollo server
     await apolloServer.start();
+    // MIDDLEWARES
+    app.use(
+      '/v2',
+      // SET UP CORS
+      cors<cors.CorsRequest>({ origin: ['http://localhost:3000'] }),
+      // BODYPARSER
+      bodyParser.json(),
+      // MORGAN
+      morgan('combined'),
+      // ASSET MIDDLEWARES
+      assetMiddlwares(__dirname),
+      // ERROR HANDLE
+      errorMiddlwares(__dirname),
+      // EXPRESSMIDDLWARE
+      expressMiddleware(apolloServer, {
+        context: async () => ({
+          models,
+          config,
+        }), // end context
+      }) // end expressMiddleware
+    ); // end MIDDLWARE
+    //
     // start mongodb Server
     await mongodbService(),
       // apply express app as middleware to the apollo server

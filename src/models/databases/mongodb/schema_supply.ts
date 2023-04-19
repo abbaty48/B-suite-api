@@ -1,5 +1,5 @@
 import { Model, Schema, model, models } from 'mongoose';
-import { ISupply } from '@/src/databases/mongodb/interfaces/ISupply';
+import { ISupply } from '@server-models/databases/mongodb/interfaces/ISupply';
 
 /**
  * PURCHASE SCHEMA
