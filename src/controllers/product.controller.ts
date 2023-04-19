@@ -2,8 +2,15 @@ import config from 'config';
 import { CallbackError } from 'mongoose';
 import { productModel } from '@server-databases/mongodb/schema_product';
 import { Pagin, IPagin } from '@/src/databases/mongodb/interfaces/IPagin';
-import { deleteFileUploader, serverFileUploader } from '@server-commons/file';
-import { escapeRegExp, genRandom, stringToID } from '@server-commons/helpers';
+import {
+  deleteFileUploader,
+  serverFileUploader,
+} from '@/src/commons/commons.file';
+import {
+  escapeRegExp,
+  genRandom,
+  stringToID,
+} from '@/src/commons/commons.helpers';
 import { RolePrevileges } from '@server-databases/mongodb/enums/RolePrevilage';
 import staffRoleAuthorization from '@server-commons/auths/authorizationMiddleware';
 

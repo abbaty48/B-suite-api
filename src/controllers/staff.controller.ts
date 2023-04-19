@@ -9,7 +9,7 @@ import {
   genRandom,
   stringToID,
   escapeRegExp,
-} from '@server-commons/helpers';
+} from '@/src/commons/commons.helpers';
 import {
   IStaffPayload,
   IStaffsPayload,
@@ -27,7 +27,7 @@ import {
   deleteDirUploader,
   deleteFileUploader,
   serverFileUploader,
-} from '@server-commons/file';
+} from '@/src/commons/commons.file';
 
 export const StaffResolver = {
   staff: async (

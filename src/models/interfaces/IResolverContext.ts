@@ -1,8 +1,7 @@
-import { Response, Request } from 'express';
 import { IConfig } from 'config';
+import { Models } from 'mongoose';
 
 export interface IResolverContext {
-  request: Request;
-  response: Response;
   config: IConfig;
+  models: Models;
 }

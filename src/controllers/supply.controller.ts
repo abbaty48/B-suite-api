@@ -6,7 +6,7 @@ import {
   ISupplyDeletePayload,
   ISupply,
 } from '@/src/databases/mongodb/interfaces/ISupply';
-import { genRandom } from '@server-commons/helpers';
+import { genRandom } from '@/src/commons/commons.helpers';
 import { Pagin } from '@server-databases/mongodb/interfaces/IPagin';
 import { supplyModel } from '@server-databases/mongodb/schema_supply';
 import { productModel } from '@server-databases/mongodb/schema_product';

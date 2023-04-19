@@ -1,5 +1,5 @@
 import Jwt from 'jsonwebtoken';
-import { decodeRSAKey } from '@server-commons/helpers';
+import { decodeRSAKey } from '@/src/commons/commons.helpers';
 import { staffModel } from '@server-databases/mongodb/schema_staff';
 import { IStaff } from '@server-databases/mongodb/interfaces/IStaff';
 

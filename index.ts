@@ -1,19 +1,22 @@
+import fs from 'fs';
 import cors from 'cors';
 import morgan from 'morgan';
 import config from 'config';
 import express from 'express';
-import { createServer } from 'http';
+import { models } from 'mongoose';
 import { WebSocketServer } from 'ws';
 import bodyParser from 'body-parser';
-import typeDefs from '@server-models/schema';
-import { useServer } from 'graphql-ws/lib/use/ws';
+import { GraphQLError } from 'graphql';
+import { Server, createServer } from 'http';
 import { ApolloServer } from '@apollo/server';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import { resolvers } from '@/src/resolvers/resolvers';
+import { mongodbService } from '@/src/services/mongodb';
 import { expressMiddleware } from '@apollo/server/express4';
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import { mongodbService } from '@/src/services/mongodb';
-import { resolvers } from '@/src/resolvers/resolvers';
 import { errorMiddlwares } from '@server-commons/middlewares/error';
 import { assetMiddlwares } from '@server-commons/middlewares/assets';
+import { IResolverContext } from '@server-models/interfaces/IResolverContext';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 
 /**
@@ -21,17 +24,30 @@ import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHt
  * this method start the express server with configuration
  */
 async function Main() {
-  const app = express();
-  // MIDDLEWARES
-  app.use(cors<cors.CorsRequest>({ origin: ['http://localhost:3000'] }));
-  app.use(morgan('combined'));
-  app.use(bodyParser.json());
-  app.use(express.urlencoded({ extended: false }));
   // This `app` is the returned value from `express()`
-  const httpServer = createServer(app);
-
-  const schema = makeExecutableSchema({ typeDefs, resolvers });
-  const _apolloServer = new ApolloServer({
+  const app = express();
+  // Create a httpServer and use express app
+  const httpServer: Server = createServer(app);
+  // Make an executable schema from the schema.graphql and resolver
+  const schema = makeExecutableSchema({
+    typeDefs: fs.readFileSync('src/models/schemas/schema.graphql', {
+      encoding: 'utf-8',
+    }),
+    resolvers,
+  });
+  // Creating the WebSocket server
+  const wsServer = new WebSocketServer({
+    // This is the `httpServer` we created in a previous step.
+    server: httpServer,
+    // Pass a different path here if your ApolloServer serves at
+    // a different path.
+    path: '/v2',
+  });
+  // Hand in the schema we just created and have the
+  // WebSocketServer start listening.
+  const serverCleanup = useServer({ schema }, wsServer);
+  //
+  const apolloServer = new ApolloServer<IResolverContext>({
     schema,
     cache: 'bounded',
     plugins: [
@@ -49,48 +65,46 @@ async function Main() {
       },
     ],
   });
-  // Creating the WebSocket server
-  const wsServer = new WebSocketServer({
-    // This is the `httpServer` we created in a previous step.
-    server: httpServer,
-    // Pass a different path here if your ApolloServer serves at
-    // a different path.
-    path: '/v2',
-  });
-
-  // Hand in the schema we just created and have the
-  // WebSocketServer start listening.
-  const serverCleanup = useServer({ schema }, wsServer);
-  // IMAGE REQUEST
-  // serve static image assets
-
-  app.use('*', async (request, response, next) => {
-    // set the res and req to context object for all resovers to leverage
-    // _apolloServer.requestOptions.context = { request, response, config };
-    next(); // makes the middleware move next
-  });
-
-  // ASSET MIDDLEWARES
-  assetMiddlwares(app, __dirname);
-  // ERROR HANDLE
-  errorMiddlwares(app, __dirname);
-
-  // start the mongodb server
+  // MIDDLEWARES
+  app.use(
+    '/v2',
+    // SET UP CORS
+    cors<cors.CorsRequest>({ origin: ['http://localhost:3000'] }),
+    // BODYPARSER
+    bodyParser.json(),
+    // MORGAN
+    morgan('combined'),
+    // ASSET MIDDLEWARES
+    assetMiddlwares(__dirname),
+    // ERROR HANDLE
+    errorMiddlwares(__dirname),
+    // EXPRESSMIDDLWARE
+    expressMiddleware(apolloServer, {
+      context: async () => ({
+        models,
+        config,
+      }), // end context
+    }) // end expressMiddleware
+  ); // end MIDDLWARE
+  //
   try {
-    // start mongodb Server
-    mongodbService();
     // start the apollo server
-    await _apolloServer.start();
-    // apply express app as middleware to the apollo server
-    // start the express server
-    httpServer.listen(config.get('server.port'), async () => {
-      console.log(
-        `B-Suite api started and listening on ${config.get('server.port')}`
-      );
-    });
+    await apolloServer.start();
+    // start mongodb Server
+    await mongodbService(),
+      // apply express app as middleware to the apollo server
+      // start the express server
+      await new Promise<void>((resolve) => {
+        httpServer.listen(config.get('server.port'), resolve);
+      });
+    console.log(
+      `B-Suite api started and listening on ${config.get('server.port')}`
+    );
   } catch (error) {
-    console.log('ERROR: ', error.message);
-  }
-}
+    throw new GraphQLError(error.message, {
+      extensions: { code: error.code },
+    }); // end GraphQLError
+  } // end catch
+} // end Main
 // start the server
 Main();

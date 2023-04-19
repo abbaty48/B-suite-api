@@ -21,9 +21,10 @@
       "@server/*": ["src/*"],
       "@server-models/*": ["src/models/*"],
       "@server-commons/*": ["src/commons/*"],
-      "@server-databases/*": ["src/databases/*"],
-      "@server-resolvers/*": ["src/controllers/*"],
-      "@server-datasources/*": ["src/services/*"],
+      "@server-services/*": ["src/services/*"],
+      "@server-resolvers/*": ["src/resolvers/*"],
+      "@server-controllers/*": ["src/controllers/*"],
+      "@server-databases/*": ["src/models/databases/*"],
     },
     "plugins": [
       {

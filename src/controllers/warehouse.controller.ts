@@ -1,5 +1,5 @@
 import { CallbackError } from 'mongoose';
-import { escapeRegExp, genRandom } from '@server-commons/helpers';
+import { escapeRegExp, genRandom } from '@/src/commons/commons.helpers';
 import { staffModel } from '@server-databases/mongodb/schema_staff';
 import { productModel } from '@server-databases/mongodb/schema_product';
 import { warehouseModel } from '@server-databases/mongodb/schema_warehouse';

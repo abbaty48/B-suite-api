@@ -1,4 +1,4 @@
-import { stringToID } from '@/src/commons/helpers';
+import { stringToID } from '@/src/commons/commons.helpers';
 import { Types, Model, Schema, model, models } from 'mongoose';
 import { IProduct } from '@server-databases/mongodb/interfaces/IProduct';
 import { FeatureSchema } from '@server-databases/mongodb/schema_feature';
