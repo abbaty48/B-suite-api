@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { IResolverContext } from '../../models/interfaces/IResolverContext';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
@@ -6,6 +6,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -14,55 +15,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-};
-
-export type AddCategoryPayload = {
-  __typename?: 'AddCategoryPayload';
-  added: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-  newAdded?: Maybe<Scalars['String']>;
-};
-
-export type AddCustomerPayload = {
-  __typename?: 'AddCustomerPayload';
-  added?: Maybe<Scalars['Boolean']>;
-  error?: Maybe<Scalars['String']>;
-  newAdded?: Maybe<Customer>;
-};
-
-export type AddProductPayload = {
-  __typename?: 'AddProductPayload';
-  added?: Maybe<Scalars['Boolean']>;
-  error?: Maybe<Scalars['String']>;
-  newAdded?: Maybe<Product>;
-};
-
-export type AddSalePayload = {
-  __typename?: 'AddSalePayload';
-  added?: Maybe<Scalars['Boolean']>;
-  error?: Maybe<Scalars['String']>;
-  newAdded?: Maybe<Sale>;
-};
-
-export type AddStaffPayload = {
-  __typename?: 'AddStaffPayload';
-  added: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-  newAdded?: Maybe<Staff>;
-};
-
-export type AddSupplyPayload = {
-  __typename?: 'AddSupplyPayload';
-  added: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-  newAdded?: Maybe<Supply>;
-};
-
-export type AddWarehousePayload = {
-  __typename?: 'AddWarehousePayload';
-  added: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-  newAdded?: Maybe<Warehouse>;
+  Date: any;
 };
 
 export type AddWarehouseStaffPayload = {
@@ -74,6 +27,45 @@ export type AddWarehouseStaffPayload = {
 export type Category = {
   __typename?: 'Category';
   name: Scalars['String'];
+};
+
+export type CategoryAddPayload = {
+  __typename?: 'CategoryAddPayload';
+  added: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+  newAdded?: Maybe<Scalars['String']>;
+};
+
+export type CategoryAddSubscription = ISubscription & {
+  __typename?: 'CategoryAddSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
+export type CategoryDeletePayload = {
+  __typename?: 'CategoryDeletePayload';
+  deleted: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+};
+
+export type CategoryDeleteSubscription = ISubscription & {
+  __typename?: 'CategoryDeleteSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
+export type CategoryEditPayload = {
+  __typename?: 'CategoryEditPayload';
+  edited: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+  newValue?: Maybe<Scalars['String']>;
+  oldValue: Scalars['String'];
+};
+
+export type CategoryEditSubscription = ISubscription & {
+  __typename?: 'CategoryEditSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
 };
 
 export type Customer = {
@@ -88,6 +80,26 @@ export type Customer = {
   supplys: Array<Sale>;
   warehouse?: Maybe<Warehouse>;
   warehouseID?: Maybe<Scalars['ID']>;
+};
+
+export type CustomerAddPayload = {
+  __typename?: 'CustomerAddPayload';
+  added?: Maybe<Scalars['Boolean']>;
+  error?: Maybe<Scalars['String']>;
+  newAdded?: Maybe<Customer>;
+};
+
+export type CustomerDeletePayload = {
+  __typename?: 'CustomerDeletePayload';
+  deleted: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+};
+
+export type CustomerEditPayload = {
+  __typename?: 'CustomerEditPayload';
+  edited?: Maybe<Scalars['Boolean']>;
+  error?: Maybe<Scalars['String']>;
+  newEdited?: Maybe<Customer>;
 };
 
 export type CustomerMetaData = {
@@ -117,98 +129,6 @@ export type CustomersPayload = {
   pagins?: Maybe<Pagins>;
 };
 
-export type DeleteCategoryPayload = {
-  __typename?: 'DeleteCategoryPayload';
-  deleted: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-};
-
-export type DeleteCustomerPayload = {
-  __typename?: 'DeleteCustomerPayload';
-  deleted: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-};
-
-export type DeleteProductPayload = {
-  __typename?: 'DeleteProductPayload';
-  deleted: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-};
-
-export type DeleteSalePayload = {
-  __typename?: 'DeleteSalePayload';
-  deleted: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-};
-
-export type DeleteStaffPayload = {
-  __typename?: 'DeleteStaffPayload';
-  deleted: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-};
-
-export type DeleteSupplyPayload = {
-  __typename?: 'DeleteSupplyPayload';
-  deleted: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-};
-
-export type DeleteWarehousePayload = {
-  __typename?: 'DeleteWarehousePayload';
-  deleted: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-};
-
-export type EditCategoryPayload = {
-  __typename?: 'EditCategoryPayload';
-  edited: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-  newValue?: Maybe<Scalars['String']>;
-  oldValue: Scalars['String'];
-};
-
-export type EditCustomerPayload = {
-  __typename?: 'EditCustomerPayload';
-  edited?: Maybe<Scalars['Boolean']>;
-  error?: Maybe<Scalars['String']>;
-  newEdited?: Maybe<Customer>;
-};
-
-export type EditProductPayload = {
-  __typename?: 'EditProductPayload';
-  edited: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-  newEdited?: Maybe<Product>;
-};
-
-export type EditSalePayload = {
-  __typename?: 'EditSalePayload';
-  edited?: Maybe<Scalars['Boolean']>;
-  error?: Maybe<Scalars['String']>;
-  newEdited?: Maybe<Sale>;
-};
-
-export type EditStaffPayload = {
-  __typename?: 'EditStaffPayload';
-  edited: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-  newEdited?: Maybe<Staff>;
-};
-
-export type EditSupplyPayload = {
-  __typename?: 'EditSupplyPayload';
-  edited: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-  newEdited?: Maybe<Supply>;
-};
-
-export type EditWarehousePayload = {
-  __typename?: 'EditWarehousePayload';
-  edited: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-  newEdited?: Maybe<Warehouse>;
-};
-
 export type Enterprise = {
   __typename?: 'Enterprise';
   about?: Maybe<Scalars['String']>;
@@ -225,6 +145,20 @@ export type Enterprise = {
   title?: Maybe<Scalars['String']>;
   warehouses: Array<Warehouse>;
   website?: Maybe<Scalars['String']>;
+};
+
+export type EnterpriseAddPayload = {
+  __typename?: 'EnterpriseAddPayload';
+  added: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+  newAdded?: Maybe<Enterprise>;
+};
+
+export type EnterpriseEditPayload = {
+  __typename?: 'EnterpriseEditPayload';
+  edited: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+  newEdited?: Maybe<Enterprise>;
 };
 
 export type EnterpriseOwner = {
@@ -246,6 +180,18 @@ export type EnterpriseSocialAccounts = {
   youtube?: Maybe<Scalars['String']>;
 };
 
+export type Error = {
+  __typename?: 'Error';
+  /** code: representing error code, i.e 401,404 */
+  code: Scalars['Int'];
+  /** message: describing the error message. */
+  message: Scalars['String'];
+  /** status: describing the status of error, i.e INVALID_ARGUMENt, UNAUTHROIZED */
+  status: Scalars['String'];
+  /** success: determine whether the operation successful */
+  success: Scalars['Boolean'];
+};
+
 export type Feature = {
   __typename?: 'Feature';
   extension?: Maybe<Scalars['String']>;
@@ -260,32 +206,37 @@ export enum FeatureEditAction {
   Remove = 'REMOVE'
 }
 
+export type ISubscription = {
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   _initializeSys: InitPayload;
-  addCategory: AddCategoryPayload;
-  addCustomer: AddCustomerPayload;
-  addEnterprise: AddEnterprisePayload;
-  addProduct: AddProductPayload;
-  addSale: AddSalePayload;
-  addStaff: AddStaffPayload;
-  addWarehouse: AddWarehousePayload;
-  deleteCategory: DeleteCategoryPayload;
-  deleteCustomer: DeleteCustomerPayload;
-  deleteProduct: DeleteProductPayload;
-  deleteSale: DeleteSalePayload;
-  deleteStaff: DeleteStaffPayload;
-  deleteSupply: DeleteSupplyPayload;
-  deleteWarehouse: DeleteWarehousePayload;
-  editCategory: EditCategoryPayload;
-  editCustomer: EditCustomerPayload;
-  editEnterprise: EditEnterprisePayload;
-  editProduct: EditProductPayload;
-  editSale: EditSalePayload;
-  editStaff: EditStaffPayload;
-  editSupply: EditSupplyPayload;
-  editWarehouse: EditWarehousePayload;
-  makeSupply: AddSupplyPayload;
+  categoryAdd: CategoryAddPayload;
+  categoryDelete: CategoryDeletePayload;
+  categoryEdit: CategoryAddPayload;
+  customerAdd: CustomerAddPayload;
+  customerDelete: CustomerDeletePayload;
+  customerEdit: CustomerEditPayload;
+  enterpriseAdd: EnterpriseAddPayload;
+  enterpriseEdit: EnterpriseEditPayload;
+  makeSupply: SupplyAddPayload;
+  productAdd: ProductAddPayload;
+  productDelete: ProductDeletePayload;
+  productEdit: ProductEditPayload;
+  saleAdd: SaleAddPayload;
+  saleDelete: SaleDeletePayload;
+  saleEdit: SaleEditPayload;
+  staffAdd: StaffAddPayload;
+  staffDelete: StaffDeletePayload;
+  staffEdit: StaffEditPayload;
+  supplyDelete: SupplyDeletePayload;
+  supplyEdit: SupplyEditPayload;
+  warehouseAdd: WarehouseAddPayload;
+  warehouseDelete: WarehouseDeletePayload;
+  warehouseEdit: WarehouseEditPayload;
 };
 
 
@@ -294,125 +245,125 @@ export type Mutation_InitializeSysArgs = {
 };
 
 
-export type MutationAddCategoryArgs = {
-  addCategoryInput: AddCategoryInput;
+export type MutationCategoryAddArgs = {
+  categoryAddInput: CategoryAddInput;
 };
 
 
-export type MutationAddCustomerArgs = {
-  addCustomerInput: AddCustomerInput;
-};
-
-
-export type MutationAddEnterpriseArgs = {
-  addEnterpriseInput: AddEnterpriseInput;
-};
-
-
-export type MutationAddProductArgs = {
-  addProductInput: AddProductInput;
-};
-
-
-export type MutationAddSaleArgs = {
-  addSaleInput: AddSaleInput;
-};
-
-
-export type MutationAddStaffArgs = {
-  addStaffInput: AddStaffInput;
-};
-
-
-export type MutationAddWarehouseArgs = {
-  addWarehouseInput: AddWarehouseInput;
-};
-
-
-export type MutationDeleteCategoryArgs = {
+export type MutationCategoryDeleteArgs = {
   category: Scalars['String'];
 };
 
 
-export type MutationDeleteCustomerArgs = {
+export type MutationCategoryEditArgs = {
+  categoryEditInput: CategoryEditInput;
+};
+
+
+export type MutationCustomerAddArgs = {
+  customerAddInput: CustomerAddInput;
+};
+
+
+export type MutationCustomerDeleteArgs = {
   customerID: Scalars['ID'];
   warehouseID?: InputMaybe<Scalars['ID']>;
 };
 
 
-export type MutationDeleteProductArgs = {
+export type MutationCustomerEditArgs = {
+  customerEditInput: CustomerEditInput;
+};
+
+
+export type MutationEnterpriseAddArgs = {
+  enterpriseAddInput: EnterpriseAddInput;
+};
+
+
+export type MutationEnterpriseEditArgs = {
+  enterpriseEditInput: EnterpriseEditInput;
+};
+
+
+export type MutationMakeSupplyArgs = {
+  supplyAddInput: Array<SupplyAddInput>;
+  warehouseID?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type MutationProductAddArgs = {
+  productAddInput: ProductAddInput;
+};
+
+
+export type MutationProductDeleteArgs = {
   productID: Scalars['ID'];
   warehouseID?: InputMaybe<Scalars['ID']>;
 };
 
 
-export type MutationDeleteSaleArgs = {
+export type MutationProductEditArgs = {
+  productEditInput: ProductEditInput;
+};
+
+
+export type MutationSaleAddArgs = {
+  saleAddInput: SaleAddInput;
+};
+
+
+export type MutationSaleDeleteArgs = {
   saleID: Scalars['ID'];
   warehouseID?: InputMaybe<Scalars['ID']>;
 };
 
 
-export type MutationDeleteStaffArgs = {
+export type MutationSaleEditArgs = {
+  saleEditInput: SaleEditInput;
+};
+
+
+export type MutationStaffAddArgs = {
+  staffAddInput: StaffAddInput;
+};
+
+
+export type MutationStaffDeleteArgs = {
   staffID: Scalars['ID'];
 };
 
 
-export type MutationDeleteSupplyArgs = {
+export type MutationStaffEditArgs = {
+  staffEditInput: StaffEditInput;
+};
+
+
+export type MutationSupplyDeleteArgs = {
   supplyID: Scalars['ID'];
   warehouseID?: InputMaybe<Scalars['ID']>;
 };
 
 
-export type MutationDeleteWarehouseArgs = {
+export type MutationSupplyEditArgs = {
+  supplyEditInput: Array<SupplyEditInput>;
+  supplyID: Scalars['ID'];
+  warehouseID?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type MutationWarehouseAddArgs = {
+  warehouseAddInput: WarehouseAddInput;
+};
+
+
+export type MutationWarehouseDeleteArgs = {
   warehouseID: Scalars['ID'];
 };
 
 
-export type MutationEditCategoryArgs = {
-  editCategoryInput: EditCategoryInput;
-};
-
-
-export type MutationEditCustomerArgs = {
-  editCustomerInput: EditCustomerInput;
-};
-
-
-export type MutationEditEnterpriseArgs = {
-  editEnterpriseInput: EditEnterpriseInput;
-};
-
-
-export type MutationEditProductArgs = {
-  editProductInput: EditProductInput;
-};
-
-
-export type MutationEditSaleArgs = {
-  editSaleInput: EditSaleInput;
-};
-
-
-export type MutationEditStaffArgs = {
-  editStaffInput: EditStaffInput;
-};
-
-
-export type MutationEditSupplyArgs = {
-  editSupplyInput: Array<EditSupplyInput>;
-  supplyID: Scalars['ID'];
-  warehouseID?: InputMaybe<Scalars['ID']>;
-};
-
-
-export type MutationEditWarehouseArgs = {
-  editWarehouseInput: EditWarehouseInput;
-};
-
-
-export type MutationMakeSupplyArgs = {
-  addSupplyInput: Array<AddSupplyInput>;
-  warehouseID?: InputMaybe<Scalars['ID']>;
+export type MutationWarehouseEditArgs = {
+  warehouseEditInput: WarehouseEditInput;
 };
 
 export type Pagins = {
@@ -438,6 +389,44 @@ export type Product = {
   retailPrice: Scalars['Float'];
   warehouses?: Maybe<Array<Warehouse>>;
   wholesalePrice: Scalars['Float'];
+};
+
+export type ProductAddPayload = {
+  __typename?: 'ProductAddPayload';
+  added?: Maybe<Scalars['Boolean']>;
+  error?: Maybe<Scalars['String']>;
+  newAdded?: Maybe<Product>;
+};
+
+export type ProductAddSubscription = ISubscription & {
+  __typename?: 'ProductAddSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
+export type ProductDeletePayload = {
+  __typename?: 'ProductDeletePayload';
+  deleted: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+};
+
+export type ProductDeleteSubscription = ISubscription & {
+  __typename?: 'ProductDeleteSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
+export type ProductEditPayload = {
+  __typename?: 'ProductEditPayload';
+  edited: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+  newEdited?: Maybe<Product>;
+};
+
+export type ProductEditSubscription = ISubscription & {
+  __typename?: 'ProductEditSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
 };
 
 export type ProductPayload = {
@@ -537,6 +526,64 @@ export type QueryWarehousesArgs = {
   searchFilter?: InputMaybe<WarehouseSearchInput>;
 };
 
+export enum RolePrevileges {
+  AddCategory = 'ADD_CATEGORY',
+  AddCustomer = 'ADD_CUSTOMER',
+  AddEnterprise = 'ADD_ENTERPRISE',
+  AddProduct = 'ADD_PRODUCT',
+  AddSale = 'ADD_SALE',
+  AddStaff = 'ADD_STAFF',
+  AddSupply = 'ADD_SUPPLY',
+  AddWarehouse = 'ADD_WAREHOUSE',
+  AllCategoryOperations = 'ALL_CATEGORY_OPERATIONS',
+  AllCustomerOperations = 'ALL_CUSTOMER_OPERATIONS',
+  AllProductOperations = 'ALL_PRODUCT_OPERATIONS',
+  AllSaleOperations = 'ALL_SALE_OPERATIONS',
+  AllStaffOperations = 'ALL_STAFF_OPERATIONS',
+  AllSupplyOperations = 'ALL_SUPPLY_OPERATIONS',
+  AllWarehouseOperations = 'ALL_WAREHOUSE_OPERATIONS',
+  DeleteCategory = 'DELETE_CATEGORY',
+  DeleteCustomer = 'DELETE_CUSTOMER',
+  DeleteProduct = 'DELETE_PRODUCT',
+  DeleteSale = 'DELETE_SALE',
+  DeleteStaff = 'DELETE_STAFF',
+  DeleteSupply = 'DELETE_SUPPLY',
+  DeleteWarehouse = 'DELETE_WAREHOUSE',
+  InitializedSystem = 'INITIALIZED_SYSTEM',
+  ListenAddCategory = 'LISTEN_ADD_CATEGORY',
+  ListenAddProduct = 'LISTEN_ADD_PRODUCT',
+  ListenAddSale = 'LISTEN_ADD_SALE',
+  ListenAddStaff = 'LISTEN_ADD_STAFF',
+  ListenAddSupply = 'LISTEN_ADD_SUPPLY',
+  ListenAddWarehouse = 'LISTEN_ADD_WAREHOUSE',
+  ListenDeleteCategory = 'LISTEN_DELETE_CATEGORY',
+  ListenDeleteProduct = 'LISTEN_DELETE_PRODUCT',
+  ListenDeleteSale = 'LISTEN_DELETE_SALE',
+  ListenDeleteStaff = 'LISTEN_DELETE_STAFF',
+  ListenDeleteSupply = 'LISTEN_DELETE_SUPPLY',
+  ListenDeleteWarehouse = 'LISTEN_DELETE_WAREHOUSE',
+  ListenEditCategory = 'LISTEN_EDIT_CATEGORY',
+  ListenEditProduct = 'LISTEN_EDIT_PRODUCT',
+  ListenEditSale = 'LISTEN_EDIT_SALE',
+  ListenEditSupply = 'LISTEN_EDIT_SUPPLY',
+  ListenEditWarehouse = 'LISTEN_EDIT_WAREHOUSE',
+  ReadCategory = 'READ_CATEGORY',
+  ReadCustomer = 'READ_CUSTOMER',
+  ReadProduct = 'READ_PRODUCT',
+  ReadSale = 'READ_SALE',
+  ReadStaff = 'READ_STAFF',
+  ReadSupply = 'READ_SUPPLY',
+  ReadWarehouse = 'READ_WAREHOUSE',
+  UpdateCategory = 'UPDATE_CATEGORY',
+  UpdateCustomer = 'UPDATE_CUSTOMER',
+  UpdateEnterprise = 'UPDATE_ENTERPRISE',
+  UpdateProduct = 'UPDATE_PRODUCT',
+  UpdateSale = 'UPDATE_SALE',
+  UpdateStaff = 'UPDATE_STAFF',
+  UpdateSupply = 'UPDATE_SUPPLY',
+  UpdateWarehouse = 'UPDATE_WAREHOUSE'
+}
+
 export type Sale = {
   __typename?: 'Sale';
   balance: Scalars['Float'];
@@ -556,6 +603,44 @@ export type Sale = {
   totalQuantity: Scalars['Int'];
   warehouse?: Maybe<Warehouse>;
   warehouseID?: Maybe<Scalars['ID']>;
+};
+
+export type SaleAddPayload = {
+  __typename?: 'SaleAddPayload';
+  added?: Maybe<Scalars['Boolean']>;
+  error?: Maybe<Scalars['String']>;
+  newAdded?: Maybe<Sale>;
+};
+
+export type SaleAddSubscription = ISubscription & {
+  __typename?: 'SaleAddSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
+export type SaleDeletePayload = {
+  __typename?: 'SaleDeletePayload';
+  deleted: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+};
+
+export type SaleDeleteSubscription = ISubscription & {
+  __typename?: 'SaleDeleteSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
+export type SaleEditPayload = {
+  __typename?: 'SaleEditPayload';
+  edited?: Maybe<Scalars['Boolean']>;
+  error?: Maybe<Scalars['String']>;
+  newEdited?: Maybe<Sale>;
+};
+
+export type SaleEditSubscription = ISubscription & {
+  __typename?: 'SaleEditSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
 };
 
 export type SalePayload = {
@@ -595,6 +680,12 @@ export type SalesPayload = {
   sales: Array<Sale>;
 };
 
+/** Sorting order in ascending or descending */
+export enum Sort {
+  Asc = 'Asc',
+  Desc = 'Desc'
+}
+
 export type Staff = {
   __typename?: 'Staff';
   address?: Maybe<Scalars['String']>;
@@ -611,17 +702,55 @@ export type Staff = {
   warehouse?: Maybe<Warehouse>;
 };
 
+export type StaffAddPayload = {
+  __typename?: 'StaffAddPayload';
+  added: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+  newAdded?: Maybe<Staff>;
+};
+
+export type StaffAddSubscription = ISubscription & {
+  __typename?: 'StaffAddSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
+export type StaffDeletePayload = {
+  __typename?: 'StaffDeletePayload';
+  deleted: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+};
+
+export type StaffDeleteSubscription = ISubscription & {
+  __typename?: 'StaffDeleteSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
+export type StaffEditPayload = {
+  __typename?: 'StaffEditPayload';
+  edited: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+  newEdited?: Maybe<Staff>;
+};
+
 export type StaffPayload = {
   __typename?: 'StaffPayload';
   error?: Maybe<Scalars['String']>;
   staff?: Maybe<Staff>;
 };
 
+/** Staff Roles previleges this includes Admin, Saller, Manager, Warehouse, Accountant */
 export enum StaffRole {
+  /** Accountant Role : Accountant staff has every previlege to ADD,READ,DELETE,EDIT except to delete a Admin/Manager staff. */
   Accountant = 'Accountant',
+  /** Admin Role : Admin has every previlege to ADD,READ,DELETE,EDIT */
   Admin = 'Admin',
+  /** Manage Role : Manager has every previlege to ADD,READ,DELETE,EDIT except can not make a sale */
   Manager = 'Manager',
+  /** Saller Role : A saller has only the previlege to ADD,READ,EDIT a Sale only. */
   Saller = 'Saller',
+  /** Warehouse Role : A warehouse staff has every previlege to ADD,READ,DELETE,EDIT on Warehouse only. */
   Warehouse = 'Warehouse'
 }
 
@@ -636,7 +765,7 @@ export type Store = {
   __typename?: 'Store';
   _enterpriseInitialized: Scalars['Boolean'];
   _sysInitialized: Scalars['Boolean'];
-  enterPrise?: Maybe<EnterPrisePayload>;
+  enterPrise?: Maybe<EnterprisePayload>;
   totalCustomers?: Maybe<StorePayload>;
   totalExpiredProducts?: Maybe<StorePayload>;
   totalProducts?: Maybe<StorePayload>;
@@ -649,6 +778,60 @@ export type StorePayload = {
   __typename?: 'StorePayload';
   error?: Maybe<Scalars['String']>;
   result: Scalars['Int'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  /** subscription when a new category is added */
+  categoryAddSubscription: CategoryAddSubscription;
+  /** subscription when a category is deleted */
+  categoryDeleteSubscription: CategoryDeleteSubscription;
+  /** subscription when a category is edited */
+  categoryEditSubscription: CategoryEditSubscription;
+  /** subscription when a product is added */
+  productAddSubscription: ProductAddSubscription;
+  /** subscription when a product is deleted */
+  productDeleteSubscription: ProductDeleteSubscription;
+  /** subscription when a product is edited */
+  productEditSubscription: ProductEditSubscription;
+  /** subscription when a sale is make */
+  saleAddSubscription: SaleAddSubscription;
+  /** subscription when a sale is deleted */
+  saleDeleteSubscription: SaleDeleteSubscription;
+  /** subscription when a sale is edited */
+  saleEditSubscription: SaleEditSubscription;
+  /** subscription when a new staff is added */
+  staffAddSubscription: SaleAddSubscription;
+  /** subscription when a new staff is deleted */
+  staffDeleteSubscription: SaleDeleteSubscription;
+  /** subscription when a supply is added */
+  supplyAddSubscription: SupplyAddSubscription;
+  /** subscription when a supply is deleted */
+  supplyDeleteSubscription: SupplyDeleteSubscription;
+  /** subscription when a supply is edited */
+  supplyEditSubscription: SupplyEditSubscription;
+  /** subscription when a new warehouse is added */
+  warehouseAddSubscription: WarehouseAddSubscription;
+  /** subscription when a warehouse is deleted */
+  warehouseDeleteSubscription: WarehouseDeleteSubscription;
+  /** subscription when a warehouse is edited */
+  warehouseEditSubscription: WarehouseEditSubscription;
+};
+
+/** Subscription action type */
+export enum SubscriptionActionType {
+  Added = 'Added',
+  Deleted = 'Deleted',
+  Edited = 'Edited',
+  Read = 'Read'
+}
+
+export type SubscriptionPayload = {
+  __typename?: 'SubscriptionPayload';
+  actionResult: Scalars['Boolean'];
+  actionType?: Maybe<SubscriptionActionType>;
+  timestamps: Timestamps;
+  type?: Maybe<UType>;
 };
 
 export type Supply = {
@@ -664,6 +847,44 @@ export type Supply = {
   totalQuantity: Scalars['Int'];
 };
 
+export type SupplyAddPayload = {
+  __typename?: 'SupplyAddPayload';
+  added: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+  newAdded?: Maybe<Supply>;
+};
+
+export type SupplyAddSubscription = ISubscription & {
+  __typename?: 'SupplyAddSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
+export type SupplyDeletePayload = {
+  __typename?: 'SupplyDeletePayload';
+  deleted: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+};
+
+export type SupplyDeleteSubscription = ISubscription & {
+  __typename?: 'SupplyDeleteSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
+export type SupplyEditPayload = {
+  __typename?: 'SupplyEditPayload';
+  edited: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+  newEdited?: Maybe<Supply>;
+};
+
+export type SupplyEditSubscription = ISubscription & {
+  __typename?: 'SupplyEditSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
 export type SupplyPayload = {
   __typename?: 'SupplyPayload';
   error?: Maybe<Scalars['String']>;
@@ -677,12 +898,19 @@ export type SupplysPayload = {
   supplies?: Maybe<Array<Supply>>;
 };
 
+/** Timestamps of an action. */
 export type Timestamps = {
   __typename?: 'Timestamps';
-  createdAt: Scalars['String'];
+  /** An Iso created date of an action: YYYY:MM:DDTHH:MM:SS.MILISECONDS+00:00 */
+  createdAt: Scalars['Date'];
+  /** A unix number representing date of an action */
   currentTime?: Maybe<Scalars['Int']>;
-  updatedAt: Scalars['String'];
+  /** An Iso updated date of an action: YYYY:MM:DDTHH:MM:SS.MILISECONDS+00:00 */
+  updatedAt: Scalars['Date'];
 };
+
+/** Representing either one among types */
+export type UType = Category | Customer | Product | Sale | Staff | Store | Supply | Warehouse;
 
 export type Warehouse = {
   __typename?: 'Warehouse';
@@ -693,6 +921,44 @@ export type Warehouse = {
   staffIDs: Array<Scalars['ID']>;
   staffs: Array<Staff>;
   warehouseID: Scalars['ID'];
+};
+
+export type WarehouseAddPayload = {
+  __typename?: 'WarehouseAddPayload';
+  added: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+  newAdded?: Maybe<Warehouse>;
+};
+
+export type WarehouseAddSubscription = ISubscription & {
+  __typename?: 'WarehouseAddSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
+export type WarehouseDeletePayload = {
+  __typename?: 'WarehouseDeletePayload';
+  deleted: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+};
+
+export type WarehouseDeleteSubscription = ISubscription & {
+  __typename?: 'WarehouseDeleteSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
+};
+
+export type WarehouseEditPayload = {
+  __typename?: 'WarehouseEditPayload';
+  edited: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+  newEdited?: Maybe<Warehouse>;
+};
+
+export type WarehouseEditSubscription = ISubscription & {
+  __typename?: 'WarehouseEditSubscription';
+  error?: Maybe<Error>;
+  payload: SubscriptionPayload;
 };
 
 export type WarehousePayload = {
@@ -707,41 +973,6 @@ export type WarehousesPayload = {
   warehouses: Array<Warehouse>;
 };
 
-export type AddCategoryInput = {
-  name?: InputMaybe<Scalars['String']>;
-};
-
-export type AddCustomerInput = {
-  address?: InputMaybe<Scalars['String']>;
-  beneficiary?: InputMaybe<Scalars['Boolean']>;
-  email?: InputMaybe<Scalars['String']>;
-  metas?: InputMaybe<CustomerMetasInput>;
-  name: Scalars['String'];
-  phoneNumber?: InputMaybe<Scalars['String']>;
-  saleIDs: Array<Scalars['ID']>;
-  warehouseID?: InputMaybe<Scalars['ID']>;
-};
-
-export type AddEnterpriseInput = {
-  about?: InputMaybe<Scalars['String']>;
-  address: Scalars['String'];
-  contacts: Array<Scalars['String']>;
-  email?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  owners: Array<AddOwnerInput>;
-  slogan?: InputMaybe<Scalars['String']>;
-  socialAccounts?: InputMaybe<AddSocialAccountInput>;
-  title?: InputMaybe<Scalars['String']>;
-  website?: InputMaybe<Scalars['String']>;
-};
-
-export type AddEnterprisePayload = {
-  __typename?: 'addEnterprisePayload';
-  added: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-  newAdded?: Maybe<Enterprise>;
-};
-
 export type AddOwnerInput = {
   about?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -750,30 +981,6 @@ export type AddOwnerInput = {
   picture?: InputMaybe<Scalars['String']>;
   socialAccounts?: InputMaybe<AddSocialAccountInput>;
   website?: InputMaybe<Scalars['String']>;
-};
-
-export type AddProductInput = {
-  categoryID: Scalars['ID'];
-  description?: InputMaybe<Scalars['String']>;
-  expirationDate?: InputMaybe<Scalars['String']>;
-  featuresURI?: InputMaybe<Array<Scalars['String']>>;
-  name: Scalars['String'];
-  quantity: Scalars['Int'];
-  retailPrice: Scalars['Float'];
-  warehouseIDs?: InputMaybe<Array<Scalars['ID']>>;
-  wholesalePrice: Scalars['Float'];
-};
-
-export type AddSaleInput = {
-  addCustomer?: InputMaybe<AddCustomerInput>;
-  balance?: InputMaybe<Scalars['Float']>;
-  customerID?: InputMaybe<Scalars['ID']>;
-  date?: InputMaybe<Scalars['String']>;
-  discount?: InputMaybe<Scalars['Float']>;
-  paid?: InputMaybe<Scalars['Float']>;
-  productMetas: Array<SaleProductMetaInput>;
-  time?: InputMaybe<Scalars['String']>;
-  warehouseID?: InputMaybe<Scalars['ID']>;
 };
 
 export type AddSaleProfitInput = {
@@ -788,31 +995,13 @@ export type AddSocialAccountInput = {
   youtube?: InputMaybe<Scalars['String']>;
 };
 
-export type AddStaffInput = {
-  address?: InputMaybe<Scalars['String']>;
-  email?: InputMaybe<Scalars['String']>;
-  featureURI?: InputMaybe<Scalars['String']>;
-  firstName: Scalars['String'];
-  lastName: Scalars['String'];
-  otherName?: InputMaybe<Scalars['String']>;
-  password: Scalars['String'];
-  phoneNumber: Scalars['String'];
-  role: StaffRole;
-  warehouseID?: InputMaybe<Scalars['ID']>;
+export type CategoryAddInput = {
+  name?: InputMaybe<Scalars['String']>;
 };
 
-export type AddSupplyInput = {
-  productID: Scalars['ID'];
-  quantity: Scalars['Int'];
-  retailPrice: Scalars['Float'];
-  wholesalePrice: Scalars['Float'];
-};
-
-export type AddWarehouseInput = {
-  address: Scalars['String'];
-  name: Scalars['String'];
-  productIDs?: InputMaybe<Array<Scalars['ID']>>;
-  staffIDs?: InputMaybe<Array<Scalars['ID']>>;
+export type CategoryEditInput = {
+  newCategory: Scalars['String'];
+  oldCategory: Scalars['String'];
 };
 
 export type CategoryPayload = {
@@ -820,24 +1009,18 @@ export type CategoryPayload = {
   error?: Maybe<Scalars['String']>;
 };
 
-export type CustomerMetasInput = {
-  avatarURL?: InputMaybe<Scalars['String']>;
-  dateOfBirth?: InputMaybe<Scalars['String']>;
-  socialMedia?: InputMaybe<CustomerSocialMediaInput>;
+export type CustomerAddInput = {
+  address?: InputMaybe<Scalars['String']>;
+  beneficiary?: InputMaybe<Scalars['Boolean']>;
+  email?: InputMaybe<Scalars['String']>;
+  metas?: InputMaybe<CustomerMetasInput>;
+  name: Scalars['String'];
+  phoneNumber?: InputMaybe<Scalars['String']>;
+  saleIDs: Array<Scalars['ID']>;
+  warehouseID?: InputMaybe<Scalars['ID']>;
 };
 
-export type CustomerSocialMediaInput = {
-  facebook?: InputMaybe<Scalars['String']>;
-  instagram?: InputMaybe<Scalars['String']>;
-  twitter?: InputMaybe<Scalars['String']>;
-};
-
-export type EditCategoryInput = {
-  newCategory: Scalars['String'];
-  oldCategory: Scalars['String'];
-};
-
-export type EditCustomerInput = {
+export type CustomerEditInput = {
   address?: InputMaybe<Scalars['String']>;
   beneficiary?: InputMaybe<Scalars['Boolean']>;
   customerID: Scalars['ID'];
@@ -850,24 +1033,16 @@ export type EditCustomerInput = {
   warehouseID?: InputMaybe<Scalars['ID']>;
 };
 
-export type EditEnterpriseInput = {
-  about?: InputMaybe<Scalars['String']>;
-  address?: InputMaybe<Scalars['String']>;
-  contacts?: InputMaybe<Array<Scalars['String']>>;
-  email?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  owners?: InputMaybe<Array<EditOwnerInput>>;
-  slogan?: InputMaybe<Scalars['String']>;
-  socialAccounts?: InputMaybe<AddSocialAccountInput>;
-  title?: InputMaybe<Scalars['String']>;
-  website?: InputMaybe<Scalars['String']>;
+export type CustomerMetasInput = {
+  avatarURL?: InputMaybe<Scalars['String']>;
+  dateOfBirth?: InputMaybe<Scalars['String']>;
+  socialMedia?: InputMaybe<CustomerSocialMediaInput>;
 };
 
-export type EditEnterprisePayload = {
-  __typename?: 'editEnterprisePayload';
-  edited: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-  newEdited?: Maybe<Enterprise>;
+export type CustomerSocialMediaInput = {
+  facebook?: InputMaybe<Scalars['String']>;
+  instagram?: InputMaybe<Scalars['String']>;
+  twitter?: InputMaybe<Scalars['String']>;
 };
 
 export type EditFeature = {
@@ -886,7 +1061,67 @@ export type EditOwnerInput = {
   website?: InputMaybe<Scalars['String']>;
 };
 
-export type EditProductInput = {
+export type EnterpriseAddInput = {
+  about?: InputMaybe<Scalars['String']>;
+  address: Scalars['String'];
+  contacts: Array<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+  owners: Array<AddOwnerInput>;
+  slogan?: InputMaybe<Scalars['String']>;
+  socialAccounts?: InputMaybe<AddSocialAccountInput>;
+  title?: InputMaybe<Scalars['String']>;
+  website?: InputMaybe<Scalars['String']>;
+};
+
+export type EnterpriseEditInput = {
+  about?: InputMaybe<Scalars['String']>;
+  address?: InputMaybe<Scalars['String']>;
+  contacts?: InputMaybe<Array<Scalars['String']>>;
+  email?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  owners?: InputMaybe<Array<EditOwnerInput>>;
+  slogan?: InputMaybe<Scalars['String']>;
+  socialAccounts?: InputMaybe<AddSocialAccountInput>;
+  title?: InputMaybe<Scalars['String']>;
+  website?: InputMaybe<Scalars['String']>;
+};
+
+export type EnterprisePayload = {
+  __typename?: 'enterprisePayload';
+  error?: Maybe<Scalars['String']>;
+  result?: Maybe<Enterprise>;
+};
+
+export type InitPayload = {
+  __typename?: 'initPayload';
+  _initialized: Scalars['Boolean'];
+  error?: Maybe<Scalars['String']>;
+};
+
+/** Pagination inputs */
+export type PaginInput = {
+  /** Limit: maximum number of data to return */
+  limit?: InputMaybe<Scalars['Int']>;
+  /** PageIndex: page index  */
+  pageIndex?: InputMaybe<Scalars['Int']>;
+  /** Sort: sort the result in Asc (ascending) or Desc (descending) order */
+  sort?: InputMaybe<Sort>;
+};
+
+export type ProductAddInput = {
+  categoryID: Scalars['ID'];
+  description?: InputMaybe<Scalars['String']>;
+  expirationDate?: InputMaybe<Scalars['String']>;
+  featuresURI?: InputMaybe<Array<Scalars['String']>>;
+  name: Scalars['String'];
+  quantity: Scalars['Int'];
+  retailPrice: Scalars['Float'];
+  warehouseIDs?: InputMaybe<Array<Scalars['ID']>>;
+  wholesalePrice: Scalars['Float'];
+};
+
+export type ProductEditInput = {
   categoryID?: InputMaybe<Scalars['ID']>;
   description?: InputMaybe<Scalars['String']>;
   editFeatures?: InputMaybe<EditFeature>;
@@ -898,7 +1133,19 @@ export type EditProductInput = {
   wholesalePrice?: InputMaybe<Scalars['Float']>;
 };
 
-export type EditSaleInput = {
+export type SaleAddInput = {
+  addCustomer?: InputMaybe<CustomerAddInput>;
+  balance?: InputMaybe<Scalars['Float']>;
+  customerID?: InputMaybe<Scalars['ID']>;
+  date?: InputMaybe<Scalars['String']>;
+  discount?: InputMaybe<Scalars['Float']>;
+  paid?: InputMaybe<Scalars['Float']>;
+  productMetas: Array<SaleProductMetaInput>;
+  time?: InputMaybe<Scalars['String']>;
+  warehouseID?: InputMaybe<Scalars['ID']>;
+};
+
+export type SaleEditInput = {
   balance?: InputMaybe<Scalars['Float']>;
   customerID: Scalars['ID'];
   date?: InputMaybe<Scalars['String']>;
@@ -908,54 +1155,6 @@ export type EditSaleInput = {
   saleID: Scalars['ID'];
   time?: InputMaybe<Scalars['String']>;
   warehouseID?: InputMaybe<Scalars['ID']>;
-};
-
-export type EditStaffInput = {
-  address?: InputMaybe<Scalars['String']>;
-  editFeature?: InputMaybe<EditFeature>;
-  email?: InputMaybe<Scalars['String']>;
-  firstName?: InputMaybe<Scalars['String']>;
-  lastName?: InputMaybe<Scalars['String']>;
-  otherName?: InputMaybe<Scalars['String']>;
-  password?: InputMaybe<Scalars['String']>;
-  phoneNumber?: InputMaybe<Scalars['String']>;
-  role?: InputMaybe<StaffRole>;
-  staffID: Scalars['ID'];
-  warehouseID?: InputMaybe<Scalars['ID']>;
-};
-
-export type EditSupplyInput = {
-  productID: Scalars['ID'];
-  quantity?: InputMaybe<Scalars['Int']>;
-  retailPrice?: InputMaybe<Scalars['Float']>;
-  warehouseID?: InputMaybe<Scalars['ID']>;
-  wholesalePrice?: InputMaybe<Scalars['Float']>;
-};
-
-export type EditWarehouseInput = {
-  address?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  productIDs?: InputMaybe<Array<Scalars['ID']>>;
-  staffIDs?: InputMaybe<Array<Scalars['ID']>>;
-  warehouseID: Scalars['ID'];
-};
-
-export type EnterPrisePayload = {
-  __typename?: 'enterPrisePayload';
-  error?: Maybe<Scalars['String']>;
-  result?: Maybe<Enterprise>;
-};
-
-export type InitPayload = {
-  __typename?: 'initPayload';
-  _initialized: Scalars['Boolean'];
-  error?: Maybe<Scalars['String']>;
-};
-
-export type PaginInput = {
-  limit?: InputMaybe<Scalars['Int']>;
-  pageIndex?: InputMaybe<Scalars['Int']>;
-  sort?: InputMaybe<Scalars['String']>;
 };
 
 export type SaleProductMetaInput = {
@@ -1009,6 +1208,63 @@ export type SearchSupplyInput = {
   supplyID?: InputMaybe<Scalars['ID']>;
   time?: InputMaybe<Scalars['String']>;
   warehouseID?: InputMaybe<Scalars['ID']>;
+};
+
+export type StaffAddInput = {
+  address?: InputMaybe<Scalars['String']>;
+  email?: InputMaybe<Scalars['String']>;
+  featureURI?: InputMaybe<Scalars['String']>;
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
+  otherName?: InputMaybe<Scalars['String']>;
+  password: Scalars['String'];
+  phoneNumber: Scalars['String'];
+  role: StaffRole;
+  warehouseID?: InputMaybe<Scalars['ID']>;
+};
+
+export type StaffEditInput = {
+  address?: InputMaybe<Scalars['String']>;
+  editFeature?: InputMaybe<EditFeature>;
+  email?: InputMaybe<Scalars['String']>;
+  firstName?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
+  otherName?: InputMaybe<Scalars['String']>;
+  password?: InputMaybe<Scalars['String']>;
+  phoneNumber?: InputMaybe<Scalars['String']>;
+  role?: InputMaybe<StaffRole>;
+  staffID: Scalars['ID'];
+  warehouseID?: InputMaybe<Scalars['ID']>;
+};
+
+export type SupplyAddInput = {
+  productID: Scalars['ID'];
+  quantity: Scalars['Int'];
+  retailPrice: Scalars['Float'];
+  wholesalePrice: Scalars['Float'];
+};
+
+export type SupplyEditInput = {
+  productID: Scalars['ID'];
+  quantity?: InputMaybe<Scalars['Int']>;
+  retailPrice?: InputMaybe<Scalars['Float']>;
+  warehouseID?: InputMaybe<Scalars['ID']>;
+  wholesalePrice?: InputMaybe<Scalars['Float']>;
+};
+
+export type WarehouseAddInput = {
+  address: Scalars['String'];
+  name: Scalars['String'];
+  productIDs?: InputMaybe<Array<Scalars['ID']>>;
+  staffIDs?: InputMaybe<Array<Scalars['ID']>>;
+};
+
+export type WarehouseEditInput = {
+  address?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  productIDs?: InputMaybe<Array<Scalars['ID']>>;
+  staffIDs?: InputMaybe<Array<Scalars['ID']>>;
+  warehouseID: Scalars['ID'];
 };
 
 export type WarehouseSearchInput = {
@@ -1085,258 +1341,272 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+/** Mapping of union types */
+export type ResolversUnionTypes = ResolversObject<{
+  UType: ( Category ) | ( Customer ) | ( Product ) | ( Sale ) | ( Staff ) | ( Store ) | ( Supply ) | ( Warehouse );
+}>;
 
+/** Mapping of union parent types */
+export type ResolversUnionParentTypes = ResolversObject<{
+  UType: ( Category ) | ( Customer ) | ( Product ) | ( Sale ) | ( Staff ) | ( Store ) | ( Supply ) | ( Warehouse );
+}>;
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
-  AddCategoryPayload: ResolverTypeWrapper<AddCategoryPayload>;
-  AddCustomerPayload: ResolverTypeWrapper<AddCustomerPayload>;
-  AddProductPayload: ResolverTypeWrapper<AddProductPayload>;
-  AddSalePayload: ResolverTypeWrapper<AddSalePayload>;
-  AddStaffPayload: ResolverTypeWrapper<AddStaffPayload>;
-  AddSupplyPayload: ResolverTypeWrapper<AddSupplyPayload>;
-  AddWarehousePayload: ResolverTypeWrapper<AddWarehousePayload>;
   AddWarehouseStaffPayload: ResolverTypeWrapper<AddWarehouseStaffPayload>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Category: ResolverTypeWrapper<Category>;
+  CategoryAddPayload: ResolverTypeWrapper<CategoryAddPayload>;
+  CategoryAddSubscription: ResolverTypeWrapper<CategoryAddSubscription>;
+  CategoryDeletePayload: ResolverTypeWrapper<CategoryDeletePayload>;
+  CategoryDeleteSubscription: ResolverTypeWrapper<CategoryDeleteSubscription>;
+  CategoryEditPayload: ResolverTypeWrapper<CategoryEditPayload>;
+  CategoryEditSubscription: ResolverTypeWrapper<CategoryEditSubscription>;
   Customer: ResolverTypeWrapper<Customer>;
+  CustomerAddPayload: ResolverTypeWrapper<CustomerAddPayload>;
+  CustomerDeletePayload: ResolverTypeWrapper<CustomerDeletePayload>;
+  CustomerEditPayload: ResolverTypeWrapper<CustomerEditPayload>;
   CustomerMetaData: ResolverTypeWrapper<CustomerMetaData>;
   CustomerPayload: ResolverTypeWrapper<CustomerPayload>;
   CustomerSocialMedia: ResolverTypeWrapper<CustomerSocialMedia>;
   CustomersPayload: ResolverTypeWrapper<CustomersPayload>;
-  DeleteCategoryPayload: ResolverTypeWrapper<DeleteCategoryPayload>;
-  DeleteCustomerPayload: ResolverTypeWrapper<DeleteCustomerPayload>;
-  DeleteProductPayload: ResolverTypeWrapper<DeleteProductPayload>;
-  DeleteSalePayload: ResolverTypeWrapper<DeleteSalePayload>;
-  DeleteStaffPayload: ResolverTypeWrapper<DeleteStaffPayload>;
-  DeleteSupplyPayload: ResolverTypeWrapper<DeleteSupplyPayload>;
-  DeleteWarehousePayload: ResolverTypeWrapper<DeleteWarehousePayload>;
-  EditCategoryPayload: ResolverTypeWrapper<EditCategoryPayload>;
-  EditCustomerPayload: ResolverTypeWrapper<EditCustomerPayload>;
-  EditProductPayload: ResolverTypeWrapper<EditProductPayload>;
-  EditSalePayload: ResolverTypeWrapper<EditSalePayload>;
-  EditStaffPayload: ResolverTypeWrapper<EditStaffPayload>;
-  EditSupplyPayload: ResolverTypeWrapper<EditSupplyPayload>;
-  EditWarehousePayload: ResolverTypeWrapper<EditWarehousePayload>;
+  Date: ResolverTypeWrapper<Scalars['Date']>;
   Enterprise: ResolverTypeWrapper<Enterprise>;
+  EnterpriseAddPayload: ResolverTypeWrapper<EnterpriseAddPayload>;
+  EnterpriseEditPayload: ResolverTypeWrapper<EnterpriseEditPayload>;
   EnterpriseOwner: ResolverTypeWrapper<EnterpriseOwner>;
   EnterpriseSocialAccounts: ResolverTypeWrapper<EnterpriseSocialAccounts>;
+  Error: ResolverTypeWrapper<Error>;
   Feature: ResolverTypeWrapper<Feature>;
   FeatureEditAction: FeatureEditAction;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  ISubscription: ResolversTypes['CategoryAddSubscription'] | ResolversTypes['CategoryDeleteSubscription'] | ResolversTypes['CategoryEditSubscription'] | ResolversTypes['ProductAddSubscription'] | ResolversTypes['ProductDeleteSubscription'] | ResolversTypes['ProductEditSubscription'] | ResolversTypes['SaleAddSubscription'] | ResolversTypes['SaleDeleteSubscription'] | ResolversTypes['SaleEditSubscription'] | ResolversTypes['StaffAddSubscription'] | ResolversTypes['StaffDeleteSubscription'] | ResolversTypes['SupplyAddSubscription'] | ResolversTypes['SupplyDeleteSubscription'] | ResolversTypes['SupplyEditSubscription'] | ResolversTypes['WarehouseAddSubscription'] | ResolversTypes['WarehouseDeleteSubscription'] | ResolversTypes['WarehouseEditSubscription'];
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   Pagins: ResolverTypeWrapper<Pagins>;
   Product: ResolverTypeWrapper<Product>;
+  ProductAddPayload: ResolverTypeWrapper<ProductAddPayload>;
+  ProductAddSubscription: ResolverTypeWrapper<ProductAddSubscription>;
+  ProductDeletePayload: ResolverTypeWrapper<ProductDeletePayload>;
+  ProductDeleteSubscription: ResolverTypeWrapper<ProductDeleteSubscription>;
+  ProductEditPayload: ResolverTypeWrapper<ProductEditPayload>;
+  ProductEditSubscription: ResolverTypeWrapper<ProductEditSubscription>;
   ProductPayload: ResolverTypeWrapper<ProductPayload>;
   ProductsPayload: ResolverTypeWrapper<ProductsPayload>;
   Query: ResolverTypeWrapper<{}>;
+  RolePrevileges: RolePrevileges;
   Sale: ResolverTypeWrapper<Sale>;
+  SaleAddPayload: ResolverTypeWrapper<SaleAddPayload>;
+  SaleAddSubscription: ResolverTypeWrapper<SaleAddSubscription>;
+  SaleDeletePayload: ResolverTypeWrapper<SaleDeletePayload>;
+  SaleDeleteSubscription: ResolverTypeWrapper<SaleDeleteSubscription>;
+  SaleEditPayload: ResolverTypeWrapper<SaleEditPayload>;
+  SaleEditSubscription: ResolverTypeWrapper<SaleEditSubscription>;
   SalePayload: ResolverTypeWrapper<SalePayload>;
   SaleProduct: ResolverTypeWrapper<SaleProduct>;
   SaleProfit: ResolverTypeWrapper<SaleProfit>;
   SalesPayload: ResolverTypeWrapper<SalesPayload>;
+  Sort: Sort;
   Staff: ResolverTypeWrapper<Staff>;
+  StaffAddPayload: ResolverTypeWrapper<StaffAddPayload>;
+  StaffAddSubscription: ResolverTypeWrapper<StaffAddSubscription>;
+  StaffDeletePayload: ResolverTypeWrapper<StaffDeletePayload>;
+  StaffDeleteSubscription: ResolverTypeWrapper<StaffDeleteSubscription>;
+  StaffEditPayload: ResolverTypeWrapper<StaffEditPayload>;
   StaffPayload: ResolverTypeWrapper<StaffPayload>;
   StaffRole: StaffRole;
   StaffsPayload: ResolverTypeWrapper<StaffsPayload>;
   Store: ResolverTypeWrapper<Store>;
   StorePayload: ResolverTypeWrapper<StorePayload>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Subscription: ResolverTypeWrapper<{}>;
+  SubscriptionActionType: SubscriptionActionType;
+  SubscriptionPayload: ResolverTypeWrapper<Omit<SubscriptionPayload, 'type'> & { type?: Maybe<ResolversTypes['UType']> }>;
   Supply: ResolverTypeWrapper<Supply>;
+  SupplyAddPayload: ResolverTypeWrapper<SupplyAddPayload>;
+  SupplyAddSubscription: ResolverTypeWrapper<SupplyAddSubscription>;
+  SupplyDeletePayload: ResolverTypeWrapper<SupplyDeletePayload>;
+  SupplyDeleteSubscription: ResolverTypeWrapper<SupplyDeleteSubscription>;
+  SupplyEditPayload: ResolverTypeWrapper<SupplyEditPayload>;
+  SupplyEditSubscription: ResolverTypeWrapper<SupplyEditSubscription>;
   SupplyPayload: ResolverTypeWrapper<SupplyPayload>;
   SupplysPayload: ResolverTypeWrapper<SupplysPayload>;
   Timestamps: ResolverTypeWrapper<Timestamps>;
+  UType: ResolverTypeWrapper<ResolversUnionTypes['UType']>;
   Warehouse: ResolverTypeWrapper<Warehouse>;
+  WarehouseAddPayload: ResolverTypeWrapper<WarehouseAddPayload>;
+  WarehouseAddSubscription: ResolverTypeWrapper<WarehouseAddSubscription>;
+  WarehouseDeletePayload: ResolverTypeWrapper<WarehouseDeletePayload>;
+  WarehouseDeleteSubscription: ResolverTypeWrapper<WarehouseDeleteSubscription>;
+  WarehouseEditPayload: ResolverTypeWrapper<WarehouseEditPayload>;
+  WarehouseEditSubscription: ResolverTypeWrapper<WarehouseEditSubscription>;
   WarehousePayload: ResolverTypeWrapper<WarehousePayload>;
   WarehousesPayload: ResolverTypeWrapper<WarehousesPayload>;
-  addCategoryInput: AddCategoryInput;
-  addCustomerInput: AddCustomerInput;
-  addEnterpriseInput: AddEnterpriseInput;
-  addEnterprisePayload: ResolverTypeWrapper<AddEnterprisePayload>;
   addOwnerInput: AddOwnerInput;
-  addProductInput: AddProductInput;
-  addSaleInput: AddSaleInput;
   addSaleProfitInput: AddSaleProfitInput;
   addSocialAccountInput: AddSocialAccountInput;
-  addStaffInput: AddStaffInput;
-  addSupplyInput: AddSupplyInput;
-  addWarehouseInput: AddWarehouseInput;
+  categoryAddInput: CategoryAddInput;
+  categoryEditInput: CategoryEditInput;
   categoryPayload: ResolverTypeWrapper<CategoryPayload>;
+  customerAddInput: CustomerAddInput;
+  customerEditInput: CustomerEditInput;
   customerMetasInput: CustomerMetasInput;
   customerSocialMediaInput: CustomerSocialMediaInput;
-  editCategoryInput: EditCategoryInput;
-  editCustomerInput: EditCustomerInput;
-  editEnterpriseInput: EditEnterpriseInput;
-  editEnterprisePayload: ResolverTypeWrapper<EditEnterprisePayload>;
   editFeature: EditFeature;
   editOwnerInput: EditOwnerInput;
-  editProductInput: EditProductInput;
-  editSaleInput: EditSaleInput;
-  editStaffInput: EditStaffInput;
-  editSupplyInput: EditSupplyInput;
-  editWarehouseInput: EditWarehouseInput;
-  enterPrisePayload: ResolverTypeWrapper<EnterPrisePayload>;
+  enterpriseAddInput: EnterpriseAddInput;
+  enterpriseEditInput: EnterpriseEditInput;
+  enterprisePayload: ResolverTypeWrapper<EnterprisePayload>;
   initPayload: ResolverTypeWrapper<InitPayload>;
   paginInput: PaginInput;
+  productAddInput: ProductAddInput;
+  productEditInput: ProductEditInput;
+  saleAddInput: SaleAddInput;
+  saleEditInput: SaleEditInput;
   saleProductMetaInput: SaleProductMetaInput;
   searchCustomerInput: SearchCustomerInput;
   searchProductInput: SearchProductInput;
   searchSaleInput: SearchSaleInput;
   searchStaffInput: SearchStaffInput;
   searchSupplyInput: SearchSupplyInput;
+  staffAddInput: StaffAddInput;
+  staffEditInput: StaffEditInput;
+  supplyAddInput: SupplyAddInput;
+  supplyEditInput: SupplyEditInput;
+  warehouseAddInput: WarehouseAddInput;
+  warehouseEditInput: WarehouseEditInput;
   warehouseSearchInput: WarehouseSearchInput;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
-  AddCategoryPayload: AddCategoryPayload;
-  AddCustomerPayload: AddCustomerPayload;
-  AddProductPayload: AddProductPayload;
-  AddSalePayload: AddSalePayload;
-  AddStaffPayload: AddStaffPayload;
-  AddSupplyPayload: AddSupplyPayload;
-  AddWarehousePayload: AddWarehousePayload;
   AddWarehouseStaffPayload: AddWarehouseStaffPayload;
   Boolean: Scalars['Boolean'];
   Category: Category;
+  CategoryAddPayload: CategoryAddPayload;
+  CategoryAddSubscription: CategoryAddSubscription;
+  CategoryDeletePayload: CategoryDeletePayload;
+  CategoryDeleteSubscription: CategoryDeleteSubscription;
+  CategoryEditPayload: CategoryEditPayload;
+  CategoryEditSubscription: CategoryEditSubscription;
   Customer: Customer;
+  CustomerAddPayload: CustomerAddPayload;
+  CustomerDeletePayload: CustomerDeletePayload;
+  CustomerEditPayload: CustomerEditPayload;
   CustomerMetaData: CustomerMetaData;
   CustomerPayload: CustomerPayload;
   CustomerSocialMedia: CustomerSocialMedia;
   CustomersPayload: CustomersPayload;
-  DeleteCategoryPayload: DeleteCategoryPayload;
-  DeleteCustomerPayload: DeleteCustomerPayload;
-  DeleteProductPayload: DeleteProductPayload;
-  DeleteSalePayload: DeleteSalePayload;
-  DeleteStaffPayload: DeleteStaffPayload;
-  DeleteSupplyPayload: DeleteSupplyPayload;
-  DeleteWarehousePayload: DeleteWarehousePayload;
-  EditCategoryPayload: EditCategoryPayload;
-  EditCustomerPayload: EditCustomerPayload;
-  EditProductPayload: EditProductPayload;
-  EditSalePayload: EditSalePayload;
-  EditStaffPayload: EditStaffPayload;
-  EditSupplyPayload: EditSupplyPayload;
-  EditWarehousePayload: EditWarehousePayload;
+  Date: Scalars['Date'];
   Enterprise: Enterprise;
+  EnterpriseAddPayload: EnterpriseAddPayload;
+  EnterpriseEditPayload: EnterpriseEditPayload;
   EnterpriseOwner: EnterpriseOwner;
   EnterpriseSocialAccounts: EnterpriseSocialAccounts;
+  Error: Error;
   Feature: Feature;
   Float: Scalars['Float'];
   ID: Scalars['ID'];
+  ISubscription: ResolversParentTypes['CategoryAddSubscription'] | ResolversParentTypes['CategoryDeleteSubscription'] | ResolversParentTypes['CategoryEditSubscription'] | ResolversParentTypes['ProductAddSubscription'] | ResolversParentTypes['ProductDeleteSubscription'] | ResolversParentTypes['ProductEditSubscription'] | ResolversParentTypes['SaleAddSubscription'] | ResolversParentTypes['SaleDeleteSubscription'] | ResolversParentTypes['SaleEditSubscription'] | ResolversParentTypes['StaffAddSubscription'] | ResolversParentTypes['StaffDeleteSubscription'] | ResolversParentTypes['SupplyAddSubscription'] | ResolversParentTypes['SupplyDeleteSubscription'] | ResolversParentTypes['SupplyEditSubscription'] | ResolversParentTypes['WarehouseAddSubscription'] | ResolversParentTypes['WarehouseDeleteSubscription'] | ResolversParentTypes['WarehouseEditSubscription'];
   Int: Scalars['Int'];
   Mutation: {};
   Pagins: Pagins;
   Product: Product;
+  ProductAddPayload: ProductAddPayload;
+  ProductAddSubscription: ProductAddSubscription;
+  ProductDeletePayload: ProductDeletePayload;
+  ProductDeleteSubscription: ProductDeleteSubscription;
+  ProductEditPayload: ProductEditPayload;
+  ProductEditSubscription: ProductEditSubscription;
   ProductPayload: ProductPayload;
   ProductsPayload: ProductsPayload;
   Query: {};
   Sale: Sale;
+  SaleAddPayload: SaleAddPayload;
+  SaleAddSubscription: SaleAddSubscription;
+  SaleDeletePayload: SaleDeletePayload;
+  SaleDeleteSubscription: SaleDeleteSubscription;
+  SaleEditPayload: SaleEditPayload;
+  SaleEditSubscription: SaleEditSubscription;
   SalePayload: SalePayload;
   SaleProduct: SaleProduct;
   SaleProfit: SaleProfit;
   SalesPayload: SalesPayload;
   Staff: Staff;
+  StaffAddPayload: StaffAddPayload;
+  StaffAddSubscription: StaffAddSubscription;
+  StaffDeletePayload: StaffDeletePayload;
+  StaffDeleteSubscription: StaffDeleteSubscription;
+  StaffEditPayload: StaffEditPayload;
   StaffPayload: StaffPayload;
   StaffsPayload: StaffsPayload;
   Store: Store;
   StorePayload: StorePayload;
   String: Scalars['String'];
+  Subscription: {};
+  SubscriptionPayload: Omit<SubscriptionPayload, 'type'> & { type?: Maybe<ResolversParentTypes['UType']> };
   Supply: Supply;
+  SupplyAddPayload: SupplyAddPayload;
+  SupplyAddSubscription: SupplyAddSubscription;
+  SupplyDeletePayload: SupplyDeletePayload;
+  SupplyDeleteSubscription: SupplyDeleteSubscription;
+  SupplyEditPayload: SupplyEditPayload;
+  SupplyEditSubscription: SupplyEditSubscription;
   SupplyPayload: SupplyPayload;
   SupplysPayload: SupplysPayload;
   Timestamps: Timestamps;
+  UType: ResolversUnionParentTypes['UType'];
   Warehouse: Warehouse;
+  WarehouseAddPayload: WarehouseAddPayload;
+  WarehouseAddSubscription: WarehouseAddSubscription;
+  WarehouseDeletePayload: WarehouseDeletePayload;
+  WarehouseDeleteSubscription: WarehouseDeleteSubscription;
+  WarehouseEditPayload: WarehouseEditPayload;
+  WarehouseEditSubscription: WarehouseEditSubscription;
   WarehousePayload: WarehousePayload;
   WarehousesPayload: WarehousesPayload;
-  addCategoryInput: AddCategoryInput;
-  addCustomerInput: AddCustomerInput;
-  addEnterpriseInput: AddEnterpriseInput;
-  addEnterprisePayload: AddEnterprisePayload;
   addOwnerInput: AddOwnerInput;
-  addProductInput: AddProductInput;
-  addSaleInput: AddSaleInput;
   addSaleProfitInput: AddSaleProfitInput;
   addSocialAccountInput: AddSocialAccountInput;
-  addStaffInput: AddStaffInput;
-  addSupplyInput: AddSupplyInput;
-  addWarehouseInput: AddWarehouseInput;
+  categoryAddInput: CategoryAddInput;
+  categoryEditInput: CategoryEditInput;
   categoryPayload: CategoryPayload;
+  customerAddInput: CustomerAddInput;
+  customerEditInput: CustomerEditInput;
   customerMetasInput: CustomerMetasInput;
   customerSocialMediaInput: CustomerSocialMediaInput;
-  editCategoryInput: EditCategoryInput;
-  editCustomerInput: EditCustomerInput;
-  editEnterpriseInput: EditEnterpriseInput;
-  editEnterprisePayload: EditEnterprisePayload;
   editFeature: EditFeature;
   editOwnerInput: EditOwnerInput;
-  editProductInput: EditProductInput;
-  editSaleInput: EditSaleInput;
-  editStaffInput: EditStaffInput;
-  editSupplyInput: EditSupplyInput;
-  editWarehouseInput: EditWarehouseInput;
-  enterPrisePayload: EnterPrisePayload;
+  enterpriseAddInput: EnterpriseAddInput;
+  enterpriseEditInput: EnterpriseEditInput;
+  enterprisePayload: EnterprisePayload;
   initPayload: InitPayload;
   paginInput: PaginInput;
+  productAddInput: ProductAddInput;
+  productEditInput: ProductEditInput;
+  saleAddInput: SaleAddInput;
+  saleEditInput: SaleEditInput;
   saleProductMetaInput: SaleProductMetaInput;
   searchCustomerInput: SearchCustomerInput;
   searchProductInput: SearchProductInput;
   searchSaleInput: SearchSaleInput;
   searchStaffInput: SearchStaffInput;
   searchSupplyInput: SearchSupplyInput;
+  staffAddInput: StaffAddInput;
+  staffEditInput: StaffEditInput;
+  supplyAddInput: SupplyAddInput;
+  supplyEditInput: SupplyEditInput;
+  warehouseAddInput: WarehouseAddInput;
+  warehouseEditInput: WarehouseEditInput;
   warehouseSearchInput: WarehouseSearchInput;
 }>;
 
-export type AddCategoryPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['AddCategoryPayload'] = ResolversParentTypes['AddCategoryPayload']> = ResolversObject<{
-  added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newAdded?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+export type AuthorizeRoleDirectiveArgs = {
+  previlege?: Maybe<RolePrevileges>;
+};
 
-export type AddCustomerPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['AddCustomerPayload'] = ResolversParentTypes['AddCustomerPayload']> = ResolversObject<{
-  added?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newAdded?: Resolver<Maybe<ResolversTypes['Customer']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type AddProductPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['AddProductPayload'] = ResolversParentTypes['AddProductPayload']> = ResolversObject<{
-  added?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newAdded?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type AddSalePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['AddSalePayload'] = ResolversParentTypes['AddSalePayload']> = ResolversObject<{
-  added?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newAdded?: Resolver<Maybe<ResolversTypes['Sale']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type AddStaffPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['AddStaffPayload'] = ResolversParentTypes['AddStaffPayload']> = ResolversObject<{
-  added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newAdded?: Resolver<Maybe<ResolversTypes['Staff']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type AddSupplyPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['AddSupplyPayload'] = ResolversParentTypes['AddSupplyPayload']> = ResolversObject<{
-  added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newAdded?: Resolver<Maybe<ResolversTypes['Supply']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type AddWarehousePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['AddWarehousePayload'] = ResolversParentTypes['AddWarehousePayload']> = ResolversObject<{
-  added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newAdded?: Resolver<Maybe<ResolversTypes['Warehouse']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+export type AuthorizeRoleDirectiveResolver<Result, Parent, ContextType = IResolverContext, Args = AuthorizeRoleDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type AddWarehouseStaffPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['AddWarehouseStaffPayload'] = ResolversParentTypes['AddWarehouseStaffPayload']> = ResolversObject<{
   added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -1346,6 +1616,45 @@ export type AddWarehouseStaffPayloadResolvers<ContextType = IResolverContext, Pa
 
 export type CategoryResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Category'] = ResolversParentTypes['Category']> = ResolversObject<{
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CategoryAddPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['CategoryAddPayload'] = ResolversParentTypes['CategoryAddPayload']> = ResolversObject<{
+  added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newAdded?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CategoryAddSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['CategoryAddSubscription'] = ResolversParentTypes['CategoryAddSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CategoryDeletePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['CategoryDeletePayload'] = ResolversParentTypes['CategoryDeletePayload']> = ResolversObject<{
+  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CategoryDeleteSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['CategoryDeleteSubscription'] = ResolversParentTypes['CategoryDeleteSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CategoryEditPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['CategoryEditPayload'] = ResolversParentTypes['CategoryEditPayload']> = ResolversObject<{
+  edited?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newValue?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  oldValue?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CategoryEditSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['CategoryEditSubscription'] = ResolversParentTypes['CategoryEditSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1360,6 +1669,26 @@ export type CustomerResolvers<ContextType = IResolverContext, ParentType extends
   supplys?: Resolver<Array<ResolversTypes['Sale']>, ParentType, ContextType>;
   warehouse?: Resolver<Maybe<ResolversTypes['Warehouse']>, ParentType, ContextType>;
   warehouseID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CustomerAddPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['CustomerAddPayload'] = ResolversParentTypes['CustomerAddPayload']> = ResolversObject<{
+  added?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newAdded?: Resolver<Maybe<ResolversTypes['Customer']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CustomerDeletePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['CustomerDeletePayload'] = ResolversParentTypes['CustomerDeletePayload']> = ResolversObject<{
+  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CustomerEditPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['CustomerEditPayload'] = ResolversParentTypes['CustomerEditPayload']> = ResolversObject<{
+  edited?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newEdited?: Resolver<Maybe<ResolversTypes['Customer']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1390,97 +1719,9 @@ export type CustomersPayloadResolvers<ContextType = IResolverContext, ParentType
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type DeleteCategoryPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['DeleteCategoryPayload'] = ResolversParentTypes['DeleteCategoryPayload']> = ResolversObject<{
-  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type DeleteCustomerPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['DeleteCustomerPayload'] = ResolversParentTypes['DeleteCustomerPayload']> = ResolversObject<{
-  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type DeleteProductPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['DeleteProductPayload'] = ResolversParentTypes['DeleteProductPayload']> = ResolversObject<{
-  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type DeleteSalePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['DeleteSalePayload'] = ResolversParentTypes['DeleteSalePayload']> = ResolversObject<{
-  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type DeleteStaffPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['DeleteStaffPayload'] = ResolversParentTypes['DeleteStaffPayload']> = ResolversObject<{
-  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type DeleteSupplyPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['DeleteSupplyPayload'] = ResolversParentTypes['DeleteSupplyPayload']> = ResolversObject<{
-  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type DeleteWarehousePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['DeleteWarehousePayload'] = ResolversParentTypes['DeleteWarehousePayload']> = ResolversObject<{
-  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type EditCategoryPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['EditCategoryPayload'] = ResolversParentTypes['EditCategoryPayload']> = ResolversObject<{
-  edited?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newValue?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  oldValue?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type EditCustomerPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['EditCustomerPayload'] = ResolversParentTypes['EditCustomerPayload']> = ResolversObject<{
-  edited?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newEdited?: Resolver<Maybe<ResolversTypes['Customer']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type EditProductPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['EditProductPayload'] = ResolversParentTypes['EditProductPayload']> = ResolversObject<{
-  edited?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newEdited?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type EditSalePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['EditSalePayload'] = ResolversParentTypes['EditSalePayload']> = ResolversObject<{
-  edited?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newEdited?: Resolver<Maybe<ResolversTypes['Sale']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type EditStaffPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['EditStaffPayload'] = ResolversParentTypes['EditStaffPayload']> = ResolversObject<{
-  edited?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newEdited?: Resolver<Maybe<ResolversTypes['Staff']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type EditSupplyPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['EditSupplyPayload'] = ResolversParentTypes['EditSupplyPayload']> = ResolversObject<{
-  edited?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newEdited?: Resolver<Maybe<ResolversTypes['Supply']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type EditWarehousePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['EditWarehousePayload'] = ResolversParentTypes['EditWarehousePayload']> = ResolversObject<{
-  edited?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newEdited?: Resolver<Maybe<ResolversTypes['Warehouse']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
+export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+  name: 'Date';
+}
 
 export type EnterpriseResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Enterprise'] = ResolversParentTypes['Enterprise']> = ResolversObject<{
   about?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1497,6 +1738,20 @@ export type EnterpriseResolvers<ContextType = IResolverContext, ParentType exten
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   warehouses?: Resolver<Array<ResolversTypes['Warehouse']>, ParentType, ContextType>;
   website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type EnterpriseAddPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['EnterpriseAddPayload'] = ResolversParentTypes['EnterpriseAddPayload']> = ResolversObject<{
+  added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newAdded?: Resolver<Maybe<ResolversTypes['Enterprise']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type EnterpriseEditPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['EnterpriseEditPayload'] = ResolversParentTypes['EnterpriseEditPayload']> = ResolversObject<{
+  edited?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newEdited?: Resolver<Maybe<ResolversTypes['Enterprise']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1519,6 +1774,14 @@ export type EnterpriseSocialAccountsResolvers<ContextType = IResolverContext, Pa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type ErrorResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Error'] = ResolversParentTypes['Error']> = ResolversObject<{
+  code?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type FeatureResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Feature'] = ResolversParentTypes['Feature']> = ResolversObject<{
   extension?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   fileName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -1528,31 +1791,37 @@ export type FeatureResolvers<ContextType = IResolverContext, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type ISubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['ISubscription'] = ResolversParentTypes['ISubscription']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'CategoryAddSubscription' | 'CategoryDeleteSubscription' | 'CategoryEditSubscription' | 'ProductAddSubscription' | 'ProductDeleteSubscription' | 'ProductEditSubscription' | 'SaleAddSubscription' | 'SaleDeleteSubscription' | 'SaleEditSubscription' | 'StaffAddSubscription' | 'StaffDeleteSubscription' | 'SupplyAddSubscription' | 'SupplyDeleteSubscription' | 'SupplyEditSubscription' | 'WarehouseAddSubscription' | 'WarehouseDeleteSubscription' | 'WarehouseEditSubscription', ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+}>;
+
 export type MutationResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   _initializeSys?: Resolver<ResolversTypes['initPayload'], ParentType, ContextType, RequireFields<Mutation_InitializeSysArgs, '_init'>>;
-  addCategory?: Resolver<ResolversTypes['AddCategoryPayload'], ParentType, ContextType, RequireFields<MutationAddCategoryArgs, 'addCategoryInput'>>;
-  addCustomer?: Resolver<ResolversTypes['AddCustomerPayload'], ParentType, ContextType, RequireFields<MutationAddCustomerArgs, 'addCustomerInput'>>;
-  addEnterprise?: Resolver<ResolversTypes['addEnterprisePayload'], ParentType, ContextType, RequireFields<MutationAddEnterpriseArgs, 'addEnterpriseInput'>>;
-  addProduct?: Resolver<ResolversTypes['AddProductPayload'], ParentType, ContextType, RequireFields<MutationAddProductArgs, 'addProductInput'>>;
-  addSale?: Resolver<ResolversTypes['AddSalePayload'], ParentType, ContextType, RequireFields<MutationAddSaleArgs, 'addSaleInput'>>;
-  addStaff?: Resolver<ResolversTypes['AddStaffPayload'], ParentType, ContextType, RequireFields<MutationAddStaffArgs, 'addStaffInput'>>;
-  addWarehouse?: Resolver<ResolversTypes['AddWarehousePayload'], ParentType, ContextType, RequireFields<MutationAddWarehouseArgs, 'addWarehouseInput'>>;
-  deleteCategory?: Resolver<ResolversTypes['DeleteCategoryPayload'], ParentType, ContextType, RequireFields<MutationDeleteCategoryArgs, 'category'>>;
-  deleteCustomer?: Resolver<ResolversTypes['DeleteCustomerPayload'], ParentType, ContextType, RequireFields<MutationDeleteCustomerArgs, 'customerID'>>;
-  deleteProduct?: Resolver<ResolversTypes['DeleteProductPayload'], ParentType, ContextType, RequireFields<MutationDeleteProductArgs, 'productID'>>;
-  deleteSale?: Resolver<ResolversTypes['DeleteSalePayload'], ParentType, ContextType, RequireFields<MutationDeleteSaleArgs, 'saleID'>>;
-  deleteStaff?: Resolver<ResolversTypes['DeleteStaffPayload'], ParentType, ContextType, RequireFields<MutationDeleteStaffArgs, 'staffID'>>;
-  deleteSupply?: Resolver<ResolversTypes['DeleteSupplyPayload'], ParentType, ContextType, RequireFields<MutationDeleteSupplyArgs, 'supplyID'>>;
-  deleteWarehouse?: Resolver<ResolversTypes['DeleteWarehousePayload'], ParentType, ContextType, RequireFields<MutationDeleteWarehouseArgs, 'warehouseID'>>;
-  editCategory?: Resolver<ResolversTypes['EditCategoryPayload'], ParentType, ContextType, RequireFields<MutationEditCategoryArgs, 'editCategoryInput'>>;
-  editCustomer?: Resolver<ResolversTypes['EditCustomerPayload'], ParentType, ContextType, RequireFields<MutationEditCustomerArgs, 'editCustomerInput'>>;
-  editEnterprise?: Resolver<ResolversTypes['editEnterprisePayload'], ParentType, ContextType, RequireFields<MutationEditEnterpriseArgs, 'editEnterpriseInput'>>;
-  editProduct?: Resolver<ResolversTypes['EditProductPayload'], ParentType, ContextType, RequireFields<MutationEditProductArgs, 'editProductInput'>>;
-  editSale?: Resolver<ResolversTypes['EditSalePayload'], ParentType, ContextType, RequireFields<MutationEditSaleArgs, 'editSaleInput'>>;
-  editStaff?: Resolver<ResolversTypes['EditStaffPayload'], ParentType, ContextType, RequireFields<MutationEditStaffArgs, 'editStaffInput'>>;
-  editSupply?: Resolver<ResolversTypes['EditSupplyPayload'], ParentType, ContextType, RequireFields<MutationEditSupplyArgs, 'editSupplyInput' | 'supplyID'>>;
-  editWarehouse?: Resolver<ResolversTypes['EditWarehousePayload'], ParentType, ContextType, RequireFields<MutationEditWarehouseArgs, 'editWarehouseInput'>>;
-  makeSupply?: Resolver<ResolversTypes['AddSupplyPayload'], ParentType, ContextType, RequireFields<MutationMakeSupplyArgs, 'addSupplyInput'>>;
+  categoryAdd?: Resolver<ResolversTypes['CategoryAddPayload'], ParentType, ContextType, RequireFields<MutationCategoryAddArgs, 'categoryAddInput'>>;
+  categoryDelete?: Resolver<ResolversTypes['CategoryDeletePayload'], ParentType, ContextType, RequireFields<MutationCategoryDeleteArgs, 'category'>>;
+  categoryEdit?: Resolver<ResolversTypes['CategoryAddPayload'], ParentType, ContextType, RequireFields<MutationCategoryEditArgs, 'categoryEditInput'>>;
+  customerAdd?: Resolver<ResolversTypes['CustomerAddPayload'], ParentType, ContextType, RequireFields<MutationCustomerAddArgs, 'customerAddInput'>>;
+  customerDelete?: Resolver<ResolversTypes['CustomerDeletePayload'], ParentType, ContextType, RequireFields<MutationCustomerDeleteArgs, 'customerID'>>;
+  customerEdit?: Resolver<ResolversTypes['CustomerEditPayload'], ParentType, ContextType, RequireFields<MutationCustomerEditArgs, 'customerEditInput'>>;
+  enterpriseAdd?: Resolver<ResolversTypes['EnterpriseAddPayload'], ParentType, ContextType, RequireFields<MutationEnterpriseAddArgs, 'enterpriseAddInput'>>;
+  enterpriseEdit?: Resolver<ResolversTypes['EnterpriseEditPayload'], ParentType, ContextType, RequireFields<MutationEnterpriseEditArgs, 'enterpriseEditInput'>>;
+  makeSupply?: Resolver<ResolversTypes['SupplyAddPayload'], ParentType, ContextType, RequireFields<MutationMakeSupplyArgs, 'supplyAddInput'>>;
+  productAdd?: Resolver<ResolversTypes['ProductAddPayload'], ParentType, ContextType, RequireFields<MutationProductAddArgs, 'productAddInput'>>;
+  productDelete?: Resolver<ResolversTypes['ProductDeletePayload'], ParentType, ContextType, RequireFields<MutationProductDeleteArgs, 'productID'>>;
+  productEdit?: Resolver<ResolversTypes['ProductEditPayload'], ParentType, ContextType, RequireFields<MutationProductEditArgs, 'productEditInput'>>;
+  saleAdd?: Resolver<ResolversTypes['SaleAddPayload'], ParentType, ContextType, RequireFields<MutationSaleAddArgs, 'saleAddInput'>>;
+  saleDelete?: Resolver<ResolversTypes['SaleDeletePayload'], ParentType, ContextType, RequireFields<MutationSaleDeleteArgs, 'saleID'>>;
+  saleEdit?: Resolver<ResolversTypes['SaleEditPayload'], ParentType, ContextType, RequireFields<MutationSaleEditArgs, 'saleEditInput'>>;
+  staffAdd?: Resolver<ResolversTypes['StaffAddPayload'], ParentType, ContextType, RequireFields<MutationStaffAddArgs, 'staffAddInput'>>;
+  staffDelete?: Resolver<ResolversTypes['StaffDeletePayload'], ParentType, ContextType, RequireFields<MutationStaffDeleteArgs, 'staffID'>>;
+  staffEdit?: Resolver<ResolversTypes['StaffEditPayload'], ParentType, ContextType, RequireFields<MutationStaffEditArgs, 'staffEditInput'>>;
+  supplyDelete?: Resolver<ResolversTypes['SupplyDeletePayload'], ParentType, ContextType, RequireFields<MutationSupplyDeleteArgs, 'supplyID'>>;
+  supplyEdit?: Resolver<ResolversTypes['SupplyEditPayload'], ParentType, ContextType, RequireFields<MutationSupplyEditArgs, 'supplyEditInput' | 'supplyID'>>;
+  warehouseAdd?: Resolver<ResolversTypes['WarehouseAddPayload'], ParentType, ContextType, RequireFields<MutationWarehouseAddArgs, 'warehouseAddInput'>>;
+  warehouseDelete?: Resolver<ResolversTypes['WarehouseDeletePayload'], ParentType, ContextType, RequireFields<MutationWarehouseDeleteArgs, 'warehouseID'>>;
+  warehouseEdit?: Resolver<ResolversTypes['WarehouseEditPayload'], ParentType, ContextType, RequireFields<MutationWarehouseEditArgs, 'warehouseEditInput'>>;
 }>;
 
 export type PaginsResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Pagins'] = ResolversParentTypes['Pagins']> = ResolversObject<{
@@ -1577,6 +1846,44 @@ export type ProductResolvers<ContextType = IResolverContext, ParentType extends 
   retailPrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   warehouses?: Resolver<Maybe<Array<ResolversTypes['Warehouse']>>, ParentType, ContextType>;
   wholesalePrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ProductAddPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['ProductAddPayload'] = ResolversParentTypes['ProductAddPayload']> = ResolversObject<{
+  added?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newAdded?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ProductAddSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['ProductAddSubscription'] = ResolversParentTypes['ProductAddSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ProductDeletePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['ProductDeletePayload'] = ResolversParentTypes['ProductDeletePayload']> = ResolversObject<{
+  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ProductDeleteSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['ProductDeleteSubscription'] = ResolversParentTypes['ProductDeleteSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ProductEditPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['ProductEditPayload'] = ResolversParentTypes['ProductEditPayload']> = ResolversObject<{
+  edited?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newEdited?: Resolver<Maybe<ResolversTypes['Product']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ProductEditSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['ProductEditSubscription'] = ResolversParentTypes['ProductEditSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1628,6 +1935,44 @@ export type SaleResolvers<ContextType = IResolverContext, ParentType extends Res
   totalQuantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   warehouse?: Resolver<Maybe<ResolversTypes['Warehouse']>, ParentType, ContextType>;
   warehouseID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SaleAddPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SaleAddPayload'] = ResolversParentTypes['SaleAddPayload']> = ResolversObject<{
+  added?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newAdded?: Resolver<Maybe<ResolversTypes['Sale']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SaleAddSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SaleAddSubscription'] = ResolversParentTypes['SaleAddSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SaleDeletePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SaleDeletePayload'] = ResolversParentTypes['SaleDeletePayload']> = ResolversObject<{
+  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SaleDeleteSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SaleDeleteSubscription'] = ResolversParentTypes['SaleDeleteSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SaleEditPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SaleEditPayload'] = ResolversParentTypes['SaleEditPayload']> = ResolversObject<{
+  edited?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newEdited?: Resolver<Maybe<ResolversTypes['Sale']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SaleEditSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SaleEditSubscription'] = ResolversParentTypes['SaleEditSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1684,6 +2029,38 @@ export type StaffResolvers<ContextType = IResolverContext, ParentType extends Re
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type StaffAddPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['StaffAddPayload'] = ResolversParentTypes['StaffAddPayload']> = ResolversObject<{
+  added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newAdded?: Resolver<Maybe<ResolversTypes['Staff']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type StaffAddSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['StaffAddSubscription'] = ResolversParentTypes['StaffAddSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type StaffDeletePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['StaffDeletePayload'] = ResolversParentTypes['StaffDeletePayload']> = ResolversObject<{
+  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type StaffDeleteSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['StaffDeleteSubscription'] = ResolversParentTypes['StaffDeleteSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type StaffEditPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['StaffEditPayload'] = ResolversParentTypes['StaffEditPayload']> = ResolversObject<{
+  edited?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newEdited?: Resolver<Maybe<ResolversTypes['Staff']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type StaffPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['StaffPayload'] = ResolversParentTypes['StaffPayload']> = ResolversObject<{
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   staff?: Resolver<Maybe<ResolversTypes['Staff']>, ParentType, ContextType>;
@@ -1700,7 +2077,7 @@ export type StaffsPayloadResolvers<ContextType = IResolverContext, ParentType ex
 export type StoreResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Store'] = ResolversParentTypes['Store']> = ResolversObject<{
   _enterpriseInitialized?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   _sysInitialized?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  enterPrise?: Resolver<Maybe<ResolversTypes['enterPrisePayload']>, ParentType, ContextType>;
+  enterPrise?: Resolver<Maybe<ResolversTypes['enterprisePayload']>, ParentType, ContextType>;
   totalCustomers?: Resolver<Maybe<ResolversTypes['StorePayload']>, ParentType, ContextType>;
   totalExpiredProducts?: Resolver<Maybe<ResolversTypes['StorePayload']>, ParentType, ContextType>;
   totalProducts?: Resolver<Maybe<ResolversTypes['StorePayload']>, ParentType, ContextType>;
@@ -1716,6 +2093,34 @@ export type StorePayloadResolvers<ContextType = IResolverContext, ParentType ext
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type SubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
+  categoryAddSubscription?: SubscriptionResolver<ResolversTypes['CategoryAddSubscription'], "categoryAddSubscription", ParentType, ContextType>;
+  categoryDeleteSubscription?: SubscriptionResolver<ResolversTypes['CategoryDeleteSubscription'], "categoryDeleteSubscription", ParentType, ContextType>;
+  categoryEditSubscription?: SubscriptionResolver<ResolversTypes['CategoryEditSubscription'], "categoryEditSubscription", ParentType, ContextType>;
+  productAddSubscription?: SubscriptionResolver<ResolversTypes['ProductAddSubscription'], "productAddSubscription", ParentType, ContextType>;
+  productDeleteSubscription?: SubscriptionResolver<ResolversTypes['ProductDeleteSubscription'], "productDeleteSubscription", ParentType, ContextType>;
+  productEditSubscription?: SubscriptionResolver<ResolversTypes['ProductEditSubscription'], "productEditSubscription", ParentType, ContextType>;
+  saleAddSubscription?: SubscriptionResolver<ResolversTypes['SaleAddSubscription'], "saleAddSubscription", ParentType, ContextType>;
+  saleDeleteSubscription?: SubscriptionResolver<ResolversTypes['SaleDeleteSubscription'], "saleDeleteSubscription", ParentType, ContextType>;
+  saleEditSubscription?: SubscriptionResolver<ResolversTypes['SaleEditSubscription'], "saleEditSubscription", ParentType, ContextType>;
+  staffAddSubscription?: SubscriptionResolver<ResolversTypes['SaleAddSubscription'], "staffAddSubscription", ParentType, ContextType>;
+  staffDeleteSubscription?: SubscriptionResolver<ResolversTypes['SaleDeleteSubscription'], "staffDeleteSubscription", ParentType, ContextType>;
+  supplyAddSubscription?: SubscriptionResolver<ResolversTypes['SupplyAddSubscription'], "supplyAddSubscription", ParentType, ContextType>;
+  supplyDeleteSubscription?: SubscriptionResolver<ResolversTypes['SupplyDeleteSubscription'], "supplyDeleteSubscription", ParentType, ContextType>;
+  supplyEditSubscription?: SubscriptionResolver<ResolversTypes['SupplyEditSubscription'], "supplyEditSubscription", ParentType, ContextType>;
+  warehouseAddSubscription?: SubscriptionResolver<ResolversTypes['WarehouseAddSubscription'], "warehouseAddSubscription", ParentType, ContextType>;
+  warehouseDeleteSubscription?: SubscriptionResolver<ResolversTypes['WarehouseDeleteSubscription'], "warehouseDeleteSubscription", ParentType, ContextType>;
+  warehouseEditSubscription?: SubscriptionResolver<ResolversTypes['WarehouseEditSubscription'], "warehouseEditSubscription", ParentType, ContextType>;
+}>;
+
+export type SubscriptionPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SubscriptionPayload'] = ResolversParentTypes['SubscriptionPayload']> = ResolversObject<{
+  actionResult?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  actionType?: Resolver<Maybe<ResolversTypes['SubscriptionActionType']>, ParentType, ContextType>;
+  timestamps?: Resolver<ResolversTypes['Timestamps'], ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['UType']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type SupplyResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Supply'] = ResolversParentTypes['Supply']> = ResolversObject<{
   date?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   productIDs?: Resolver<Maybe<Array<ResolversTypes['ID']>>, ParentType, ContextType>;
@@ -1726,6 +2131,44 @@ export type SupplyResolvers<ContextType = IResolverContext, ParentType extends R
   timestamps?: Resolver<Maybe<ResolversTypes['Timestamps']>, ParentType, ContextType>;
   totalPrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   totalQuantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SupplyAddPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SupplyAddPayload'] = ResolversParentTypes['SupplyAddPayload']> = ResolversObject<{
+  added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newAdded?: Resolver<Maybe<ResolversTypes['Supply']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SupplyAddSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SupplyAddSubscription'] = ResolversParentTypes['SupplyAddSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SupplyDeletePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SupplyDeletePayload'] = ResolversParentTypes['SupplyDeletePayload']> = ResolversObject<{
+  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SupplyDeleteSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SupplyDeleteSubscription'] = ResolversParentTypes['SupplyDeleteSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SupplyEditPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SupplyEditPayload'] = ResolversParentTypes['SupplyEditPayload']> = ResolversObject<{
+  edited?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newEdited?: Resolver<Maybe<ResolversTypes['Supply']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type SupplyEditSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SupplyEditSubscription'] = ResolversParentTypes['SupplyEditSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1743,10 +2186,14 @@ export type SupplysPayloadResolvers<ContextType = IResolverContext, ParentType e
 }>;
 
 export type TimestampsResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Timestamps'] = ResolversParentTypes['Timestamps']> = ResolversObject<{
-  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   currentTime?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type UTypeResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['UType'] = ResolversParentTypes['UType']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'Category' | 'Customer' | 'Product' | 'Sale' | 'Staff' | 'Store' | 'Supply' | 'Warehouse', ParentType, ContextType>;
 }>;
 
 export type WarehouseResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Warehouse'] = ResolversParentTypes['Warehouse']> = ResolversObject<{
@@ -1757,6 +2204,44 @@ export type WarehouseResolvers<ContextType = IResolverContext, ParentType extend
   staffIDs?: Resolver<Array<ResolversTypes['ID']>, ParentType, ContextType>;
   staffs?: Resolver<Array<ResolversTypes['Staff']>, ParentType, ContextType>;
   warehouseID?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type WarehouseAddPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['WarehouseAddPayload'] = ResolversParentTypes['WarehouseAddPayload']> = ResolversObject<{
+  added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newAdded?: Resolver<Maybe<ResolversTypes['Warehouse']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type WarehouseAddSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['WarehouseAddSubscription'] = ResolversParentTypes['WarehouseAddSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type WarehouseDeletePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['WarehouseDeletePayload'] = ResolversParentTypes['WarehouseDeletePayload']> = ResolversObject<{
+  deleted?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type WarehouseDeleteSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['WarehouseDeleteSubscription'] = ResolversParentTypes['WarehouseDeleteSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type WarehouseEditPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['WarehouseEditPayload'] = ResolversParentTypes['WarehouseEditPayload']> = ResolversObject<{
+  edited?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  newEdited?: Resolver<Maybe<ResolversTypes['Warehouse']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type WarehouseEditSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['WarehouseEditSubscription'] = ResolversParentTypes['WarehouseEditSubscription']> = ResolversObject<{
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1772,26 +2257,12 @@ export type WarehousesPayloadResolvers<ContextType = IResolverContext, ParentTyp
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type AddEnterprisePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['addEnterprisePayload'] = ResolversParentTypes['addEnterprisePayload']> = ResolversObject<{
-  added?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newAdded?: Resolver<Maybe<ResolversTypes['Enterprise']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type CategoryPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['categoryPayload'] = ResolversParentTypes['categoryPayload']> = ResolversObject<{
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type EditEnterprisePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['editEnterprisePayload'] = ResolversParentTypes['editEnterprisePayload']> = ResolversObject<{
-  edited?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  newEdited?: Resolver<Maybe<ResolversTypes['Enterprise']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type EnterPrisePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['enterPrisePayload'] = ResolversParentTypes['enterPrisePayload']> = ResolversObject<{
+export type EnterprisePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['enterprisePayload'] = ResolversParentTypes['enterprisePayload']> = ResolversObject<{
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   result?: Resolver<Maybe<ResolversTypes['Enterprise']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1804,65 +2275,91 @@ export type InitPayloadResolvers<ContextType = IResolverContext, ParentType exte
 }>;
 
 export type Resolvers<ContextType = IResolverContext> = ResolversObject<{
-  AddCategoryPayload?: AddCategoryPayloadResolvers<ContextType>;
-  AddCustomerPayload?: AddCustomerPayloadResolvers<ContextType>;
-  AddProductPayload?: AddProductPayloadResolvers<ContextType>;
-  AddSalePayload?: AddSalePayloadResolvers<ContextType>;
-  AddStaffPayload?: AddStaffPayloadResolvers<ContextType>;
-  AddSupplyPayload?: AddSupplyPayloadResolvers<ContextType>;
-  AddWarehousePayload?: AddWarehousePayloadResolvers<ContextType>;
   AddWarehouseStaffPayload?: AddWarehouseStaffPayloadResolvers<ContextType>;
   Category?: CategoryResolvers<ContextType>;
+  CategoryAddPayload?: CategoryAddPayloadResolvers<ContextType>;
+  CategoryAddSubscription?: CategoryAddSubscriptionResolvers<ContextType>;
+  CategoryDeletePayload?: CategoryDeletePayloadResolvers<ContextType>;
+  CategoryDeleteSubscription?: CategoryDeleteSubscriptionResolvers<ContextType>;
+  CategoryEditPayload?: CategoryEditPayloadResolvers<ContextType>;
+  CategoryEditSubscription?: CategoryEditSubscriptionResolvers<ContextType>;
   Customer?: CustomerResolvers<ContextType>;
+  CustomerAddPayload?: CustomerAddPayloadResolvers<ContextType>;
+  CustomerDeletePayload?: CustomerDeletePayloadResolvers<ContextType>;
+  CustomerEditPayload?: CustomerEditPayloadResolvers<ContextType>;
   CustomerMetaData?: CustomerMetaDataResolvers<ContextType>;
   CustomerPayload?: CustomerPayloadResolvers<ContextType>;
   CustomerSocialMedia?: CustomerSocialMediaResolvers<ContextType>;
   CustomersPayload?: CustomersPayloadResolvers<ContextType>;
-  DeleteCategoryPayload?: DeleteCategoryPayloadResolvers<ContextType>;
-  DeleteCustomerPayload?: DeleteCustomerPayloadResolvers<ContextType>;
-  DeleteProductPayload?: DeleteProductPayloadResolvers<ContextType>;
-  DeleteSalePayload?: DeleteSalePayloadResolvers<ContextType>;
-  DeleteStaffPayload?: DeleteStaffPayloadResolvers<ContextType>;
-  DeleteSupplyPayload?: DeleteSupplyPayloadResolvers<ContextType>;
-  DeleteWarehousePayload?: DeleteWarehousePayloadResolvers<ContextType>;
-  EditCategoryPayload?: EditCategoryPayloadResolvers<ContextType>;
-  EditCustomerPayload?: EditCustomerPayloadResolvers<ContextType>;
-  EditProductPayload?: EditProductPayloadResolvers<ContextType>;
-  EditSalePayload?: EditSalePayloadResolvers<ContextType>;
-  EditStaffPayload?: EditStaffPayloadResolvers<ContextType>;
-  EditSupplyPayload?: EditSupplyPayloadResolvers<ContextType>;
-  EditWarehousePayload?: EditWarehousePayloadResolvers<ContextType>;
+  Date?: GraphQLScalarType;
   Enterprise?: EnterpriseResolvers<ContextType>;
+  EnterpriseAddPayload?: EnterpriseAddPayloadResolvers<ContextType>;
+  EnterpriseEditPayload?: EnterpriseEditPayloadResolvers<ContextType>;
   EnterpriseOwner?: EnterpriseOwnerResolvers<ContextType>;
   EnterpriseSocialAccounts?: EnterpriseSocialAccountsResolvers<ContextType>;
+  Error?: ErrorResolvers<ContextType>;
   Feature?: FeatureResolvers<ContextType>;
+  ISubscription?: ISubscriptionResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Pagins?: PaginsResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
+  ProductAddPayload?: ProductAddPayloadResolvers<ContextType>;
+  ProductAddSubscription?: ProductAddSubscriptionResolvers<ContextType>;
+  ProductDeletePayload?: ProductDeletePayloadResolvers<ContextType>;
+  ProductDeleteSubscription?: ProductDeleteSubscriptionResolvers<ContextType>;
+  ProductEditPayload?: ProductEditPayloadResolvers<ContextType>;
+  ProductEditSubscription?: ProductEditSubscriptionResolvers<ContextType>;
   ProductPayload?: ProductPayloadResolvers<ContextType>;
   ProductsPayload?: ProductsPayloadResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Sale?: SaleResolvers<ContextType>;
+  SaleAddPayload?: SaleAddPayloadResolvers<ContextType>;
+  SaleAddSubscription?: SaleAddSubscriptionResolvers<ContextType>;
+  SaleDeletePayload?: SaleDeletePayloadResolvers<ContextType>;
+  SaleDeleteSubscription?: SaleDeleteSubscriptionResolvers<ContextType>;
+  SaleEditPayload?: SaleEditPayloadResolvers<ContextType>;
+  SaleEditSubscription?: SaleEditSubscriptionResolvers<ContextType>;
   SalePayload?: SalePayloadResolvers<ContextType>;
   SaleProduct?: SaleProductResolvers<ContextType>;
   SaleProfit?: SaleProfitResolvers<ContextType>;
   SalesPayload?: SalesPayloadResolvers<ContextType>;
   Staff?: StaffResolvers<ContextType>;
+  StaffAddPayload?: StaffAddPayloadResolvers<ContextType>;
+  StaffAddSubscription?: StaffAddSubscriptionResolvers<ContextType>;
+  StaffDeletePayload?: StaffDeletePayloadResolvers<ContextType>;
+  StaffDeleteSubscription?: StaffDeleteSubscriptionResolvers<ContextType>;
+  StaffEditPayload?: StaffEditPayloadResolvers<ContextType>;
   StaffPayload?: StaffPayloadResolvers<ContextType>;
   StaffsPayload?: StaffsPayloadResolvers<ContextType>;
   Store?: StoreResolvers<ContextType>;
   StorePayload?: StorePayloadResolvers<ContextType>;
+  Subscription?: SubscriptionResolvers<ContextType>;
+  SubscriptionPayload?: SubscriptionPayloadResolvers<ContextType>;
   Supply?: SupplyResolvers<ContextType>;
+  SupplyAddPayload?: SupplyAddPayloadResolvers<ContextType>;
+  SupplyAddSubscription?: SupplyAddSubscriptionResolvers<ContextType>;
+  SupplyDeletePayload?: SupplyDeletePayloadResolvers<ContextType>;
+  SupplyDeleteSubscription?: SupplyDeleteSubscriptionResolvers<ContextType>;
+  SupplyEditPayload?: SupplyEditPayloadResolvers<ContextType>;
+  SupplyEditSubscription?: SupplyEditSubscriptionResolvers<ContextType>;
   SupplyPayload?: SupplyPayloadResolvers<ContextType>;
   SupplysPayload?: SupplysPayloadResolvers<ContextType>;
   Timestamps?: TimestampsResolvers<ContextType>;
+  UType?: UTypeResolvers<ContextType>;
   Warehouse?: WarehouseResolvers<ContextType>;
+  WarehouseAddPayload?: WarehouseAddPayloadResolvers<ContextType>;
+  WarehouseAddSubscription?: WarehouseAddSubscriptionResolvers<ContextType>;
+  WarehouseDeletePayload?: WarehouseDeletePayloadResolvers<ContextType>;
+  WarehouseDeleteSubscription?: WarehouseDeleteSubscriptionResolvers<ContextType>;
+  WarehouseEditPayload?: WarehouseEditPayloadResolvers<ContextType>;
+  WarehouseEditSubscription?: WarehouseEditSubscriptionResolvers<ContextType>;
   WarehousePayload?: WarehousePayloadResolvers<ContextType>;
   WarehousesPayload?: WarehousesPayloadResolvers<ContextType>;
-  addEnterprisePayload?: AddEnterprisePayloadResolvers<ContextType>;
   categoryPayload?: CategoryPayloadResolvers<ContextType>;
-  editEnterprisePayload?: EditEnterprisePayloadResolvers<ContextType>;
-  enterPrisePayload?: EnterPrisePayloadResolvers<ContextType>;
+  enterprisePayload?: EnterprisePayloadResolvers<ContextType>;
   initPayload?: InitPayloadResolvers<ContextType>;
 }>;
 
+export type DirectiveResolvers<ContextType = IResolverContext> = ResolversObject<{
+  authorizeRole?: AuthorizeRoleDirectiveResolver<any, any, ContextType>;
+}>;

@@ -18,7 +18,9 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { errorMiddlwares } from '@server-commons/middlewares/error';
 import { assetMiddlwares } from '@server-commons/middlewares/assets';
 import { IResolverContext } from '@server-models/interfaces/IResolverContext';
+import { authenticationToken } from '@server-commons/auths/authenticationMiddleware';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { authorizeRoleDirectiveTransformer } from '@server/directives/authorize.directives';
 
 /**
  * Main Entry point for the server,
@@ -30,20 +32,19 @@ async function Main() {
   // Create a httpServer and use express app
   const httpServer: Server = createServer(app);
   // Make an executable schema from the schema.graphql and resolver
-  const schema = makeExecutableSchema({
-    /* typeDefs: fs.readFileSync('src/models/schemas/schema.graphql', {
-      encoding: 'utf-8',
-    }), */
-    typeDefs,
-    resolvers,
-  });
+  const schema = authorizeRoleDirectiveTransformer(
+    makeExecutableSchema({
+      typeDefs,
+      resolvers,
+    })
+  );
   // Creating the WebSocket server
   const wsServer = new WebSocketServer({
     // This is the `httpServer` we created in a previous step.
     server: httpServer,
     // Pass a different path here if your ApolloServer serves at
     // a different path.
-    path: '/v2',
+    path: '/v1',
   });
   // Hand in the schema we just created and have the
   // WebSocketServer start listening.
@@ -72,7 +73,7 @@ async function Main() {
     await apolloServer.start();
     // MIDDLEWARES
     app.use(
-      '/v2',
+      '/v1',
       // SET UP CORS
       cors<cors.CorsRequest>({ origin: ['http://localhost:3000'] }),
       // BODYPARSER
@@ -85,10 +86,19 @@ async function Main() {
       errorMiddlwares(__dirname),
       // EXPRESSMIDDLWARE
       expressMiddleware(apolloServer, {
-        context: async () => ({
-          models,
-          config,
-        }), // end context
+        context: async ({ req }) => {
+          // perform authentication
+          const authenticatedStaff = await authenticationToken(
+            req,
+            config.get('jwt.privateKey')
+          );
+          return {
+            models,
+            config,
+            authenticatedStaff,
+            privateKey: config.get<string>('jwt.privateKey'),
+          }; // end return
+        }, // end context
       }) // end expressMiddleware
     ); // end MIDDLWARE
     //

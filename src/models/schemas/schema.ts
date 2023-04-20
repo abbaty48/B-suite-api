@@ -1,5 +1,9 @@
 import { buildSchema } from 'graphql';
 
+const Directives = `#graphql
+  directive @authorizeRole(previlege: RolePrevileges ) on OBJECT | FIELD_DEFINITION 
+`;
+
 const Scalars = `#graphql
   scalar Date
 `;
@@ -36,6 +40,81 @@ const Enums = `#graphql
       "Accountant Role : Accountant staff has every previlege to ADD,READ,DELETE,EDIT except to delete a Admin/Manager staff."
       Accountant
    }
+
+   enum RolePrevileges {
+      #STAFF
+      ALL_STAFF_OPERATIONS,
+      ADD_STAFF,
+      READ_STAFF,
+      UPDATE_STAFF,
+      DELETE_STAFF,
+      #PRODUCT
+      ALL_PRODUCT_OPERATIONS,
+      ADD_PRODUCT,
+      READ_PRODUCT,
+      UPDATE_PRODUCT,
+      DELETE_PRODUCT,
+      #CATEGORY
+      ALL_CATEGORY_OPERATIONS,
+      ADD_CATEGORY,
+      READ_CATEGORY,
+      UPDATE_CATEGORY,
+      DELETE_CATEGORY,
+      #CUSTOMER
+      ALL_CUSTOMER_OPERATIONS,
+      ADD_CUSTOMER,
+      READ_CUSTOMER,
+      UPDATE_CUSTOMER,
+      DELETE_CUSTOMER,
+      #SALE
+      ALL_SALE_OPERATIONS,
+      ADD_SALE,
+      READ_SALE,
+      UPDATE_SALE,
+      DELETE_SALE,
+      #WAREHOUSE
+      ALL_WAREHOUSE_OPERATIONS,
+      ADD_WAREHOUSE,
+      READ_WAREHOUSE,
+      UPDATE_WAREHOUSE,
+      DELETE_WAREHOUSE,
+      # SUPPLY
+      ALL_SUPPLY_OPERATIONS,
+      ADD_SUPPLY,
+      READ_SUPPLY,
+      UPDATE_SUPPLY,
+      DELETE_SUPPLY,
+      ######### SUBSCRIPTIONS
+      # SALES
+      LISTEN_ADD_SALE,
+      LISTEN_EDIT_SALE,
+      LISTEN_DELETE_SALE,
+      #PRODUCT
+      LISTEN_ADD_PRODUCT,
+      LISTEN_EDIT_PRODUCT,
+      LISTEN_DELETE_PRODUCT,
+      #STAFF
+      LISTEN_ADD_STAFF,
+      LISTEN_DELETE_STAFF,
+      #SUPPLY
+      LISTEN_ADD_SUPPLY,
+      LISTEN_EDIT_SUPPLY,
+      LISTEN_DELETE_SUPPLY,
+      #CATEGORY
+      LISTEN_ADD_CATEGORY,
+      LISTEN_EDIT_CATEGORY,
+      LISTEN_DELETE_CATEGORY,
+      #WAREHOUSE
+      LISTEN_ADD_WAREHOUSE,
+      LISTEN_EDIT_WAREHOUSE,
+      LISTEN_DELETE_WAREHOUSE,
+      #########END SUBSCRIPTION
+      # ENTERPRISE
+      ADD_ENTERPRISE,
+      UPDATE_ENTERPRISE,
+      # SYSTEM
+      INITIALIZED_SYSTEM,
+    }
 
    "Subscription action type"
    enum SubscriptionActionType {
@@ -112,7 +191,7 @@ const Feature = `#graphql
 `;
 
 const Staff = `#graphql
-type Staff {
+type Staff{
   staffID: ID!
   firstName: String!
   lastName: String!
@@ -792,42 +871,42 @@ const Query = `#graphql
 
   type Query {
   ################################## STAFF ##########################################
-    staff(searchFilter: searchStaffInput!): StaffPayload!
-    staffs(searchFilter: searchStaffInput, pagin: paginInput): StaffsPayload!
+    staff(searchFilter: searchStaffInput!): StaffPayload! @authorizeRole(previlege: READ_STAFF)
+    staffs(searchFilter: searchStaffInput, pagin: paginInput): StaffsPayload! @authorizeRole(previlege: READ_STAFF)
 
     ################################## PRODUCT #########################################
-    product(searchFilter: searchProductInput!): ProductPayload!
+    product(searchFilter: searchProductInput!): ProductPayload! @authorizeRole(previlege: READ_PRODUCT)
     products(
       searchFilter: searchProductInput
       pagin: paginInput
-    ): ProductsPayload!
+    ): ProductsPayload! @authorizeRole(previlege: READ_PRODUCT)
 
     ################################## CATEGORY ########################################
-    categories: [Category!]!
+    categories: [Category!]! 
 
     ################################## WAREHOUSE #######################################
-    warehouse(searchFilter: warehouseSearchInput!): WarehousePayload!
+    warehouse(searchFilter: warehouseSearchInput!): WarehousePayload! @authorizeRole(previlege: READ_WAREHOUSE)
     warehouses(
       searchFilter: warehouseSearchInput
       pagin: paginInput
-    ): WarehousesPayload!
+    ): WarehousesPayload! @authorizeRole(previlege: READ_WAREHOUSE)
 
     ################################## SALE ############################################
-    sale(searchFilter: searchSaleInput!): SalePayload!
-    sales(searchFilter: searchSaleInput, pagin: paginInput): SalesPayload!
+    sale(searchFilter: searchSaleInput!): SalePayload! @authorizeRole(previlege: READ_SALE)
+    sales(searchFilter: searchSaleInput, pagin: paginInput): SalesPayload! @authorizeRole(previlege: READ_SALE)
 
     ################################## CUSTOMER ########################################
-    customer(searchFilter: searchCustomerInput!): CustomerPayload!
+    customer(searchFilter: searchCustomerInput!): CustomerPayload! @authorizeRole(previlege: READ_CUSTOMER)
     customers(
       searchFilter: searchCustomerInput
       pagin: paginInput
-    ): CustomersPayload!
+    ): CustomersPayload! @authorizeRole(previlege: READ_CUSTOMER)
 
     ################################## PURCHASE ########################################
-    supply(searchFilter: searchSupplyInput!): SupplyPayload!
-    supplies(searchFilter: searchSupplyInput, pagin: paginInput): SupplysPayload!
+    supply(searchFilter: searchSupplyInput!): SupplyPayload! @authorizeRole(previlege: READ_SUPPLY)
+    supplies(searchFilter: searchSupplyInput, pagin: paginInput): SupplysPayload! @authorizeRole(previlege: READ_SUPPLY)
 
-    ################################## STORE ###########################################
+    ################################## STORE ########################################### 
     store: Store!
   }
 `;
@@ -835,116 +914,117 @@ const Query = `#graphql
 const Mutation = `#graphql
   type Mutation {
       ################################## STAFF ###########################################
-      staffDelete(staffID: ID!): StaffDeletePayload!
-      staffAdd(staffAddInput: staffAddInput!): StaffAddPayload!
-      staffEdit(staffEditInput: staffEditInput!): StaffEditPayload!
+      staffDelete(staffID: ID!): StaffDeletePayload! @authorizeRole(previlege: DELETE_STAFF)
+      staffAdd(staffAddInput: staffAddInput!): StaffAddPayload! @authorizeRole(previlege: ADD_STAFF)
+      staffEdit(staffEditInput: staffEditInput!): StaffEditPayload! @authorizeRole(previlege: UPDATE_STAFF)
 
       ################################## PRODUCT ########################################
-      productAdd(productAddInput: productAddInput!): ProductAddPayload!
-      productEdit(productEditInput: productEditInput!): ProductEditPayload!
-      productDelete(productID: ID!, warehouseID: ID): ProductDeletePayload!
+      productAdd(productAddInput: productAddInput!): ProductAddPayload! @authorizeRole(previlege: ADD_PRODUCT)
+      productEdit(productEditInput: productEditInput!): ProductEditPayload! @authorizeRole(previlege: UPDATE_PRODUCT)
+      productDelete(productID: ID!, warehouseID: ID): ProductDeletePayload! @authorizeRole(previlege: DELETE_PRODUCT)
 
       ################################## CATEGORY ########################################
-      categoryDelete(category: String!): CategoryDeletePayload!
-      categoryAdd(categoryAddInput: categoryAddInput!): CategoryAddPayload!
-      categoryEdit(categoryEditInput: categoryEditInput!): CategoryAddPayload!
+      categoryDelete(category: String!): CategoryDeletePayload! @authorizeRole(previlege: DELETE_CATEGORY)
+      categoryAdd(categoryAddInput: categoryAddInput!): CategoryAddPayload! @authorizeRole(previlege: ADD_CATEGORY)
+      categoryEdit(categoryEditInput: categoryEditInput!): CategoryAddPayload! @authorizeRole(previlege: UPDATE_CATEGORY)
 
       ################################## WAREHOUSE #######################################
-      warehouseDelete(warehouseID: ID!): WarehouseDeletePayload!
-      warehouseAdd(warehouseAddInput: warehouseAddInput!): WarehouseAddPayload!
-      warehouseEdit(warehouseEditInput: warehouseEditInput!): WarehouseEditPayload!
+      warehouseDelete(warehouseID: ID!): WarehouseDeletePayload! @authorizeRole(previlege: DELETE_WAREHOUSE)
+      warehouseAdd(warehouseAddInput: warehouseAddInput!): WarehouseAddPayload! @authorizeRole(previlege: ADD_WAREHOUSE)
+      warehouseEdit(warehouseEditInput: warehouseEditInput!): WarehouseEditPayload! @authorizeRole(previlege: UPDATE_WAREHOUSE)
 
       ################################## SALE ############################################
-      saleAdd(saleAddInput: saleAddInput!): SaleAddPayload!
-      saleDelete(saleID: ID!, warehouseID: ID): SaleDeletePayload!
-      saleEdit(saleEditInput: saleEditInput!): SaleEditPayload!
+      saleAdd(saleAddInput: saleAddInput!): SaleAddPayload! @authorizeRole(previlege: ADD_SALE)
+      saleEdit(saleEditInput: saleEditInput!): SaleEditPayload! @authorizeRole(previlege: UPDATE_SALE)
+      saleDelete(saleID: ID!, warehouseID: ID): SaleDeletePayload! @authorizeRole(previlege: DELETE_SALE)
 
       ################################## CUSTOMER #########################################
-      customerAdd(customerAddInput: customerAddInput!): CustomerAddPayload!
-      customerEdit(customerEditInput: customerEditInput!): CustomerEditPayload!
-      customerDelete(customerID: ID!, warehouseID: ID): CustomerDeletePayload!
+      customerAdd(customerAddInput: customerAddInput!): CustomerAddPayload! @authorizeRole(previlege: ADD_CUSTOMER)
+      customerDelete(customerID: ID!, warehouseID: ID): CustomerDeletePayload! @authorizeRole(previlege: DELETE_CUSTOMER)
+      customerEdit(customerEditInput: customerEditInput!): CustomerEditPayload! @authorizeRole(previlege: UPDATE_CUSTOMER)
 
       ################################# PURCHASE ##########################################
       makeSupply(
         supplyAddInput: [supplyAddInput!]!
         warehouseID: ID
-      ): SupplyAddPayload!
+      ): SupplyAddPayload! @authorizeRole(previlege: ADD_SUPPLY)
       supplyEdit(
         supplyID: ID!
         supplyEditInput: [supplyEditInput!]!
         warehouseID: ID
-      ): SupplyEditPayload!
-      supplyDelete(supplyID: ID!, warehouseID: ID): SupplyDeletePayload!
+      ): SupplyEditPayload! @authorizeRole(previlege: UPDATE_SUPPLY)
+      supplyDelete(supplyID: ID!, warehouseID: ID): SupplyDeletePayload! @authorizeRole(previlege: DELETE_SUPPLY)
 
       ################################# ENTERPRISE ########################################
-      enterpriseAdd(enterpriseAddInput: enterpriseAddInput!): EnterpriseAddPayload!
+      enterpriseAdd(enterpriseAddInput: enterpriseAddInput!): EnterpriseAddPayload! @authorizeRole(previlege: ADD_ENTERPRISE)
       enterpriseEdit(
         enterpriseEditInput: enterpriseEditInput!
-      ): EnterpriseEditPayload!
-      _initializeSys(_init: Boolean!): initPayload!
+      ): EnterpriseEditPayload! @authorizeRole(previlege: UPDATE_ENTERPRISE)
+      _initializeSys(_init: Boolean!): initPayload! @authorizeRole(previlege: INITIALIZED_SYSTEM)
   }
 `;
 
 const Subscription = `#graphql
   type Subscription {
     "subscription when a sale is make"
-    saleAddSubscription: SaleAddSubscription!
+    saleAddSubscription: SaleAddSubscription! @authorizeRole(previlege: LISTEN_ADD_SALE)
     "subscription when a sale is edited"
-    saleEditSubscription: SaleEditSubscription!
+    saleEditSubscription: SaleEditSubscription!  @authorizeRole(previlege: LISTEN_EDIT_SALE)
     "subscription when a sale is deleted"
-    saleDeleteSubscription: SaleDeleteSubscription!
+    saleDeleteSubscription: SaleDeleteSubscription!  @authorizeRole(previlege: LISTEN_DELETE_SALE)
 
     "subscription when a product is added"
-    productAddSubscription: ProductAddSubscription!
+    productAddSubscription: ProductAddSubscription! @authorizeRole(previlege: LISTEN_ADD_PRODUCT)
     "subscription when a product is edited"
-    productEditSubscription: ProductEditSubscription!
+    productEditSubscription: ProductEditSubscription! @authorizeRole(previlege: LISTEN_EDIT_PRODUCT)
     "subscription when a product is deleted"
-    productDeleteSubscription: ProductDeleteSubscription!
+    productDeleteSubscription: ProductDeleteSubscription! @authorizeRole(previlege: LISTEN_DELETE_PRODUCT)
 
     "subscription when a new staff is added"
-    staffAddSubscription: SaleAddSubscription!
+    staffAddSubscription: SaleAddSubscription! @authorizeRole(previlege: LISTEN_ADD_STAFF)
     "subscription when a new staff is deleted"
-    staffDeleteSubscription: SaleDeleteSubscription!
+    staffDeleteSubscription: SaleDeleteSubscription! @authorizeRole(previlege: LISTEN_DELETE_STAFF)
 
     "subscription when a supply is added"
-    supplyAddSubscription: SupplyAddSubscription!
+    supplyAddSubscription: SupplyAddSubscription! @authorizeRole(previlege: LISTEN_ADD_SUPPLY)
     "subscription when a supply is edited"
-    supplyEditSubscription: SupplyEditSubscription!
+    supplyEditSubscription: SupplyEditSubscription! @authorizeRole(previlege: LISTEN_EDIT_SUPPLY)
     "subscription when a supply is deleted"
-    supplyDeleteSubscription: SupplyDeleteSubscription!
+    supplyDeleteSubscription: SupplyDeleteSubscription! @authorizeRole(previlege: LISTEN_DELETE_SUPPLY)
 
     "subscription when a new category is added"
-    categoryAddSubscription: CategoryAddSubscription!
+    categoryAddSubscription: CategoryAddSubscription! @authorizeRole(previlege: LISTEN_ADD_CATEGORY)
     "subscription when a category is edited"
-    categoryEditSubscription: CategoryEditSubscription!
+    categoryEditSubscription: CategoryEditSubscription! @authorizeRole(previlege: LISTEN_EDIT_CATEGORY)
     "subscription when a category is deleted"
-    categoryDeleteSubscription: CategoryDeleteSubscription!
+    categoryDeleteSubscription: CategoryDeleteSubscription! @authorizeRole(previlege: LISTEN_DELETE_CATEGORY)
 
     "subscription when a new warehouse is added"
-    warehouseAddSubscription: WarehouseAddSubscription!
+    warehouseAddSubscription: WarehouseAddSubscription! @authorizeRole(previlege: LISTEN_ADD_WAREHOUSE)
     "subscription when a warehouse is edited"
-    warehouseEditSubscription: WarehouseEditSubscription!
+    warehouseEditSubscription: WarehouseEditSubscription! @authorizeRole(previlege: LISTEN_EDIT_WAREHOUSE)
     "subscription when a warehouse is deleted"
-    warehouseDeleteSubscription: WarehouseDeleteSubscription!
+    warehouseDeleteSubscription: WarehouseDeleteSubscription! @authorizeRole(previlege: LISTEN_DELETE_WAREHOUSE)
 
   }
 `;
 
 const schemas = `
+  ${Directives}
   ${Scalars}
-  ${Unions},
+  ${Unions}
+  ${Enums}
   ${Interfaces}
+  ${Commons}
   ${Enterprice}
   ${Warehouse}
   ${Category}
   ${Customer}
   ${Feature}
   ${Product}
-  ${Commons}
   ${Supply}
   ${Staff}
   ${Store}
-  ${Enums}
   ${Sale}
   ${Query}
   ${Mutation}

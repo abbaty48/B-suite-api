@@ -30,7 +30,9 @@ const express4_1 = require("@apollo/server/express4");
 const schema_2 = require("@graphql-tools/schema");
 const error_1 = require("./src/commons/middlewares/error");
 const assets_1 = require("./src/commons/middlewares/assets");
+const authenticationMiddleware_1 = require("./src/commons/auths/authenticationMiddleware");
 const drainHttpServer_1 = require("@apollo/server/plugin/drainHttpServer");
+const authorize_directives_1 = require("./src/directives/authorize.directives");
 /**
  * Main Entry point for the server,
  * this method start the express server with configuration
@@ -42,20 +44,17 @@ function Main() {
         // Create a httpServer and use express app
         const httpServer = (0, http_1.createServer)(app);
         // Make an executable schema from the schema.graphql and resolver
-        const schema = (0, schema_2.makeExecutableSchema)({
-            /* typeDefs: fs.readFileSync('src/models/schemas/schema.graphql', {
-              encoding: 'utf-8',
-            }), */
+        const schema = (0, authorize_directives_1.authorizeRoleDirectiveTransformer)((0, schema_2.makeExecutableSchema)({
             typeDefs: schema_1.typeDefs,
             resolvers: resolver_1.resolvers,
-        });
+        }));
         // Creating the WebSocket server
         const wsServer = new ws_1.WebSocketServer({
             // This is the `httpServer` we created in a previous step.
             server: httpServer,
             // Pass a different path here if your ApolloServer serves at
             // a different path.
-            path: '/v2',
+            path: '/v1',
         });
         // Hand in the schema we just created and have the
         // WebSocketServer start listening.
@@ -87,7 +86,7 @@ function Main() {
             // start the apollo server
             yield apolloServer.start();
             // MIDDLEWARES
-            app.use('/v2', 
+            app.use('/v1', 
             // SET UP CORS
             (0, cors_1.default)({ origin: ['http://localhost:3000'] }), 
             // BODYPARSER
@@ -100,11 +99,15 @@ function Main() {
             (0, error_1.errorMiddlwares)(__dirname), 
             // EXPRESSMIDDLWARE
             (0, express4_1.expressMiddleware)(apolloServer, {
-                context: () => __awaiter(this, void 0, void 0, function* () {
-                    return ({
+                context: ({ req }) => __awaiter(this, void 0, void 0, function* () {
+                    // perform authentication
+                    const authenticatedStaff = yield (0, authenticationMiddleware_1.authenticationToken)(req, config_1.default.get('jwt.privateKey'));
+                    return {
                         models: mongoose_1.models,
                         config: config_1.default,
-                    });
+                        authenticatedStaff,
+                        privateKey: config_1.default.get('jwt.privateKey'),
+                    }; // end return
                 }), // end context
             }) // end expressMiddleware
             ); // end MIDDLWARE

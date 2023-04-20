@@ -6,7 +6,7 @@ export const assetMiddlwares =
   (__dirname: string) => (req: Request, res: Response, next: NextFunction) => {
     /*** SERVE PRODUCT FEATURE IMAGES*/
     req.app.use(
-      '/v2/public/uploads/features/products/:productID/:featurename',
+      '/v1/public/uploads/features/products/:productID/:featurename',
       (req: Request, res: Response) => {
         res.sendFile(
           path.join(
@@ -20,7 +20,7 @@ export const assetMiddlwares =
     );
     /** SERVE STAFF FEATURE IMAGES */
     req.app.use(
-      '/v2/public/uploads/features/staffs/:staffID/:featurename',
+      '/v1/public/uploads/features/staffs/:staffID/:featurename',
       (req: Request, res: Response) => {
         res.sendFile(
           path.join(
