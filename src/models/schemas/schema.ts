@@ -1,5 +1,21 @@
 import { buildSchema } from 'graphql';
 
+const Scalars = `#graphql
+  scalar Date
+`;
+
+const Unions = `#graphql
+  "Representing either one among types"
+  union UType = Product | Staff | Category | Warehouse | Sale | Customer | Supply | Store
+`;
+
+const Interfaces = `#graphql
+  interface ISubscription {
+    error: Error,
+    payload: SubscriptionPayload!
+  }
+`;
+
 const Enums = `#graphql
   "Sorting order in ascending or descending"
   enum Sort {
@@ -20,15 +36,24 @@ const Enums = `#graphql
       "Accountant Role : Accountant staff has every previlege to ADD,READ,DELETE,EDIT except to delete a Admin/Manager staff."
       Accountant
    }
+
+   "Subscription action type"
+   enum SubscriptionActionType {
+      Added,
+      Edited,
+      Deleted,
+      Read
+    }
 `;
 
 const Commons = `#graphql
+   
    "Timestamps of an action."
    type Timestamps {
       "An Iso created date of an action: YYYY:MM:DDTHH:MM:SS.MILISECONDS+00:00"
-      createdAt: String!
+      createdAt: Date!
       "An Iso updated date of an action: YYYY:MM:DDTHH:MM:SS.MILISECONDS+00:00"
-      updatedAt: String!
+      updatedAt: Date!
       "A unix number representing date of an action"
       currentTime: Int
    }
@@ -48,6 +73,23 @@ const Commons = `#graphql
       nextPageIndex: Int
       currentPageIndex: Int
    }
+   type Error {
+      "message: describing the error message."
+      message: String!,
+      "status: describing the status of error, i.e INVALID_ARGUMENt, UNAUTHROIZED"
+      status: String!,
+      "code: representing error code, i.e 401,404"
+      code: Int!,
+      "success: determine whether the operation successful"
+      success: Boolean!
+   }
+
+   type SubscriptionPayload {
+      type: UType,
+      timestamps: Timestamps!,
+      actionResult: Boolean!,
+      actionType: SubscriptionActionType,
+    }
 `;
 
 const Feature = `#graphql 
@@ -106,6 +148,14 @@ type StaffEditPayload {
 type StaffDeletePayload {
   error: String
   deleted: Boolean!
+}
+type StaffAddSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
+type StaffDeleteSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
 }
 input staffAddInput {
   firstName: String!
@@ -178,6 +228,20 @@ type ProductDeletePayload {
   error: String
   deleted: Boolean!
 }
+
+type ProductAddSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
+type ProductEditSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
+type ProductDeleteSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
+
 input productAddInput {
   name: String!
   quantity: Int!
@@ -235,6 +299,18 @@ type CategoryDeletePayload {
   error: String
   deleted: Boolean!
 }
+type CategoryAddSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
+type CategoryEditSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
+type CategoryDeleteSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
 input categoryAddInput {
   name: String
 }
@@ -283,7 +359,18 @@ type AddWarehouseStaffPayload {
   error: String
   added: Boolean!
 }
-
+type WarehouseAddSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
+type WarehouseEditSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
+type WarehouseDeleteSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
 input warehouseAddInput {
   name: String!
   address: String!
@@ -366,6 +453,18 @@ type SaleEditPayload {
 type SaleDeletePayload {
   error: String
   deleted: Boolean!
+}
+type SaleAddSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
+type SaleEditSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
+type SaleDeleteSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
 }
 input saleProductMetaInput {
   productID: ID!
@@ -531,6 +630,18 @@ type SupplysPayload {
   error: String
   supplies: [Supply!]
   pagins: Pagins
+}
+type SupplyAddSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
+type SupplyEditSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
+}
+type SupplyDeleteSubscription implements ISubscription {
+  error: Error
+  payload: SubscriptionPayload!
 }
 input supplyAddInput {
   productID: ID!
@@ -774,21 +885,70 @@ const Mutation = `#graphql
   }
 `;
 
+const Subscription = `#graphql
+  type Subscription {
+    "subscription when a sale is make"
+    saleAddSubscription: SaleAddSubscription!
+    "subscription when a sale is edited"
+    saleEditSubscription: SaleEditSubscription!
+    "subscription when a sale is deleted"
+    saleDeleteSubscription: SaleDeleteSubscription!
+
+    "subscription when a product is added"
+    productAddSubscription: ProductAddSubscription!
+    "subscription when a product is edited"
+    productEditSubscription: ProductEditSubscription!
+    "subscription when a product is deleted"
+    productDeleteSubscription: ProductDeleteSubscription!
+
+    "subscription when a new staff is added"
+    staffAddSubscription: SaleAddSubscription!
+    "subscription when a new staff is deleted"
+    staffDeleteSubscription: SaleDeleteSubscription!
+
+    "subscription when a supply is added"
+    supplyAddSubscription: SupplyAddSubscription!
+    "subscription when a supply is edited"
+    supplyEditSubscription: SupplyEditSubscription!
+    "subscription when a supply is deleted"
+    supplyDeleteSubscription: SupplyDeleteSubscription!
+
+    "subscription when a new category is added"
+    categoryAddSubscription: CategoryAddSubscription!
+    "subscription when a category is edited"
+    categoryEditSubscription: CategoryEditSubscription!
+    "subscription when a category is deleted"
+    categoryDeleteSubscription: CategoryDeleteSubscription!
+
+    "subscription when a new warehouse is added"
+    warehouseAddSubscription: WarehouseAddSubscription!
+    "subscription when a warehouse is edited"
+    warehouseEditSubscription: WarehouseEditSubscription!
+    "subscription when a warehouse is deleted"
+    warehouseDeleteSubscription: WarehouseDeleteSubscription!
+
+  }
+`;
+
 const schemas = `
-  ${Sale}
-  ${Enums}
-  ${Staff}
-  ${Store}
-  ${Supply}
+  ${Scalars}
+  ${Unions},
+  ${Interfaces}
+  ${Enterprice}
+  ${Warehouse}
+  ${Category}
+  ${Customer}
   ${Feature}
   ${Product}
   ${Commons}
-  ${Category}
-  ${Customer}
-  ${Warehouse}
-  ${Enterprice}
-  ${Mutation}
+  ${Supply}
+  ${Staff}
+  ${Store}
+  ${Enums}
+  ${Sale}
   ${Query}
+  ${Mutation}
+  ${Subscription}
 `;
 
 export const typeDefs = buildSchema(schemas);
