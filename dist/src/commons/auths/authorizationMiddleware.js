@@ -258,11 +258,11 @@ const AuthorizeStaff = (previlege, authenticatedStaff) => {
     /*
      * Check if the authenticated staff role includes the any the prelilege, then return the staff,
      */
-    if (staffPrevileges[authenticatedStaff.role].includes(previlege)) {
+    if (staffPrevileges[authenticatedStaff.role].includes(Number(RolePrevilege_1.RolePrevileges[previlege]))) {
         return authenticatedStaff;
     }
     // else return an error
-    throw new graphql_1.GraphQLError(`You are not authorized to "${RolePrevilege_1.RolePrevileges[previlege].replace('_', ' ')}".`, {
+    throw new graphql_1.GraphQLError(`You are not authorized to "${previlege.toString().replace('_', ' ')}".`, {
         extensions: {
             code: 'UNAUTHORIZED',
             http: { status: 401 },

@@ -15,28 +15,6 @@ export interface IProductsPayload {
   };
 }
 
-export interface IProductPayload {
-  error: string | null;
-  product: IProduct | null;
-}
-
-export interface IProductAddPayload {
-  error: string | null;
-  added: boolean;
-  newAdded: IProduct | null;
-}
-
-export interface IProductEditPayload {
-  error: string | null;
-  edited: boolean;
-  newEdited: IProduct | null;
-}
-
-export interface IProductDeletePayload {
-  error: string;
-  deleted: boolean;
-}
-
 export interface IProduct extends Document {
   productID: string;
   name: string;

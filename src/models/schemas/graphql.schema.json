@@ -2607,6 +2607,16 @@
         "possibleTypes": null
       },
       {
+        "kind": "SCALAR",
+        "name": "Object",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "Pagins",
         "description": null,
@@ -3272,7 +3282,7 @@
             "description": null,
             "args": [
               {
-                "name": "searchFilter",
+                "name": "searchTerm",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3317,7 +3327,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "searchFilter",
+                "name": "searchTerm",
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
@@ -3346,7 +3356,7 @@
             "description": null,
             "args": [
               {
-                "name": "searchFilter",
+                "name": "searchTerm",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3391,7 +3401,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "searchFilter",
+                "name": "searchTerm",
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
@@ -3420,7 +3430,7 @@
             "description": null,
             "args": [
               {
-                "name": "searchFilter",
+                "name": "searchTerm",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3465,7 +3475,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "searchFilter",
+                "name": "searchTerm",
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
@@ -3494,7 +3504,7 @@
             "description": null,
             "args": [
               {
-                "name": "searchFilter",
+                "name": "searchTerm",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3539,7 +3549,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "searchFilter",
+                "name": "searchTerm",
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
@@ -3596,7 +3606,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "searchFilter",
+                "name": "searchTerm",
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
@@ -3625,7 +3635,7 @@
             "description": null,
             "args": [
               {
-                "name": "searchFilter",
+                "name": "searchTerm",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3658,7 +3668,7 @@
             "description": null,
             "args": [
               {
-                "name": "searchFilter",
+                "name": "searchTerm",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -3703,7 +3713,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "searchFilter",
+                "name": "searchTerm",
                 "description": null,
                 "type": {
                   "kind": "INPUT_OBJECT",
@@ -6048,8 +6058,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
+                "kind": "UNION",
+                "name": "Type",
                 "ofType": null
               }
             },
@@ -6080,18 +6090,6 @@
                 "name": "Timestamps",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "type",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "UNION",
-              "name": "UType",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -6680,7 +6678,7 @@
       },
       {
         "kind": "UNION",
-        "name": "UType",
+        "name": "Type",
         "description": "Representing either one among types",
         "fields": null,
         "inputFields": null,
@@ -9427,7 +9425,7 @@
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Date",
               "ofType": null
             },
             "defaultValue": null,
@@ -11111,7 +11109,8 @@
         "isRepeatable": false,
         "locations": [
           "FIELD_DEFINITION",
-          "OBJECT"
+          "OBJECT",
+          "SUBSCRIPTION"
         ],
         "args": [
           {

@@ -1,16 +1,17 @@
 import { buildSchema } from 'graphql';
 
 const Directives = `#graphql
-  directive @authorizeRole(previlege: RolePrevileges ) on OBJECT | FIELD_DEFINITION 
+  directive @authorizeRole(previlege: RolePrevileges ) on OBJECT | FIELD_DEFINITION  | SUBSCRIPTION
 `;
 
 const Scalars = `#graphql
   scalar Date
+  scalar Object
 `;
 
 const Unions = `#graphql
   "Representing either one among types"
-  union UType = Product | Staff | Category | Warehouse | Sale | Customer | Supply | Store
+  union Type = Product | Staff | Category | Warehouse | Sale | Customer | Supply | Store
 `;
 
 const Interfaces = `#graphql
@@ -127,15 +128,6 @@ const Enums = `#graphql
 
 const Commons = `#graphql
    
-   "Timestamps of an action."
-   type Timestamps {
-      "An Iso created date of an action: YYYY:MM:DDTHH:MM:SS.MILISECONDS+00:00"
-      createdAt: Date!
-      "An Iso updated date of an action: YYYY:MM:DDTHH:MM:SS.MILISECONDS+00:00"
-      updatedAt: Date!
-      "A unix number representing date of an action"
-      currentTime: Int
-   }
    "Pagination inputs"
    input paginInput {
       "Limit: maximum number of data to return"
@@ -164,9 +156,8 @@ const Commons = `#graphql
    }
 
    type SubscriptionPayload {
-      type: UType,
-      timestamps: Timestamps!,
-      actionResult: Boolean!,
+      timestamp: Date!,
+      actionResult: Type!,
       actionType: SubscriptionActionType,
     }
 `;
@@ -324,7 +315,7 @@ type ProductDeleteSubscription implements ISubscription {
 input productAddInput {
   name: String!
   quantity: Int!
-  expirationDate: String
+  expirationDate: Date
   warehouseIDs: [ID!]
   categoryID: ID!
   retailPrice: Float!
@@ -685,7 +676,6 @@ type Supply {
   totalQuantity: Int!
   totalPrice: Float!
   date: String
-  timestamps: Timestamps
 }
 type SupplyAddPayload {
   error: String
@@ -871,13 +861,13 @@ const Query = `#graphql
 
   type Query {
   ################################## STAFF ##########################################
-    staff(searchFilter: searchStaffInput!): StaffPayload! @authorizeRole(previlege: READ_STAFF)
-    staffs(searchFilter: searchStaffInput, pagin: paginInput): StaffsPayload! @authorizeRole(previlege: READ_STAFF)
+    staff(searchTerm: searchStaffInput!): StaffPayload! @authorizeRole(previlege: READ_STAFF)
+    staffs(searchTerm: searchStaffInput, pagin: paginInput): StaffsPayload! @authorizeRole(previlege: READ_STAFF)
 
     ################################## PRODUCT #########################################
-    product(searchFilter: searchProductInput!): ProductPayload! @authorizeRole(previlege: READ_PRODUCT)
+    product(searchTerm: searchProductInput!): ProductPayload! @authorizeRole(previlege: READ_PRODUCT)
     products(
-      searchFilter: searchProductInput
+      searchTerm: searchProductInput
       pagin: paginInput
     ): ProductsPayload! @authorizeRole(previlege: READ_PRODUCT)
 
@@ -885,26 +875,26 @@ const Query = `#graphql
     categories: [Category!]! 
 
     ################################## WAREHOUSE #######################################
-    warehouse(searchFilter: warehouseSearchInput!): WarehousePayload! @authorizeRole(previlege: READ_WAREHOUSE)
+    warehouse(searchTerm: warehouseSearchInput!): WarehousePayload! @authorizeRole(previlege: READ_WAREHOUSE)
     warehouses(
-      searchFilter: warehouseSearchInput
+      searchTerm: warehouseSearchInput
       pagin: paginInput
     ): WarehousesPayload! @authorizeRole(previlege: READ_WAREHOUSE)
 
     ################################## SALE ############################################
-    sale(searchFilter: searchSaleInput!): SalePayload! @authorizeRole(previlege: READ_SALE)
-    sales(searchFilter: searchSaleInput, pagin: paginInput): SalesPayload! @authorizeRole(previlege: READ_SALE)
+    sale(searchTerm: searchSaleInput!): SalePayload! @authorizeRole(previlege: READ_SALE)
+    sales(searchTerm: searchSaleInput, pagin: paginInput): SalesPayload! @authorizeRole(previlege: READ_SALE)
 
     ################################## CUSTOMER ########################################
-    customer(searchFilter: searchCustomerInput!): CustomerPayload! @authorizeRole(previlege: READ_CUSTOMER)
+    customer(searchTerm: searchCustomerInput!): CustomerPayload! @authorizeRole(previlege: READ_CUSTOMER)
     customers(
-      searchFilter: searchCustomerInput
+      searchTerm: searchCustomerInput
       pagin: paginInput
     ): CustomersPayload! @authorizeRole(previlege: READ_CUSTOMER)
 
     ################################## PURCHASE ########################################
-    supply(searchFilter: searchSupplyInput!): SupplyPayload! @authorizeRole(previlege: READ_SUPPLY)
-    supplies(searchFilter: searchSupplyInput, pagin: paginInput): SupplysPayload! @authorizeRole(previlege: READ_SUPPLY)
+    supply(searchTerm: searchSupplyInput!): SupplyPayload! @authorizeRole(previlege: READ_SUPPLY)
+    supplies(searchTerm: searchSupplyInput, pagin: paginInput): SupplysPayload! @authorizeRole(previlege: READ_SUPPLY)
 
     ################################## STORE ########################################### 
     store: Store!

@@ -1,5 +1,4 @@
 import { GraphQLSchema, defaultFieldResolver } from 'graphql';
-import { makeExecutableSchema } from '@graphql-tools/schema';
 import { mapSchema, MapperKind, getDirective } from '@graphql-tools/utils';
 
 import { IStaff } from '@server-models/databases/mongodb/interfaces/IStaff';
@@ -29,24 +28,26 @@ function authRoleDirective(
           }
           return undefined;
         },
-        [MapperKind.OBJECT_FIELD]: (fieldConfig, _fieldName, typeName) => {
+        [MapperKind.OBJECT_FIELD]: (
+          fieldConfig: any,
+          _fieldName: any,
+          typeName: any
+        ) => {
           const authorizeRoleDirective =
             getDirective(schema, fieldConfig, directiveName)?.[0] ??
             typeDirectiveArgumentMaps[typeName];
           if (authorizeRoleDirective) {
             const { previlege } = authorizeRoleDirective;
+
             if (previlege) {
               const { resolve = defaultFieldResolver } = fieldConfig;
               fieldConfig.resolve = function (
-                source,
-                args,
+                source: any,
+                args: any,
                 context: IResolverContext,
-                info
+                info: any
               ) {
-                AuthorizeStaff(
-                  previlege as RolePrevileges,
-                  context.authenticatedStaff
-                );
+                AuthorizeStaff(previlege, context.authenticatedStaff);
                 return resolve(source, args, context, info);
               };
               return fieldConfig;
@@ -61,32 +62,3 @@ export const { authorizeRoleDirectiveTransformer } = authRoleDirective(
   'authorizeRole',
   AuthorizeStaff
 );
-
-/* let schema = makeExecutableSchema({
-  typeDefs: [
-    authorizeRoleDirectiveTypeDefs,
-    `
-      type User @auth(requires: USER) {
-        name: String
-        banned: Boolean @auth(requires: ADMIN)
-        canPost: Boolean @auth(requires: REVIEWER)
-      }
-
-      type Query {
-        users: [User]
-      }
-    `,
-  ],
-  resolvers: {
-    Query: {
-      users: () => [
-        {
-          banned: true,
-          canPost: false,
-          name: 'Ben',
-        },
-      ],
-    },
-  },
-});
-schema = authorizeRoleDirectiveTransformer(schema); */

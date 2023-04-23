@@ -10,4 +10,6 @@ export const errorMiddlwares =
       const { status } = err;
       res.status(status).json(err);
     });
+
+    return next();
   };

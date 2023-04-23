@@ -16,6 +16,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   Date: any;
+  Object: any;
 };
 
 export type AddWarehouseStaffPayload = {
@@ -462,68 +463,68 @@ export type Query = {
 
 
 export type QueryCustomerArgs = {
-  searchFilter: SearchCustomerInput;
+  searchTerm: SearchCustomerInput;
 };
 
 
 export type QueryCustomersArgs = {
   pagin?: InputMaybe<PaginInput>;
-  searchFilter?: InputMaybe<SearchCustomerInput>;
+  searchTerm?: InputMaybe<SearchCustomerInput>;
 };
 
 
 export type QueryProductArgs = {
-  searchFilter: SearchProductInput;
+  searchTerm: SearchProductInput;
 };
 
 
 export type QueryProductsArgs = {
   pagin?: InputMaybe<PaginInput>;
-  searchFilter?: InputMaybe<SearchProductInput>;
+  searchTerm?: InputMaybe<SearchProductInput>;
 };
 
 
 export type QuerySaleArgs = {
-  searchFilter: SearchSaleInput;
+  searchTerm: SearchSaleInput;
 };
 
 
 export type QuerySalesArgs = {
   pagin?: InputMaybe<PaginInput>;
-  searchFilter?: InputMaybe<SearchSaleInput>;
+  searchTerm?: InputMaybe<SearchSaleInput>;
 };
 
 
 export type QueryStaffArgs = {
-  searchFilter: SearchStaffInput;
+  searchTerm: SearchStaffInput;
 };
 
 
 export type QueryStaffsArgs = {
   pagin?: InputMaybe<PaginInput>;
-  searchFilter?: InputMaybe<SearchStaffInput>;
+  searchTerm?: InputMaybe<SearchStaffInput>;
 };
 
 
 export type QuerySuppliesArgs = {
   pagin?: InputMaybe<PaginInput>;
-  searchFilter?: InputMaybe<SearchSupplyInput>;
+  searchTerm?: InputMaybe<SearchSupplyInput>;
 };
 
 
 export type QuerySupplyArgs = {
-  searchFilter: SearchSupplyInput;
+  searchTerm: SearchSupplyInput;
 };
 
 
 export type QueryWarehouseArgs = {
-  searchFilter: WarehouseSearchInput;
+  searchTerm: WarehouseSearchInput;
 };
 
 
 export type QueryWarehousesArgs = {
   pagin?: InputMaybe<PaginInput>;
-  searchFilter?: InputMaybe<WarehouseSearchInput>;
+  searchTerm?: InputMaybe<WarehouseSearchInput>;
 };
 
 export enum RolePrevileges {
@@ -828,10 +829,9 @@ export enum SubscriptionActionType {
 
 export type SubscriptionPayload = {
   __typename?: 'SubscriptionPayload';
-  actionResult: Scalars['Boolean'];
+  actionResult: Type;
   actionType?: Maybe<SubscriptionActionType>;
   timestamps: Timestamps;
-  type?: Maybe<UType>;
 };
 
 export type Supply = {
@@ -910,7 +910,7 @@ export type Timestamps = {
 };
 
 /** Representing either one among types */
-export type UType = Category | Customer | Product | Sale | Staff | Store | Supply | Warehouse;
+export type Type = Category | Customer | Product | Sale | Staff | Store | Supply | Warehouse;
 
 export type Warehouse = {
   __typename?: 'Warehouse';
@@ -1112,7 +1112,7 @@ export type PaginInput = {
 export type ProductAddInput = {
   categoryID: Scalars['ID'];
   description?: InputMaybe<Scalars['String']>;
-  expirationDate?: InputMaybe<Scalars['String']>;
+  expirationDate?: InputMaybe<Scalars['Date']>;
   featuresURI?: InputMaybe<Array<Scalars['String']>>;
   name: Scalars['String'];
   quantity: Scalars['Int'];
@@ -1343,12 +1343,12 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping of union types */
 export type ResolversUnionTypes = ResolversObject<{
-  UType: ( Category ) | ( Customer ) | ( Product ) | ( Sale ) | ( Staff ) | ( Store ) | ( Supply ) | ( Warehouse );
+  Type: ( Category ) | ( Customer ) | ( Product ) | ( Sale ) | ( Staff ) | ( Store ) | ( Supply ) | ( Warehouse );
 }>;
 
 /** Mapping of union parent types */
 export type ResolversUnionParentTypes = ResolversObject<{
-  UType: ( Category ) | ( Customer ) | ( Product ) | ( Sale ) | ( Staff ) | ( Store ) | ( Supply ) | ( Warehouse );
+  Type: ( Category ) | ( Customer ) | ( Product ) | ( Sale ) | ( Staff ) | ( Store ) | ( Supply ) | ( Warehouse );
 }>;
 
 /** Mapping between all available schema types and the resolvers types */
@@ -1384,6 +1384,7 @@ export type ResolversTypes = ResolversObject<{
   ISubscription: ResolversTypes['CategoryAddSubscription'] | ResolversTypes['CategoryDeleteSubscription'] | ResolversTypes['CategoryEditSubscription'] | ResolversTypes['ProductAddSubscription'] | ResolversTypes['ProductDeleteSubscription'] | ResolversTypes['ProductEditSubscription'] | ResolversTypes['SaleAddSubscription'] | ResolversTypes['SaleDeleteSubscription'] | ResolversTypes['SaleEditSubscription'] | ResolversTypes['StaffAddSubscription'] | ResolversTypes['StaffDeleteSubscription'] | ResolversTypes['SupplyAddSubscription'] | ResolversTypes['SupplyDeleteSubscription'] | ResolversTypes['SupplyEditSubscription'] | ResolversTypes['WarehouseAddSubscription'] | ResolversTypes['WarehouseDeleteSubscription'] | ResolversTypes['WarehouseEditSubscription'];
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
+  Object: ResolverTypeWrapper<Scalars['Object']>;
   Pagins: ResolverTypeWrapper<Pagins>;
   Product: ResolverTypeWrapper<Product>;
   ProductAddPayload: ResolverTypeWrapper<ProductAddPayload>;
@@ -1422,7 +1423,7 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
   SubscriptionActionType: SubscriptionActionType;
-  SubscriptionPayload: ResolverTypeWrapper<Omit<SubscriptionPayload, 'type'> & { type?: Maybe<ResolversTypes['UType']> }>;
+  SubscriptionPayload: ResolverTypeWrapper<Omit<SubscriptionPayload, 'actionResult'> & { actionResult: ResolversTypes['Type'] }>;
   Supply: ResolverTypeWrapper<Supply>;
   SupplyAddPayload: ResolverTypeWrapper<SupplyAddPayload>;
   SupplyAddSubscription: ResolverTypeWrapper<SupplyAddSubscription>;
@@ -1433,7 +1434,7 @@ export type ResolversTypes = ResolversObject<{
   SupplyPayload: ResolverTypeWrapper<SupplyPayload>;
   SupplysPayload: ResolverTypeWrapper<SupplysPayload>;
   Timestamps: ResolverTypeWrapper<Timestamps>;
-  UType: ResolverTypeWrapper<ResolversUnionTypes['UType']>;
+  Type: ResolverTypeWrapper<ResolversUnionTypes['Type']>;
   Warehouse: ResolverTypeWrapper<Warehouse>;
   WarehouseAddPayload: ResolverTypeWrapper<WarehouseAddPayload>;
   WarehouseAddSubscription: ResolverTypeWrapper<WarehouseAddSubscription>;
@@ -1511,6 +1512,7 @@ export type ResolversParentTypes = ResolversObject<{
   ISubscription: ResolversParentTypes['CategoryAddSubscription'] | ResolversParentTypes['CategoryDeleteSubscription'] | ResolversParentTypes['CategoryEditSubscription'] | ResolversParentTypes['ProductAddSubscription'] | ResolversParentTypes['ProductDeleteSubscription'] | ResolversParentTypes['ProductEditSubscription'] | ResolversParentTypes['SaleAddSubscription'] | ResolversParentTypes['SaleDeleteSubscription'] | ResolversParentTypes['SaleEditSubscription'] | ResolversParentTypes['StaffAddSubscription'] | ResolversParentTypes['StaffDeleteSubscription'] | ResolversParentTypes['SupplyAddSubscription'] | ResolversParentTypes['SupplyDeleteSubscription'] | ResolversParentTypes['SupplyEditSubscription'] | ResolversParentTypes['WarehouseAddSubscription'] | ResolversParentTypes['WarehouseDeleteSubscription'] | ResolversParentTypes['WarehouseEditSubscription'];
   Int: Scalars['Int'];
   Mutation: {};
+  Object: Scalars['Object'];
   Pagins: Pagins;
   Product: Product;
   ProductAddPayload: ProductAddPayload;
@@ -1545,7 +1547,7 @@ export type ResolversParentTypes = ResolversObject<{
   StorePayload: StorePayload;
   String: Scalars['String'];
   Subscription: {};
-  SubscriptionPayload: Omit<SubscriptionPayload, 'type'> & { type?: Maybe<ResolversParentTypes['UType']> };
+  SubscriptionPayload: Omit<SubscriptionPayload, 'actionResult'> & { actionResult: ResolversParentTypes['Type'] };
   Supply: Supply;
   SupplyAddPayload: SupplyAddPayload;
   SupplyAddSubscription: SupplyAddSubscription;
@@ -1556,7 +1558,7 @@ export type ResolversParentTypes = ResolversObject<{
   SupplyPayload: SupplyPayload;
   SupplysPayload: SupplysPayload;
   Timestamps: Timestamps;
-  UType: ResolversUnionParentTypes['UType'];
+  Type: ResolversUnionParentTypes['Type'];
   Warehouse: Warehouse;
   WarehouseAddPayload: WarehouseAddPayload;
   WarehouseAddSubscription: WarehouseAddSubscription;
@@ -1824,6 +1826,10 @@ export type MutationResolvers<ContextType = IResolverContext, ParentType extends
   warehouseEdit?: Resolver<ResolversTypes['WarehouseEditPayload'], ParentType, ContextType, RequireFields<MutationWarehouseEditArgs, 'warehouseEditInput'>>;
 }>;
 
+export interface ObjectScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Object'], any> {
+  name: 'Object';
+}
+
 export type PaginsResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Pagins'] = ResolversParentTypes['Pagins']> = ResolversObject<{
   currentPageIndex?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   nextPageIndex?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
@@ -1902,18 +1908,18 @@ export type ProductsPayloadResolvers<ContextType = IResolverContext, ParentType 
 
 export type QueryResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
-  customer?: Resolver<ResolversTypes['CustomerPayload'], ParentType, ContextType, RequireFields<QueryCustomerArgs, 'searchFilter'>>;
+  customer?: Resolver<ResolversTypes['CustomerPayload'], ParentType, ContextType, RequireFields<QueryCustomerArgs, 'searchTerm'>>;
   customers?: Resolver<ResolversTypes['CustomersPayload'], ParentType, ContextType, Partial<QueryCustomersArgs>>;
-  product?: Resolver<ResolversTypes['ProductPayload'], ParentType, ContextType, RequireFields<QueryProductArgs, 'searchFilter'>>;
+  product?: Resolver<ResolversTypes['ProductPayload'], ParentType, ContextType, RequireFields<QueryProductArgs, 'searchTerm'>>;
   products?: Resolver<ResolversTypes['ProductsPayload'], ParentType, ContextType, Partial<QueryProductsArgs>>;
-  sale?: Resolver<ResolversTypes['SalePayload'], ParentType, ContextType, RequireFields<QuerySaleArgs, 'searchFilter'>>;
+  sale?: Resolver<ResolversTypes['SalePayload'], ParentType, ContextType, RequireFields<QuerySaleArgs, 'searchTerm'>>;
   sales?: Resolver<ResolversTypes['SalesPayload'], ParentType, ContextType, Partial<QuerySalesArgs>>;
-  staff?: Resolver<ResolversTypes['StaffPayload'], ParentType, ContextType, RequireFields<QueryStaffArgs, 'searchFilter'>>;
+  staff?: Resolver<ResolversTypes['StaffPayload'], ParentType, ContextType, RequireFields<QueryStaffArgs, 'searchTerm'>>;
   staffs?: Resolver<ResolversTypes['StaffsPayload'], ParentType, ContextType, Partial<QueryStaffsArgs>>;
   store?: Resolver<ResolversTypes['Store'], ParentType, ContextType>;
   supplies?: Resolver<ResolversTypes['SupplysPayload'], ParentType, ContextType, Partial<QuerySuppliesArgs>>;
-  supply?: Resolver<ResolversTypes['SupplyPayload'], ParentType, ContextType, RequireFields<QuerySupplyArgs, 'searchFilter'>>;
-  warehouse?: Resolver<ResolversTypes['WarehousePayload'], ParentType, ContextType, RequireFields<QueryWarehouseArgs, 'searchFilter'>>;
+  supply?: Resolver<ResolversTypes['SupplyPayload'], ParentType, ContextType, RequireFields<QuerySupplyArgs, 'searchTerm'>>;
+  warehouse?: Resolver<ResolversTypes['WarehousePayload'], ParentType, ContextType, RequireFields<QueryWarehouseArgs, 'searchTerm'>>;
   warehouses?: Resolver<ResolversTypes['WarehousesPayload'], ParentType, ContextType, Partial<QueryWarehousesArgs>>;
 }>;
 
@@ -2114,10 +2120,9 @@ export type SubscriptionResolvers<ContextType = IResolverContext, ParentType ext
 }>;
 
 export type SubscriptionPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SubscriptionPayload'] = ResolversParentTypes['SubscriptionPayload']> = ResolversObject<{
-  actionResult?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  actionResult?: Resolver<ResolversTypes['Type'], ParentType, ContextType>;
   actionType?: Resolver<Maybe<ResolversTypes['SubscriptionActionType']>, ParentType, ContextType>;
   timestamps?: Resolver<ResolversTypes['Timestamps'], ParentType, ContextType>;
-  type?: Resolver<Maybe<ResolversTypes['UType']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2192,7 +2197,7 @@ export type TimestampsResolvers<ContextType = IResolverContext, ParentType exten
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type UTypeResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['UType'] = ResolversParentTypes['UType']> = ResolversObject<{
+export type TypeResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Type'] = ResolversParentTypes['Type']> = ResolversObject<{
   __resolveType: TypeResolveFn<'Category' | 'Customer' | 'Product' | 'Sale' | 'Staff' | 'Store' | 'Supply' | 'Warehouse', ParentType, ContextType>;
 }>;
 
@@ -2301,6 +2306,7 @@ export type Resolvers<ContextType = IResolverContext> = ResolversObject<{
   Feature?: FeatureResolvers<ContextType>;
   ISubscription?: ISubscriptionResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  Object?: GraphQLScalarType;
   Pagins?: PaginsResolvers<ContextType>;
   Product?: ProductResolvers<ContextType>;
   ProductAddPayload?: ProductAddPayloadResolvers<ContextType>;
@@ -2345,7 +2351,7 @@ export type Resolvers<ContextType = IResolverContext> = ResolversObject<{
   SupplyPayload?: SupplyPayloadResolvers<ContextType>;
   SupplysPayload?: SupplysPayloadResolvers<ContextType>;
   Timestamps?: TimestampsResolvers<ContextType>;
-  UType?: UTypeResolvers<ContextType>;
+  Type?: TypeResolvers<ContextType>;
   Warehouse?: WarehouseResolvers<ContextType>;
   WarehouseAddPayload?: WarehouseAddPayloadResolvers<ContextType>;
   WarehouseAddSubscription?: WarehouseAddSubscriptionResolvers<ContextType>;

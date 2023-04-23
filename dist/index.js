@@ -22,6 +22,7 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const graphql_1 = require("graphql");
 const http_1 = require("http");
 const server_1 = require("@apollo/server");
+const graphql_subscriptions_1 = require("graphql-subscriptions");
 const ws_2 = require("graphql-ws/lib/use/ws");
 const resolver_1 = require("./src/resolvers/resolver");
 const schema_1 = require("./src/models/schemas/schema");
@@ -39,6 +40,7 @@ const authorize_directives_1 = require("./src/directives/authorize.directives");
  */
 function Main() {
     return __awaiter(this, void 0, void 0, function* () {
+        const pubSub = new graphql_subscriptions_1.PubSub();
         // This `app` is the returned value from `express()`
         const app = (0, express_1.default)();
         // Create a httpServer and use express app
@@ -58,11 +60,24 @@ function Main() {
         });
         // Hand in the schema we just created and have the
         // WebSocketServer start listening.
-        const serverCleanup = (0, ws_2.useServer)({ schema }, wsServer);
+        const serverCleanup = (0, ws_2.useServer)({
+            schema,
+            // Pass context for subscriptions
+            context(ctx, msg, args) {
+                var _a, _b;
+                return __awaiter(this, void 0, void 0, function* () {
+                    // perform authentication
+                    const authorizationToken = (_b = (_a = ctx.connectionParams) === null || _a === void 0 ? void 0 : _a.authorization) !== null && _b !== void 0 ? _b : '';
+                    const authenticatedStaff = yield (0, authenticationMiddleware_1.authenticationToken)(authorizationToken, config_1.default.get('jwt.private'));
+                    return { pubSub, authenticatedStaff };
+                });
+            },
+        }, wsServer);
         //
         const apolloServer = new server_1.ApolloServer({
             schema,
             cache: 'bounded',
+            csrfPrevention: true,
             plugins: [
                 // Proper shutdown for the HTTP server.
                 (0, drainHttpServer_1.ApolloServerPluginDrainHttpServer)({ httpServer }),
@@ -101,12 +116,12 @@ function Main() {
             (0, express4_1.expressMiddleware)(apolloServer, {
                 context: ({ req }) => __awaiter(this, void 0, void 0, function* () {
                     // perform authentication
-                    const authenticatedStaff = yield (0, authenticationMiddleware_1.authenticationToken)(req, config_1.default.get('jwt.privateKey'));
+                    const authenticatedStaff = yield (0, authenticationMiddleware_1.authenticationToken)(req.headers.authorization, config_1.default.get('jwt.private'));
                     return {
                         models: mongoose_1.models,
                         config: config_1.default,
+                        pubSub,
                         authenticatedStaff,
-                        privateKey: config_1.default.get('jwt.privateKey'),
                     }; // end return
                 }), // end context
             }) // end expressMiddleware

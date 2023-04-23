@@ -1,20 +1,18 @@
 import Jwt from 'jsonwebtoken';
-import { Request } from 'express';
 import { GraphQLError } from 'graphql';
 import { decodeRSAKey } from '@/src/commons/commons.helpers';
 import { staffModel } from '@server-databases/mongodb/schema_staff';
 import { IStaff } from '@server-databases/mongodb/interfaces/IStaff';
 
 export const authenticationToken = async (
-  request: Request,
-  privateKey: string
+  authorizationToken: string,
+  jwtPrivateKey: string
 ): Promise<IStaff> => {
   // check the Authorization key existence
-  const bearer = request.headers.authorization;
 
-  if (!bearer) {
+  if (!authorizationToken) {
     throw new GraphQLError(
-      'Authorization bearer not found, authentication is required, provide your token.',
+      'Authorization token not found in the header, authentication is required, provide your token.',
       {
         extensions: {
           code: 'BAD_REQUEST',
@@ -25,7 +23,7 @@ export const authenticationToken = async (
   }
 
   // check the token validity
-  const token = bearer.split(' ')[1];
+  const token = authorizationToken.split(' ')[1];
   if (!token) {
     throw new GraphQLError('Token is missing in the authorization bearer.', {
       extensions: {
@@ -37,7 +35,7 @@ export const authenticationToken = async (
   // sign the token
   // let verifyToken: any;
   try {
-    Jwt.verify(token, decodeRSAKey(privateKey), {
+    Jwt.verify(token, decodeRSAKey(jwtPrivateKey), {
       algorithms: ['HS512'],
     });
   } catch (error: any) {

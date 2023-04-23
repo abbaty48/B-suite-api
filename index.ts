@@ -1,4 +1,3 @@
-import fs from 'fs';
 import cors from 'cors';
 import morgan from 'morgan';
 import config from 'config';
@@ -9,6 +8,7 @@ import bodyParser from 'body-parser';
 import { GraphQLError } from 'graphql';
 import { Server, createServer } from 'http';
 import { ApolloServer } from '@apollo/server';
+import { PubSub } from 'graphql-subscriptions';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { resolvers } from '@server-resolvers/resolver';
 import { typeDefs } from '@server-models/schemas/schema';
@@ -27,6 +27,7 @@ import { authorizeRoleDirectiveTransformer } from '@server/directives/authorize.
  * this method start the express server with configuration
  */
 async function Main() {
+  const pubSub = new PubSub();
   // This `app` is the returned value from `express()`
   const app = express();
   // Create a httpServer and use express app
@@ -48,11 +49,28 @@ async function Main() {
   });
   // Hand in the schema we just created and have the
   // WebSocketServer start listening.
-  const serverCleanup = useServer({ schema }, wsServer);
+  const serverCleanup = useServer(
+    {
+      schema,
+      // Pass context for subscriptions
+      async context(ctx, msg, args) {
+        // perform authentication
+        const authorizationToken =
+          (ctx.connectionParams?.authorization as string) ?? '';
+        const authenticatedStaff = await authenticationToken(
+          authorizationToken,
+          config.get('jwt.private')
+        );
+        return { pubSub, authenticatedStaff };
+      },
+    },
+    wsServer
+  );
   //
   const apolloServer = new ApolloServer<IResolverContext>({
     schema,
     cache: 'bounded',
+    csrfPrevention: true,
     plugins: [
       // Proper shutdown for the HTTP server.
       ApolloServerPluginDrainHttpServer({ httpServer }),
@@ -89,14 +107,14 @@ async function Main() {
         context: async ({ req }) => {
           // perform authentication
           const authenticatedStaff = await authenticationToken(
-            req,
-            config.get('jwt.privateKey')
+            req.headers.authorization,
+            config.get('jwt.private')
           );
           return {
             models,
             config,
+            pubSub,
             authenticatedStaff,
-            privateKey: config.get<string>('jwt.privateKey'),
           }; // end return
         }, // end context
       }) // end expressMiddleware

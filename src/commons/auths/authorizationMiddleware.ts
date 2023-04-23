@@ -12,7 +12,7 @@ interface IStaffPrevilege {
 }
 
 export const AuthorizeStaff = (
-  previlege: RolePrevileges,
+  previlege: any,
   authenticatedStaff: IStaff
 ): IStaff => {
   const staffPrevileges: IStaffPrevilege = {
@@ -266,19 +266,19 @@ export const AuthorizeStaff = (
       RolePrevileges.INITIALIZED_SYSTEM,
     ],
   };
-
   /*
    * Check if the authenticated staff role includes the any the prelilege, then return the staff,
    */
-  if (staffPrevileges[authenticatedStaff.role].includes(previlege)) {
+  if (
+    staffPrevileges[authenticatedStaff.role].includes(
+      Number(RolePrevileges[previlege])
+    )
+  ) {
     return authenticatedStaff;
   }
   // else return an error
   throw new GraphQLError(
-    `You are not authorized to "${RolePrevileges[previlege].replace(
-      '_',
-      ' '
-    )}".`,
+    `You are not authorized to "${previlege.toString().replace('_', ' ')}".`,
     {
       extensions: {
         code: 'UNAUTHORIZED',

@@ -1,10 +1,11 @@
 import { IConfig } from 'config';
 import { Models } from 'mongoose';
+import { PubSub } from 'graphql-subscriptions';
 import { IStaff } from '@server-databases/mongodb/interfaces/IStaff';
 
 export interface IResolverContext {
   config: IConfig;
   models: Models;
-  privateKey: String;
-  authenticatedStaff: IStaff
+  pubSub: PubSub;
+  authenticatedStaff: IStaff;
 }
