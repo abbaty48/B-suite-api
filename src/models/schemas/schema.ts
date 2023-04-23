@@ -157,6 +157,7 @@ const Commons = `#graphql
 
    type SubscriptionPayload {
       timestamp: Date!,
+      actionBy: Staff!,
       actionResult: Type!,
       actionType: SubscriptionActionType,
     }
@@ -257,6 +258,7 @@ input searchStaffInput {
   firstName: String
   lastName: String
   warehouseID: ID
+  role: StaffRole
 }
 `;
 

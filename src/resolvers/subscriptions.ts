@@ -15,6 +15,18 @@ const ProductSubscriptions: SubscriptionResolvers = {
   },
 }; // end ProductSubscriptions
 
+const StaffSubscriptions: SubscriptionResolvers = {
+  staffAddSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_ADD_STAFF'),
+  },
+  staffDeleteSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_DELETE_STAFF'),
+  },
+}; // end StaffSubscripbtions
+
 export const Subscriptions: SubscriptionResolvers = {
   ...ProductSubscriptions,
+  ...StaffSubscriptions,
 };

@@ -829,9 +829,10 @@ export enum SubscriptionActionType {
 
 export type SubscriptionPayload = {
   __typename?: 'SubscriptionPayload';
+  actionBy: Staff;
   actionResult: Type;
   actionType?: Maybe<SubscriptionActionType>;
-  timestamps: Timestamps;
+  timestamp: Scalars['Date'];
 };
 
 export type Supply = {
@@ -842,7 +843,6 @@ export type Supply = {
   staff?: Maybe<Staff>;
   staffID: Scalars['ID'];
   supplyID: Scalars['ID'];
-  timestamps?: Maybe<Timestamps>;
   totalPrice: Scalars['Float'];
   totalQuantity: Scalars['Int'];
 };
@@ -896,17 +896,6 @@ export type SupplysPayload = {
   error?: Maybe<Scalars['String']>;
   pagins?: Maybe<Pagins>;
   supplies?: Maybe<Array<Supply>>;
-};
-
-/** Timestamps of an action. */
-export type Timestamps = {
-  __typename?: 'Timestamps';
-  /** An Iso created date of an action: YYYY:MM:DDTHH:MM:SS.MILISECONDS+00:00 */
-  createdAt: Scalars['Date'];
-  /** A unix number representing date of an action */
-  currentTime?: Maybe<Scalars['Int']>;
-  /** An Iso updated date of an action: YYYY:MM:DDTHH:MM:SS.MILISECONDS+00:00 */
-  updatedAt: Scalars['Date'];
 };
 
 /** Representing either one among types */
@@ -1198,6 +1187,7 @@ export type SearchSaleInput = {
 export type SearchStaffInput = {
   firstName?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
+  role?: InputMaybe<StaffRole>;
   staffID?: InputMaybe<Scalars['ID']>;
   warehouseID?: InputMaybe<Scalars['ID']>;
 };
@@ -1433,7 +1423,6 @@ export type ResolversTypes = ResolversObject<{
   SupplyEditSubscription: ResolverTypeWrapper<SupplyEditSubscription>;
   SupplyPayload: ResolverTypeWrapper<SupplyPayload>;
   SupplysPayload: ResolverTypeWrapper<SupplysPayload>;
-  Timestamps: ResolverTypeWrapper<Timestamps>;
   Type: ResolverTypeWrapper<ResolversUnionTypes['Type']>;
   Warehouse: ResolverTypeWrapper<Warehouse>;
   WarehouseAddPayload: ResolverTypeWrapper<WarehouseAddPayload>;
@@ -1557,7 +1546,6 @@ export type ResolversParentTypes = ResolversObject<{
   SupplyEditSubscription: SupplyEditSubscription;
   SupplyPayload: SupplyPayload;
   SupplysPayload: SupplysPayload;
-  Timestamps: Timestamps;
   Type: ResolversUnionParentTypes['Type'];
   Warehouse: Warehouse;
   WarehouseAddPayload: WarehouseAddPayload;
@@ -2120,9 +2108,10 @@ export type SubscriptionResolvers<ContextType = IResolverContext, ParentType ext
 }>;
 
 export type SubscriptionPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SubscriptionPayload'] = ResolversParentTypes['SubscriptionPayload']> = ResolversObject<{
+  actionBy?: Resolver<ResolversTypes['Staff'], ParentType, ContextType>;
   actionResult?: Resolver<ResolversTypes['Type'], ParentType, ContextType>;
   actionType?: Resolver<Maybe<ResolversTypes['SubscriptionActionType']>, ParentType, ContextType>;
-  timestamps?: Resolver<ResolversTypes['Timestamps'], ParentType, ContextType>;
+  timestamp?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2133,7 +2122,6 @@ export type SupplyResolvers<ContextType = IResolverContext, ParentType extends R
   staff?: Resolver<Maybe<ResolversTypes['Staff']>, ParentType, ContextType>;
   staffID?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   supplyID?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  timestamps?: Resolver<Maybe<ResolversTypes['Timestamps']>, ParentType, ContextType>;
   totalPrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   totalQuantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -2187,13 +2175,6 @@ export type SupplysPayloadResolvers<ContextType = IResolverContext, ParentType e
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   pagins?: Resolver<Maybe<ResolversTypes['Pagins']>, ParentType, ContextType>;
   supplies?: Resolver<Maybe<Array<ResolversTypes['Supply']>>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type TimestampsResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Timestamps'] = ResolversParentTypes['Timestamps']> = ResolversObject<{
-  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  currentTime?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -2350,7 +2331,6 @@ export type Resolvers<ContextType = IResolverContext> = ResolversObject<{
   SupplyEditSubscription?: SupplyEditSubscriptionResolvers<ContextType>;
   SupplyPayload?: SupplyPayloadResolvers<ContextType>;
   SupplysPayload?: SupplysPayloadResolvers<ContextType>;
-  Timestamps?: TimestampsResolvers<ContextType>;
   Type?: TypeResolvers<ContextType>;
   Warehouse?: WarehouseResolvers<ContextType>;
   WarehouseAddPayload?: WarehouseAddPayloadResolvers<ContextType>;

@@ -172,7 +172,7 @@ export class ProductController {
 
   static addProduct = async (
     addProductInput: ProductAddInput,
-    { config, pubSub }: IResolverContext
+    { config, pubSub, authenticatedStaff }: IResolverContext
   ) => {
     return new Promise<ProductAddPayload>(async (resolve) => {
       try {
@@ -222,6 +222,7 @@ export class ProductController {
             payload: {
               timestamp: new Date(),
               actionResult: newAdded,
+              actionBy: authenticatedStaff,
               actionType: SubscriptionActionType.Added,
             },
           },
@@ -244,7 +245,7 @@ export class ProductController {
 
   static editProduct = async (
     editProductInput: ProductEditInput,
-    { config, pubSub }: IResolverContext
+    { config, pubSub, authenticatedStaff }: IResolverContext
   ) => {
     return new Promise<ProductEditPayload>(async (resolve) => {
       try {
@@ -305,6 +306,7 @@ export class ProductController {
             payload: {
               timestamp: new Date(),
               actionResult: newEdited,
+              actionBy: authenticatedStaff,
               actionType: SubscriptionActionType.Edited,
             },
           },
@@ -328,7 +330,7 @@ export class ProductController {
   static deleteProduct = async (
     productID: string,
     warehouseID: string | undefined,
-    { models, pubSub }: IResolverContext
+    { models, pubSub, authenticatedStaff }: IResolverContext
   ) => {
     return new Promise<ProductDeletePayload>(async (resolve) => {
       try {
@@ -358,13 +360,12 @@ export class ProductController {
           { multi: true }
         );
         /** Publish Subscription on LISTEN_ADD_PRODUCT */
-        console.log('DELETED PRODUCT: ', deletedProduct);
-
         pubSub.publish('LISTEN_DELETE_PRODUCT', {
           productDeleteSubscription: {
             error: null,
             payload: {
               timestamp: new Date(),
+              actionBy: authenticatedStaff,
               actionResult: deletedProduct,
               actionType: SubscriptionActionType.Deleted,
             },
