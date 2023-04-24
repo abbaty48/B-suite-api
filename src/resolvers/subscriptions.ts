@@ -26,7 +26,23 @@ const StaffSubscriptions: SubscriptionResolvers = {
   },
 }; // end StaffSubscripbtions
 
+const CategorySubscriptions: SubscriptionResolvers = {
+  categoryAddSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_ADD_CATEGORY'),
+  },
+  categoryEditSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_EDIT_CATEGORY'),
+  },
+  categoryDeleteSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_DELETE_CATEGORY'),
+  },
+};
+
 export const Subscriptions: SubscriptionResolvers = {
+  ...CategorySubscriptions,
   ...ProductSubscriptions,
   ...StaffSubscriptions,
 };

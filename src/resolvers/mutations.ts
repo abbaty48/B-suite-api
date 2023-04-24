@@ -1,8 +1,9 @@
 import { MutationResolvers } from '@server-models/@types/resolver_types';
 import { ProductController } from '@server-controllers/product.controller';
 import { StaffController } from '@server-controllers/staff.controller';
+import { CategoryController } from '../controllers/category.controller';
 
-// PRODUCT MUTATION
+// PRODUCT MUTATIONS
 
 const ProductMutations: MutationResolvers = {
   // productAdd
@@ -16,7 +17,7 @@ const ProductMutations: MutationResolvers = {
     await ProductController.deleteProduct(productID, warehouseID, context),
 };
 
-// STAFF MUTATION
+// STAFF MUTATIONS
 
 const StaffMutations: MutationResolvers = {
   // staffAdd
@@ -30,7 +31,21 @@ const StaffMutations: MutationResolvers = {
     await StaffController.deleteStaff(staffID, context),
 };
 
+// CATEGORY MUTATIONS
+const CategoryMutations: MutationResolvers = {
+  // Add Category
+  categoryAdd: async (_, { categoryAddInput }, context) =>
+    await CategoryController.addCategory(categoryAddInput, context),
+  // Edit Category
+  categoryEdit: async (_, { categoryEditInput }, context) =>
+    await CategoryController.editCategory(categoryEditInput, context),
+  // Delete Category
+  categoryDelete: async (_, { category }, context) =>
+    await CategoryController.deleteCategory(category, context),
+};
+
 export const Mutations: MutationResolvers = {
+  ...CategoryMutations,
   ...ProductMutations,
   ...StaffMutations,
 };

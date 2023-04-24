@@ -69,6 +69,13 @@ export type CategoryEditSubscription = ISubscription & {
   payload: SubscriptionPayload;
 };
 
+export type CategoryPayload = {
+  __typename?: 'CategoryPayload';
+  categories: Array<Category>;
+  error?: Maybe<Scalars['String']>;
+  pagins?: Maybe<Pagins>;
+};
+
 export type Customer = {
   __typename?: 'Customer';
   address?: Maybe<Scalars['String']>;
@@ -217,7 +224,7 @@ export type Mutation = {
   _initializeSys: InitPayload;
   categoryAdd: CategoryAddPayload;
   categoryDelete: CategoryDeletePayload;
-  categoryEdit: CategoryAddPayload;
+  categoryEdit: CategoryEditPayload;
   customerAdd: CustomerAddPayload;
   customerDelete: CustomerDeletePayload;
   customerEdit: CustomerEditPayload;
@@ -445,7 +452,7 @@ export type ProductsPayload = {
 
 export type Query = {
   __typename?: 'Query';
-  categories: Array<Category>;
+  categories: CategoryPayload;
   customer: CustomerPayload;
   customers: CustomersPayload;
   product: ProductPayload;
@@ -459,6 +466,11 @@ export type Query = {
   supply: SupplyPayload;
   warehouse: WarehousePayload;
   warehouses: WarehousesPayload;
+};
+
+
+export type QueryCategoriesArgs = {
+  pagin?: InputMaybe<PaginInput>;
 };
 
 
@@ -683,8 +695,8 @@ export type SalesPayload = {
 
 /** Sorting order in ascending or descending */
 export enum Sort {
-  Asc = 'Asc',
-  Desc = 'Desc'
+  Asc = 'asc',
+  Desc = 'desc'
 }
 
 export type Staff = {
@@ -991,11 +1003,6 @@ export type CategoryAddInput = {
 export type CategoryEditInput = {
   newCategory: Scalars['String'];
   oldCategory: Scalars['String'];
-};
-
-export type CategoryPayload = {
-  __typename?: 'categoryPayload';
-  error?: Maybe<Scalars['String']>;
 };
 
 export type CustomerAddInput = {
@@ -1352,6 +1359,7 @@ export type ResolversTypes = ResolversObject<{
   CategoryDeleteSubscription: ResolverTypeWrapper<CategoryDeleteSubscription>;
   CategoryEditPayload: ResolverTypeWrapper<CategoryEditPayload>;
   CategoryEditSubscription: ResolverTypeWrapper<CategoryEditSubscription>;
+  CategoryPayload: ResolverTypeWrapper<CategoryPayload>;
   Customer: ResolverTypeWrapper<Customer>;
   CustomerAddPayload: ResolverTypeWrapper<CustomerAddPayload>;
   CustomerDeletePayload: ResolverTypeWrapper<CustomerDeletePayload>;
@@ -1438,7 +1446,6 @@ export type ResolversTypes = ResolversObject<{
   addSocialAccountInput: AddSocialAccountInput;
   categoryAddInput: CategoryAddInput;
   categoryEditInput: CategoryEditInput;
-  categoryPayload: ResolverTypeWrapper<CategoryPayload>;
   customerAddInput: CustomerAddInput;
   customerEditInput: CustomerEditInput;
   customerMetasInput: CustomerMetasInput;
@@ -1480,6 +1487,7 @@ export type ResolversParentTypes = ResolversObject<{
   CategoryDeleteSubscription: CategoryDeleteSubscription;
   CategoryEditPayload: CategoryEditPayload;
   CategoryEditSubscription: CategoryEditSubscription;
+  CategoryPayload: CategoryPayload;
   Customer: Customer;
   CustomerAddPayload: CustomerAddPayload;
   CustomerDeletePayload: CustomerDeletePayload;
@@ -1561,7 +1569,6 @@ export type ResolversParentTypes = ResolversObject<{
   addSocialAccountInput: AddSocialAccountInput;
   categoryAddInput: CategoryAddInput;
   categoryEditInput: CategoryEditInput;
-  categoryPayload: CategoryPayload;
   customerAddInput: CustomerAddInput;
   customerEditInput: CustomerEditInput;
   customerMetasInput: CustomerMetasInput;
@@ -1645,6 +1652,13 @@ export type CategoryEditPayloadResolvers<ContextType = IResolverContext, ParentT
 export type CategoryEditSubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['CategoryEditSubscription'] = ResolversParentTypes['CategoryEditSubscription']> = ResolversObject<{
   error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
   payload?: Resolver<ResolversTypes['SubscriptionPayload'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type CategoryPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['CategoryPayload'] = ResolversParentTypes['CategoryPayload']> = ResolversObject<{
+  categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
+  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  pagins?: Resolver<Maybe<ResolversTypes['Pagins']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1791,7 +1805,7 @@ export type MutationResolvers<ContextType = IResolverContext, ParentType extends
   _initializeSys?: Resolver<ResolversTypes['initPayload'], ParentType, ContextType, RequireFields<Mutation_InitializeSysArgs, '_init'>>;
   categoryAdd?: Resolver<ResolversTypes['CategoryAddPayload'], ParentType, ContextType, RequireFields<MutationCategoryAddArgs, 'categoryAddInput'>>;
   categoryDelete?: Resolver<ResolversTypes['CategoryDeletePayload'], ParentType, ContextType, RequireFields<MutationCategoryDeleteArgs, 'category'>>;
-  categoryEdit?: Resolver<ResolversTypes['CategoryAddPayload'], ParentType, ContextType, RequireFields<MutationCategoryEditArgs, 'categoryEditInput'>>;
+  categoryEdit?: Resolver<ResolversTypes['CategoryEditPayload'], ParentType, ContextType, RequireFields<MutationCategoryEditArgs, 'categoryEditInput'>>;
   customerAdd?: Resolver<ResolversTypes['CustomerAddPayload'], ParentType, ContextType, RequireFields<MutationCustomerAddArgs, 'customerAddInput'>>;
   customerDelete?: Resolver<ResolversTypes['CustomerDeletePayload'], ParentType, ContextType, RequireFields<MutationCustomerDeleteArgs, 'customerID'>>;
   customerEdit?: Resolver<ResolversTypes['CustomerEditPayload'], ParentType, ContextType, RequireFields<MutationCustomerEditArgs, 'customerEditInput'>>;
@@ -1895,7 +1909,7 @@ export type ProductsPayloadResolvers<ContextType = IResolverContext, ParentType 
 }>;
 
 export type QueryResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
+  categories?: Resolver<ResolversTypes['CategoryPayload'], ParentType, ContextType, Partial<QueryCategoriesArgs>>;
   customer?: Resolver<ResolversTypes['CustomerPayload'], ParentType, ContextType, RequireFields<QueryCustomerArgs, 'searchTerm'>>;
   customers?: Resolver<ResolversTypes['CustomersPayload'], ParentType, ContextType, Partial<QueryCustomersArgs>>;
   product?: Resolver<ResolversTypes['ProductPayload'], ParentType, ContextType, RequireFields<QueryProductArgs, 'searchTerm'>>;
@@ -2243,11 +2257,6 @@ export type WarehousesPayloadResolvers<ContextType = IResolverContext, ParentTyp
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type CategoryPayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['categoryPayload'] = ResolversParentTypes['categoryPayload']> = ResolversObject<{
-  error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type EnterprisePayloadResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['enterprisePayload'] = ResolversParentTypes['enterprisePayload']> = ResolversObject<{
   error?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   result?: Resolver<Maybe<ResolversTypes['Enterprise']>, ParentType, ContextType>;
@@ -2269,6 +2278,7 @@ export type Resolvers<ContextType = IResolverContext> = ResolversObject<{
   CategoryDeleteSubscription?: CategoryDeleteSubscriptionResolvers<ContextType>;
   CategoryEditPayload?: CategoryEditPayloadResolvers<ContextType>;
   CategoryEditSubscription?: CategoryEditSubscriptionResolvers<ContextType>;
+  CategoryPayload?: CategoryPayloadResolvers<ContextType>;
   Customer?: CustomerResolvers<ContextType>;
   CustomerAddPayload?: CustomerAddPayloadResolvers<ContextType>;
   CustomerDeletePayload?: CustomerDeletePayloadResolvers<ContextType>;
@@ -2341,7 +2351,6 @@ export type Resolvers<ContextType = IResolverContext> = ResolversObject<{
   WarehouseEditSubscription?: WarehouseEditSubscriptionResolvers<ContextType>;
   WarehousePayload?: WarehousePayloadResolvers<ContextType>;
   WarehousesPayload?: WarehousesPayloadResolvers<ContextType>;
-  categoryPayload?: CategoryPayloadResolvers<ContextType>;
   enterprisePayload?: EnterprisePayloadResolvers<ContextType>;
   initPayload?: InitPayloadResolvers<ContextType>;
 }>;

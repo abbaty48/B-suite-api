@@ -380,6 +380,65 @@
       },
       {
         "kind": "OBJECT",
+        "name": "CategoryPayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "categories",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "Category",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "error",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pagins",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Pagins",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "Customer",
         "description": null,
         "fields": [
@@ -1829,7 +1888,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "CategoryAddPayload",
+                "name": "CategoryEditPayload",
                 "ofType": null
               }
             },
@@ -3256,22 +3315,27 @@
           {
             "name": "categories",
             "description": null,
-            "args": [],
+            "args": [
+              {
+                "name": "pagin",
+                "description": null,
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "paginInput",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Category",
-                    "ofType": null
-                  }
-                }
+                "kind": "OBJECT",
+                "name": "CategoryPayload",
+                "ofType": null
               }
             },
             "isDeprecated": false,
@@ -4992,13 +5056,13 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "Asc",
+            "name": "asc",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "Desc",
+            "name": "desc",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -8364,29 +8428,6 @@
           }
         ],
         "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "categoryPayload",
-        "description": null,
-        "fields": [
-          {
-            "name": "error",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
       },

@@ -24,8 +24,8 @@ const Interfaces = `#graphql
 const Enums = `#graphql
   "Sorting order in ascending or descending"
   enum Sort {
-    Asc
-    Desc
+    asc
+    desc
   }
 
    "Staff Roles previleges this includes Admin, Saller, Manager, Warehouse, Accountant"
@@ -354,44 +354,46 @@ input searchProductInput {
 
 const Category = `#graphql
 type Category {
-  name: String!
+  name: String!,
+}
+type CategoryPayload {
+  error: String,
+  pagins: Pagins,
+  categories: [Category!]!
 }
 type CategoryAddPayload {
-  error: String
-  added: Boolean!
+  error: String,
+  added: Boolean!,
   newAdded: String
 }
 type CategoryEditPayload {
-  error: String
-  edited: Boolean!
-  newValue: String
+  error: String,
+  edited: Boolean!,
+  newValue: String,
   oldValue: String!
 }
 type CategoryDeletePayload {
-  error: String
+  error: String,
   deleted: Boolean!
 }
 type CategoryAddSubscription implements ISubscription {
-  error: Error
+  error: Error,
   payload: SubscriptionPayload!
 }
 type CategoryEditSubscription implements ISubscription {
-  error: Error
+  error: Error,
   payload: SubscriptionPayload!
 }
 type CategoryDeleteSubscription implements ISubscription {
-  error: Error
+  error: Error,
   payload: SubscriptionPayload!
 }
 input categoryAddInput {
   name: String
 }
 input categoryEditInput {
-  oldCategory: String!
+  oldCategory: String!,
   newCategory: String!
-}
-type categoryPayload {
-  error: String
 }
 `;
 
@@ -874,7 +876,7 @@ const Query = `#graphql
     ): ProductsPayload! @authorizeRole(previlege: READ_PRODUCT)
 
     ################################## CATEGORY ########################################
-    categories: [Category!]! 
+    categories(pagin: paginInput): CategoryPayload! 
 
     ################################## WAREHOUSE #######################################
     warehouse(searchTerm: warehouseSearchInput!): WarehousePayload! @authorizeRole(previlege: READ_WAREHOUSE)
@@ -918,7 +920,7 @@ const Mutation = `#graphql
       ################################## CATEGORY ########################################
       categoryDelete(category: String!): CategoryDeletePayload! @authorizeRole(previlege: DELETE_CATEGORY)
       categoryAdd(categoryAddInput: categoryAddInput!): CategoryAddPayload! @authorizeRole(previlege: ADD_CATEGORY)
-      categoryEdit(categoryEditInput: categoryEditInput!): CategoryAddPayload! @authorizeRole(previlege: UPDATE_CATEGORY)
+      categoryEdit(categoryEditInput: categoryEditInput!): CategoryEditPayload! @authorizeRole(previlege: UPDATE_CATEGORY)
 
       ################################## WAREHOUSE #######################################
       warehouseDelete(warehouseID: ID!): WarehouseDeletePayload! @authorizeRole(previlege: DELETE_WAREHOUSE)
