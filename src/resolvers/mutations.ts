@@ -3,6 +3,7 @@ import { ProductController } from '@server-controllers/product.controller';
 import { StaffController } from '@server-controllers/staff.controller';
 import { CategoryController } from '../controllers/category.controller';
 import { WarehouseController } from '../controllers/warehouse.controller';
+import { SupplyController } from '../controllers/supply.controller';
 
 // PRODUCT MUTATIONS
 
@@ -55,9 +56,28 @@ const WarehouseMutations: MutationResolvers = {
     await WarehouseController.deleteWarehouse(warehouseID, context),
 };
 
+// SUPPLY MUTATIONS
+const SupplyMutations: MutationResolvers = {
+  // MakeSupply
+  makeSupply: async (_, { supplyAddInput, warehouseID }, context) =>
+    await SupplyController.makeSupply(supplyAddInput, context, warehouseID),
+  // supplyEdit
+  supplyEdit: async (_, { supplyID, warehouseID, supplyEditInput }, context) =>
+    await SupplyController.editSupply(
+      supplyID,
+      supplyEditInput,
+      context,
+      warehouseID
+    ),
+  // supplyDelete
+  supplyDelete: async (_, { supplyDeleteInput }, context) =>
+    await SupplyController.deleteSupply(supplyDeleteInput, context),
+};
+
 export const Mutations: MutationResolvers = {
   ...WarehouseMutations,
   ...CategoryMutations,
   ...ProductMutations,
+  ...SupplyMutations,
   ...StaffMutations,
 };

@@ -672,62 +672,65 @@ input customerEditInput {
 
 const Supply = `#graphql
 type Supply {
-  supplyID: ID!
-  staffID: ID!
-  staff: Staff
-  productIDs: [ID!]
-  products: [Product!]!
-  totalQuantity: Int!
-  totalPrice: Float!
-  date: String
+  supplyID: ID!,
+  staffID: ID!,
+  staff: Staff,
+  productIDs: [ID!],
+  products: [Product!],
+  totalQuantity: Int!,
+  totalPrice: Float!,
+  date: Date
 }
 type SupplyAddPayload {
-  error: String
-  added: Boolean!
+  error: String,
+  added: Boolean!,
   newAdded: Supply
 }
 type SupplyEditPayload {
-  error: String
-  edited: Boolean!
+  error: String,
+  edited: Boolean!,
   newEdited: Supply
 }
 type SupplyDeletePayload {
-  error: String
+  error: String,
   deleted: Boolean!
 }
 type SupplyPayload {
-  error: String
+  error: String,
   supply: Supply
 }
 type SupplysPayload {
-  error: String
-  supplies: [Supply!]
+  error: String,
+  supplies: [Supply!],
   pagins: Pagins
 }
 type SupplyAddSubscription implements ISubscription {
-  error: Error
+  error: Error,
   payload: SubscriptionPayload!
 }
 type SupplyEditSubscription implements ISubscription {
-  error: Error
+  error: Error,
   payload: SubscriptionPayload!
 }
 type SupplyDeleteSubscription implements ISubscription {
-  error: Error
+  error: Error,
   payload: SubscriptionPayload!
 }
 input supplyAddInput {
-  productID: ID!
-  quantity: Int!
-  retailPrice: Float!
+  productID: ID!,
+  quantity: Int!,
+  retailPrice: Float!,
   wholesalePrice: Float!
 }
 input supplyEditInput {
-  productID: ID!
-  quantity: Int
-  retailPrice: Float
+  productID: ID!,
+  quantity: Int,
+  retailPrice: Float,
   wholesalePrice: Float
-  warehouseID: ID
+}
+input supplyDeleteInput {
+  supplyID: ID!,
+  warehouseID: ID,
 }
 input searchSupplyInput {
   supplyID: ID
@@ -947,7 +950,7 @@ const Mutation = `#graphql
         supplyEditInput: [supplyEditInput!]!
         warehouseID: ID
       ): SupplyEditPayload! @authorizeRole(previlege: UPDATE_SUPPLY)
-      supplyDelete(supplyID: ID!, warehouseID: ID): SupplyDeletePayload! @authorizeRole(previlege: DELETE_SUPPLY)
+      supplyDelete(supplyDeleteInput: supplyDeleteInput!): SupplyDeletePayload! @authorizeRole(previlege: DELETE_SUPPLY)
 
       ################################# ENTERPRISE ########################################
       enterpriseAdd(enterpriseAddInput: enterpriseAddInput!): EnterpriseAddPayload! @authorizeRole(previlege: ADD_ENTERPRISE)

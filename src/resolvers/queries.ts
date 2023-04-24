@@ -2,6 +2,7 @@ import { QueryResolvers } from '@server-models/@types/resolver_types';
 import { WarehouseController } from '@server-controllers/warehouse.controller';
 import { CategoryController } from '@server-controllers/category.controller';
 import { ProductController } from '@server-controllers/product.controller';
+import { SupplyController } from '@server-controllers/supply.controller';
 import { StaffController } from '@server-controllers/staff.controller';
 
 export const Queries: QueryResolvers = {
@@ -25,4 +26,10 @@ export const Queries: QueryResolvers = {
   // warehouses
   warehouses: async (_, { searchTerm, pagin }) =>
     await WarehouseController.warehouses(searchTerm, pagin),
+  // supplies
+  supplies: async (_, { searchTerm, pagin }) =>
+    await SupplyController.supplies(searchTerm, pagin),
+  // supply
+  supply: async (_, { searchTerm }) =>
+    await SupplyController.supply(searchTerm),
 };

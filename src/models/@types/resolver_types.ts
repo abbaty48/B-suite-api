@@ -348,8 +348,7 @@ export type MutationStaffEditArgs = {
 
 
 export type MutationSupplyDeleteArgs = {
-  supplyID: Scalars['ID'];
-  warehouseID?: InputMaybe<Scalars['ID']>;
+  supplyDeleteInput: SupplyDeleteInput;
 };
 
 
@@ -849,9 +848,9 @@ export type SubscriptionPayload = {
 
 export type Supply = {
   __typename?: 'Supply';
-  date?: Maybe<Scalars['String']>;
+  date?: Maybe<Scalars['Date']>;
   productIDs?: Maybe<Array<Scalars['ID']>>;
-  products: Array<Product>;
+  products?: Maybe<Array<Product>>;
   staff?: Maybe<Staff>;
   staffID: Scalars['ID'];
   supplyID: Scalars['ID'];
@@ -1241,11 +1240,15 @@ export type SupplyAddInput = {
   wholesalePrice: Scalars['Float'];
 };
 
+export type SupplyDeleteInput = {
+  supplyID: Scalars['ID'];
+  warehouseID?: InputMaybe<Scalars['ID']>;
+};
+
 export type SupplyEditInput = {
   productID: Scalars['ID'];
   quantity?: InputMaybe<Scalars['Int']>;
   retailPrice?: InputMaybe<Scalars['Float']>;
-  warehouseID?: InputMaybe<Scalars['ID']>;
   wholesalePrice?: InputMaybe<Scalars['Float']>;
 };
 
@@ -1470,6 +1473,7 @@ export type ResolversTypes = ResolversObject<{
   staffAddInput: StaffAddInput;
   staffEditInput: StaffEditInput;
   supplyAddInput: SupplyAddInput;
+  supplyDeleteInput: SupplyDeleteInput;
   supplyEditInput: SupplyEditInput;
   warehouseAddInput: WarehouseAddInput;
   warehouseEditInput: WarehouseEditInput;
@@ -1593,6 +1597,7 @@ export type ResolversParentTypes = ResolversObject<{
   staffAddInput: StaffAddInput;
   staffEditInput: StaffEditInput;
   supplyAddInput: SupplyAddInput;
+  supplyDeleteInput: SupplyDeleteInput;
   supplyEditInput: SupplyEditInput;
   warehouseAddInput: WarehouseAddInput;
   warehouseEditInput: WarehouseEditInput;
@@ -1821,7 +1826,7 @@ export type MutationResolvers<ContextType = IResolverContext, ParentType extends
   staffAdd?: Resolver<ResolversTypes['StaffAddPayload'], ParentType, ContextType, RequireFields<MutationStaffAddArgs, 'staffAddInput'>>;
   staffDelete?: Resolver<ResolversTypes['StaffDeletePayload'], ParentType, ContextType, RequireFields<MutationStaffDeleteArgs, 'staffID'>>;
   staffEdit?: Resolver<ResolversTypes['StaffEditPayload'], ParentType, ContextType, RequireFields<MutationStaffEditArgs, 'staffEditInput'>>;
-  supplyDelete?: Resolver<ResolversTypes['SupplyDeletePayload'], ParentType, ContextType, RequireFields<MutationSupplyDeleteArgs, 'supplyID'>>;
+  supplyDelete?: Resolver<ResolversTypes['SupplyDeletePayload'], ParentType, ContextType, RequireFields<MutationSupplyDeleteArgs, 'supplyDeleteInput'>>;
   supplyEdit?: Resolver<ResolversTypes['SupplyEditPayload'], ParentType, ContextType, RequireFields<MutationSupplyEditArgs, 'supplyEditInput' | 'supplyID'>>;
   warehouseAdd?: Resolver<ResolversTypes['WarehouseAddPayload'], ParentType, ContextType, RequireFields<MutationWarehouseAddArgs, 'warehouseAddInput'>>;
   warehouseDelete?: Resolver<ResolversTypes['WarehouseDeletePayload'], ParentType, ContextType, RequireFields<MutationWarehouseDeleteArgs, 'warehouseID'>>;
@@ -2130,9 +2135,9 @@ export type SubscriptionPayloadResolvers<ContextType = IResolverContext, ParentT
 }>;
 
 export type SupplyResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Supply'] = ResolversParentTypes['Supply']> = ResolversObject<{
-  date?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  date?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
   productIDs?: Resolver<Maybe<Array<ResolversTypes['ID']>>, ParentType, ContextType>;
-  products?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType>;
+  products?: Resolver<Maybe<Array<ResolversTypes['Product']>>, ParentType, ContextType>;
   staff?: Resolver<Maybe<ResolversTypes['Staff']>, ParentType, ContextType>;
   staffID?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   supplyID?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;

@@ -1,4 +1,8 @@
-import { SubscriptionResolvers } from '@server-models/@types/resolver_types';
+import {
+  SubscriptionResolvers,
+  Supply,
+  SupplyAddSubscription,
+} from '@server-models/@types/resolver_types';
 
 const ProductSubscriptions: SubscriptionResolvers = {
   productAddSubscription: {
@@ -56,9 +60,25 @@ const WarehouseSubscriptins: SubscriptionResolvers = {
   },
 };
 
+const SupplySubscriptions: SubscriptionResolvers = {
+  supplyAddSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_ADD_SUPPLY'),
+  },
+  supplyEditSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_EDIT_SUPPLY'),
+  },
+  supplyDeleteSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_DELETE_SUPPLY'),
+  },
+};
+
 export const Subscriptions: SubscriptionResolvers = {
   ...CategorySubscriptions,
   ...WarehouseSubscriptins,
   ...ProductSubscriptions,
+  ...SupplySubscriptions,
   ...StaffSubscriptions,
 };
