@@ -39,10 +39,26 @@ const CategorySubscriptions: SubscriptionResolvers = {
     subscribe: (_, __, { pubSub }: any) =>
       pubSub.asyncIterator('LISTEN_DELETE_CATEGORY'),
   },
+}; // end CategorySubscription
+
+const WarehouseSubscriptins: SubscriptionResolvers = {
+  warehouseAddSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_ADD_WAREHOUSE'),
+  },
+  warehouseEditSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_EDIT_WAREHOUSE'),
+  },
+  warehouseDeleteSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_DELETE_WAREHOUSE'),
+  },
 };
 
 export const Subscriptions: SubscriptionResolvers = {
   ...CategorySubscriptions,
+  ...WarehouseSubscriptins,
   ...ProductSubscriptions,
   ...StaffSubscriptions,
 };
