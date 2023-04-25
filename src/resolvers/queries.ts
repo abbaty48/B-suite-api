@@ -4,6 +4,7 @@ import { CategoryController } from '@server-controllers/category.controller';
 import { ProductController } from '@server-controllers/product.controller';
 import { SupplyController } from '@server-controllers/supply.controller';
 import { StaffController } from '@server-controllers/staff.controller';
+import { StoreController } from '@server-controllers/store.controller';
 
 export const Queries: QueryResolvers = {
   // product
@@ -32,4 +33,6 @@ export const Queries: QueryResolvers = {
   // supply
   supply: async (_, { searchTerm }) =>
     await SupplyController.supply(searchTerm),
+  // store
+  store: async () => await StoreController.store(),
 };

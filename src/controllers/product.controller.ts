@@ -7,6 +7,7 @@ import {
   genRandom,
   stringToID,
   escapeRegExp,
+  setRealTimeSubscription,
 } from '@server-commons/commons.helpers';
 import { productModel } from '@server-databases/mongodb/schema_product';
 import { IResolverContext } from '@server-models/interfaces/IResolverContext';
@@ -227,6 +228,12 @@ export class ProductController {
             },
           },
         });
+        setRealTimeSubscription(
+          pubSub,
+          'LISTEN_REALTIME_STORE',
+          'totalProducts',
+          await productModel.count()
+        );
         // Resolve
         resolve({
           added: true,
@@ -371,6 +378,12 @@ export class ProductController {
             },
           },
         });
+        setRealTimeSubscription(
+          pubSub,
+          'LISTEN_REALTIME_STORE',
+          'totalProducts',
+          await productModel.count()
+        );
         //
         resolve({
           deleted: true,

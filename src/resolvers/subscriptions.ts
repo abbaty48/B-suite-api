@@ -1,8 +1,4 @@
-import {
-  SubscriptionResolvers,
-  Supply,
-  SupplyAddSubscription,
-} from '@server-models/@types/resolver_types';
+import { SubscriptionResolvers } from '@server-models/@types/resolver_types';
 
 const ProductSubscriptions: SubscriptionResolvers = {
   productAddSubscription: {
@@ -58,7 +54,7 @@ const WarehouseSubscriptins: SubscriptionResolvers = {
     subscribe: (_, __, { pubSub }: any) =>
       pubSub.asyncIterator('LISTEN_DELETE_WAREHOUSE'),
   },
-};
+}; // end WarehouseSubscriptins
 
 const SupplySubscriptions: SubscriptionResolvers = {
   supplyAddSubscription: {
@@ -73,7 +69,14 @@ const SupplySubscriptions: SubscriptionResolvers = {
     subscribe: (_, __, { pubSub }: any) =>
       pubSub.asyncIterator('LISTEN_DELETE_SUPPLY'),
   },
-};
+}; // end SupplySubscriptions
+
+const StoreSubscriptions: SubscriptionResolvers = {
+  storeRealTime: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_REALTIME_STORE'),
+  },
+}; // StoreSubscriptions
 
 export const Subscriptions: SubscriptionResolvers = {
   ...CategorySubscriptions,
@@ -81,4 +84,5 @@ export const Subscriptions: SubscriptionResolvers = {
   ...ProductSubscriptions,
   ...SupplySubscriptions,
   ...StaffSubscriptions,
+  ...StoreSubscriptions,
 };

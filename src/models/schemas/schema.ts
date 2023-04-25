@@ -591,7 +591,7 @@ type Customer {
   address: String
   phoneNumber: String
   beneficiary: Boolean
-  supplys: [Sale!]!
+  purchases: [Sale!]!
   warehouse: Warehouse
   metas: CustomerMetaData
 }
@@ -742,26 +742,42 @@ input searchSupplyInput {
 `;
 
 const Store = `#graphql
+
 type StorePayload {
   error: String
   result: Int!
 }
 
 type Store {
-  totalSales: StorePayload
-  totalStaffs: StorePayload
-  totalProducts: StorePayload
-  totalCustomers: StorePayload
-  totalWarehouses: StorePayload
-  totalExpiredProducts: StorePayload
-  enterPrise: enterprisePayload
-  _sysInitialized: Boolean!
-  _enterpriseInitialized: Boolean!
+  totalSales: StorePayload @authorizeRole(previlege: READ_SALE),
+  totalStaffs: StorePayload @authorizeRole(previlege: READ_STAFF),
+  totalProducts: StorePayload @authorizeRole(previlege: READ_PRODUCT),
+  totalCustomers: StorePayload @authorizeRole(previlege: READ_CUSTOMER),
+  totalWarehouses: StorePayload @authorizeRole(previlege: READ_WAREHOUSE),
+  totalExpiredProducts: StorePayload @authorizeRole(previlege: READ_PRODUCT),
+  enterPrise: enterprisePayload,
+  _enterpriseInitialized: Boolean!,
+  _sysInitialized: Boolean!,
+}
+
+type StoreRealTime {
+  "get the total number of sales in a real time subscription. "
+  totalSales: Int!,
+  "get the total number of staffs in a real time subscription. "
+  totalStaffs: Int!,
+  "get the total number of products in a real time subscription. "
+  totalProducts: Int!,
+  "get the total number of customers in a real time subscription. "
+  totalCustomers: Int!,
+  "get the total number of warehouses in a real time subscription. "
+  totalWarehouses: Int!,
+  "get the total number of products that expired in a real time subscription. "
+  totalExpiredProducts: Int!,
 }
 `;
 
 const Enterprice = `#graphql
-   type EnterpriseSocialAccounts {
+type EnterpriseSocialAccounts {
   facebook: String
   twitter: String
   youtube: String
@@ -1003,6 +1019,9 @@ const Subscription = `#graphql
     "subscription when a warehouse is deleted"
     warehouseDeleteSubscription: WarehouseDeleteSubscription! @authorizeRole(previlege: LISTEN_DELETE_WAREHOUSE)
 
+    "subscription for a realtime store counts"
+    storeRealTime: StoreRealTime!
+    #"subscription to alarm for an expired product, watch any product at a realtime for it expiration date"
   }
 `;
 

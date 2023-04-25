@@ -3,15 +3,13 @@ import JWT from 'jsonwebtoken';
 import { StaffRole } from '@server-databases/mongodb/enums/Role';
 import { staffModel } from '@server-databases/mongodb/schema_staff';
 import {
-  decodeRSAKey,
   genRandom,
   stringToID,
+  decodeRSAKey,
   escapeRegExp,
+  setRealTimeSubscription,
 } from '@server-commons/commons.helpers';
-import {
-  IPagin,
-  Pagin,
-} from '@server-models/databases/mongodb/interfaces/IPagin';
+import { Pagin } from '@server-models/databases/mongodb/interfaces/IPagin';
 import { IResolverContext } from '@server-models/interfaces/IResolverContext';
 import {
   checkFileExistant,
@@ -232,6 +230,13 @@ export class StaffController {
             }, // end payload
           }, // end staffDeleteSubscription
         }); // end publish
+
+        setRealTimeSubscription(
+          pubSub,
+          'LISTEN_REALTIME_STORE',
+          'totalStaffs',
+          await staffModel.count()
+        );
         // RESOLVE
         resolve({
           error: null,
@@ -437,6 +442,12 @@ export class StaffController {
             }, // end payload
           }, // end staffDeleteSubscription
         }); // end publish
+        setRealTimeSubscription(
+          pubSub,
+          'LISTEN_REALTIME_STORE',
+          'totalStaffs',
+          await staffModel.count()
+        );
         // RESOLVE
         resolve({
           deleted: true,

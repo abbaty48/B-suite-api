@@ -1,5 +1,9 @@
 import { staffModel } from '@server-databases/mongodb/schema_staff';
-import { escapeRegExp, genRandom } from '@/src/commons/commons.helpers';
+import {
+  escapeRegExp,
+  genRandom,
+  setRealTimeSubscription,
+} from '@/src/commons/commons.helpers';
 import { productModel } from '@server-databases/mongodb/schema_product';
 import { warehouseModel } from '@server-databases/mongodb/schema_warehouse';
 import {
@@ -131,6 +135,12 @@ export class WarehouseController {
             },
           },
         }); // end publish
+        setRealTimeSubscription(
+          pubSub,
+          'LISTEN_REALTIME_STORE',
+          'totalWarehouses',
+          await warehouseModel.count()
+        );
         resolve({
           error: null,
           added: true,
@@ -213,6 +223,12 @@ export class WarehouseController {
             },
           }, // warehouseDeleteSusbscription
         }); // end publish
+        setRealTimeSubscription(
+          pubSub,
+          'LISTEN_REALTIME_STORE',
+          'totalWarehouses',
+          await warehouseModel.count()
+        );
         resolve({ deleted: true, error: null });
       } catch (error) {
         resolve({
