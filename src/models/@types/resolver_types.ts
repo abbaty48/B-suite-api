@@ -274,8 +274,7 @@ export type MutationCustomerAddArgs = {
 
 
 export type MutationCustomerDeleteArgs = {
-  customerID: Scalars['ID'];
-  warehouseID?: InputMaybe<Scalars['ID']>;
+  customerDeleteInput: CustomerDeleteInput;
 };
 
 
@@ -1033,6 +1032,11 @@ export type CustomerAddInput = {
   warehouseID?: InputMaybe<Scalars['ID']>;
 };
 
+export type CustomerDeleteInput = {
+  customerID: Scalars['ID'];
+  warehouseID?: InputMaybe<Scalars['ID']>;
+};
+
 export type CustomerEditInput = {
   address?: InputMaybe<Scalars['String']>;
   beneficiary?: InputMaybe<Scalars['Boolean']>;
@@ -1469,6 +1473,7 @@ export type ResolversTypes = ResolversObject<{
   categoryAddInput: CategoryAddInput;
   categoryEditInput: CategoryEditInput;
   customerAddInput: CustomerAddInput;
+  customerDeleteInput: CustomerDeleteInput;
   customerEditInput: CustomerEditInput;
   customerMetasInput: CustomerMetasInput;
   customerSocialMediaInput: CustomerSocialMediaInput;
@@ -1594,6 +1599,7 @@ export type ResolversParentTypes = ResolversObject<{
   categoryAddInput: CategoryAddInput;
   categoryEditInput: CategoryEditInput;
   customerAddInput: CustomerAddInput;
+  customerDeleteInput: CustomerDeleteInput;
   customerEditInput: CustomerEditInput;
   customerMetasInput: CustomerMetasInput;
   customerSocialMediaInput: CustomerSocialMediaInput;
@@ -1832,7 +1838,7 @@ export type MutationResolvers<ContextType = IResolverContext, ParentType extends
   categoryDelete?: Resolver<ResolversTypes['CategoryDeletePayload'], ParentType, ContextType, RequireFields<MutationCategoryDeleteArgs, 'category'>>;
   categoryEdit?: Resolver<ResolversTypes['CategoryEditPayload'], ParentType, ContextType, RequireFields<MutationCategoryEditArgs, 'categoryEditInput'>>;
   customerAdd?: Resolver<ResolversTypes['CustomerAddPayload'], ParentType, ContextType, RequireFields<MutationCustomerAddArgs, 'customerAddInput'>>;
-  customerDelete?: Resolver<ResolversTypes['CustomerDeletePayload'], ParentType, ContextType, RequireFields<MutationCustomerDeleteArgs, 'customerID'>>;
+  customerDelete?: Resolver<ResolversTypes['CustomerDeletePayload'], ParentType, ContextType, RequireFields<MutationCustomerDeleteArgs, 'customerDeleteInput'>>;
   customerEdit?: Resolver<ResolversTypes['CustomerEditPayload'], ParentType, ContextType, RequireFields<MutationCustomerEditArgs, 'customerEditInput'>>;
   enterpriseAdd?: Resolver<ResolversTypes['EnterpriseAddPayload'], ParentType, ContextType, RequireFields<MutationEnterpriseAddArgs, 'enterpriseAddInput'>>;
   enterpriseEdit?: Resolver<ResolversTypes['EnterpriseEditPayload'], ParentType, ContextType, RequireFields<MutationEnterpriseEditArgs, 'enterpriseEditInput'>>;

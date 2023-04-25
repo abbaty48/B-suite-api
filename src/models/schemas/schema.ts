@@ -668,6 +668,10 @@ input customerEditInput {
   saleIDs: [ID!]
   metas: customerMetasInput
 }
+input customerDeleteInput {
+  customerID: ID!,
+  warehouseID: ID
+}
 `;
 
 const Supply = `#graphql
@@ -953,7 +957,7 @@ const Mutation = `#graphql
 
       ################################## CUSTOMER #########################################
       customerAdd(customerAddInput: customerAddInput!): CustomerAddPayload! @authorizeRole(previlege: ADD_CUSTOMER)
-      customerDelete(customerID: ID!, warehouseID: ID): CustomerDeletePayload! @authorizeRole(previlege: DELETE_CUSTOMER)
+      customerDelete(customerDeleteInput: customerDeleteInput!): CustomerDeletePayload! @authorizeRole(previlege: DELETE_CUSTOMER)
       customerEdit(customerEditInput: customerEditInput!): CustomerEditPayload! @authorizeRole(previlege: UPDATE_CUSTOMER)
 
       ################################# PURCHASE ##########################################
