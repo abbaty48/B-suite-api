@@ -6,6 +6,7 @@ import { ProductController } from '@server-controllers/product.controller';
 import { SupplyController } from '@server-controllers/supply.controller';
 import { StaffController } from '@server-controllers/staff.controller';
 import { StoreController } from '@server-controllers/store.controller';
+import { SaleController } from '../controllers/sale.controller';
 
 export const Queries: QueryResolvers = {
   // product
@@ -42,4 +43,9 @@ export const Queries: QueryResolvers = {
   // customers
   customers: async (_, { searchTerm, pagin }) =>
     await CustomerController.customers(searchTerm, pagin),
+  // sale
+  sale: async (_, { searchTerm }) => await SaleController.sale(searchTerm),
+  // sales
+  sales: async (_, { searchTerm, pagin }) =>
+    await SaleController.sales(searchTerm, pagin),
 };

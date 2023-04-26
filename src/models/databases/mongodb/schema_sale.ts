@@ -159,7 +159,7 @@ SaleSchema.pre('save', function (this: ISale) {
         productID,
       });
       _product.quantity -= quantity;
-      await _product.save();
+      _product.save({ validateBeforeSave: false });
     } // end async
   ); // end each
 });

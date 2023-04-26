@@ -71,6 +71,21 @@ const SupplySubscriptions: SubscriptionResolvers = {
   },
 }; // end SupplySubscriptions
 
+const SaleSubscriptions: SubscriptionResolvers = {
+  saleAddSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_ADD_SALE'),
+  },
+  saleEditSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_EDIT_SALE'),
+  },
+  saleDeleteSubscription: {
+    subscribe: (_, __, { pubSub }: any) =>
+      pubSub.asyncIterator('LISTEN_DELETE_SALE'),
+  },
+};
+
 const StoreSubscriptions: SubscriptionResolvers = {
   storeRealTime: {
     subscribe: (_, __, { pubSub }: any) =>
@@ -84,5 +99,6 @@ export const Subscriptions: SubscriptionResolvers = {
   ...ProductSubscriptions,
   ...SupplySubscriptions,
   ...StaffSubscriptions,
+  ...SaleSubscriptions,
   ...StoreSubscriptions,
 };

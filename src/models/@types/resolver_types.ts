@@ -214,6 +214,20 @@ export enum FeatureEditAction {
   Remove = 'REMOVE'
 }
 
+export type IProduct = {
+  description?: Maybe<Scalars['String']>;
+  expirationDate?: Maybe<Scalars['String']>;
+  expired?: Maybe<Scalars['Boolean']>;
+  features?: Maybe<Array<Maybe<Feature>>>;
+  inStock: Scalars['Boolean'];
+  name: Scalars['String'];
+  productID: Scalars['ID'];
+  quantity: Scalars['Int'];
+  retailPrice: Scalars['Float'];
+  warehouses?: Maybe<Array<Warehouse>>;
+  wholesalePrice: Scalars['Float'];
+};
+
 export type ISubscription = {
   error?: Maybe<Error>;
   payload: SubscriptionPayload;
@@ -381,7 +395,7 @@ export type Pagins = {
   totalPaginated?: Maybe<Scalars['Int']>;
 };
 
-export type Product = {
+export type Product = IProduct & {
   __typename?: 'Product';
   category: Category;
   description?: Maybe<Scalars['String']>;
@@ -597,12 +611,11 @@ export enum RolePrevileges {
 
 export type Sale = {
   __typename?: 'Sale';
-  balance: Scalars['Float'];
+  balance?: Maybe<Scalars['Float']>;
   customer: Customer;
   customerID: Scalars['ID'];
   date: Scalars['String'];
   discount?: Maybe<Scalars['Float']>;
-  kind: Scalars['String'];
   paid: Scalars['Float'];
   products: Array<SaleProduct>;
   profit?: Maybe<SaleProfit>;
@@ -660,13 +673,12 @@ export type SalePayload = {
   sale?: Maybe<Sale>;
 };
 
-export type SaleProduct = {
+export type SaleProduct = IProduct & {
   __typename?: 'SaleProduct';
-  category: Category;
   description?: Maybe<Scalars['String']>;
   expirationDate?: Maybe<Scalars['String']>;
   expired?: Maybe<Scalars['Boolean']>;
-  images?: Maybe<Array<Maybe<Scalars['String']>>>;
+  features?: Maybe<Array<Maybe<Feature>>>;
   inStock: Scalars['Boolean'];
   kind: Scalars['String'];
   name: Scalars['String'];
@@ -674,7 +686,7 @@ export type SaleProduct = {
   quantity: Scalars['Int'];
   retailPrice: Scalars['Float'];
   subTotal: Scalars['Float'];
-  warehouse?: Maybe<Warehouse>;
+  warehouses?: Maybe<Array<Warehouse>>;
   wholesalePrice: Scalars['Float'];
 };
 
@@ -1163,8 +1175,9 @@ export type SaleAddInput = {
 };
 
 export type SaleEditInput = {
+  addCustomer?: InputMaybe<CustomerAddInput>;
   balance?: InputMaybe<Scalars['Float']>;
-  customerID: Scalars['ID'];
+  customerID?: InputMaybe<Scalars['ID']>;
   date?: InputMaybe<Scalars['String']>;
   discount?: InputMaybe<Scalars['Float']>;
   paid?: InputMaybe<Scalars['Float']>;
@@ -1404,6 +1417,7 @@ export type ResolversTypes = ResolversObject<{
   FeatureEditAction: FeatureEditAction;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  IProduct: ResolversTypes['Product'] | ResolversTypes['SaleProduct'];
   ISubscription: ResolversTypes['CategoryAddSubscription'] | ResolversTypes['CategoryDeleteSubscription'] | ResolversTypes['CategoryEditSubscription'] | ResolversTypes['ProductAddSubscription'] | ResolversTypes['ProductDeleteSubscription'] | ResolversTypes['ProductEditSubscription'] | ResolversTypes['SaleAddSubscription'] | ResolversTypes['SaleDeleteSubscription'] | ResolversTypes['SaleEditSubscription'] | ResolversTypes['StaffAddSubscription'] | ResolversTypes['StaffDeleteSubscription'] | ResolversTypes['SupplyAddSubscription'] | ResolversTypes['SupplyDeleteSubscription'] | ResolversTypes['SupplyEditSubscription'] | ResolversTypes['WarehouseAddSubscription'] | ResolversTypes['WarehouseDeleteSubscription'] | ResolversTypes['WarehouseEditSubscription'];
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -1534,6 +1548,7 @@ export type ResolversParentTypes = ResolversObject<{
   Feature: Feature;
   Float: Scalars['Float'];
   ID: Scalars['ID'];
+  IProduct: ResolversParentTypes['Product'] | ResolversParentTypes['SaleProduct'];
   ISubscription: ResolversParentTypes['CategoryAddSubscription'] | ResolversParentTypes['CategoryDeleteSubscription'] | ResolversParentTypes['CategoryEditSubscription'] | ResolversParentTypes['ProductAddSubscription'] | ResolversParentTypes['ProductDeleteSubscription'] | ResolversParentTypes['ProductEditSubscription'] | ResolversParentTypes['SaleAddSubscription'] | ResolversParentTypes['SaleDeleteSubscription'] | ResolversParentTypes['SaleEditSubscription'] | ResolversParentTypes['StaffAddSubscription'] | ResolversParentTypes['StaffDeleteSubscription'] | ResolversParentTypes['SupplyAddSubscription'] | ResolversParentTypes['SupplyDeleteSubscription'] | ResolversParentTypes['SupplyEditSubscription'] | ResolversParentTypes['WarehouseAddSubscription'] | ResolversParentTypes['WarehouseDeleteSubscription'] | ResolversParentTypes['WarehouseEditSubscription'];
   Int: Scalars['Int'];
   Mutation: {};
@@ -1826,6 +1841,21 @@ export type FeatureResolvers<ContextType = IResolverContext, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type IProductResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['IProduct'] = ResolversParentTypes['IProduct']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'Product' | 'SaleProduct', ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  expirationDate?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  expired?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  features?: Resolver<Maybe<Array<Maybe<ResolversTypes['Feature']>>>, ParentType, ContextType>;
+  inStock?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  productID?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  retailPrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  warehouses?: Resolver<Maybe<Array<ResolversTypes['Warehouse']>>, ParentType, ContextType>;
+  wholesalePrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+}>;
+
 export type ISubscriptionResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['ISubscription'] = ResolversParentTypes['ISubscription']> = ResolversObject<{
   __resolveType: TypeResolveFn<'CategoryAddSubscription' | 'CategoryDeleteSubscription' | 'CategoryEditSubscription' | 'ProductAddSubscription' | 'ProductDeleteSubscription' | 'ProductEditSubscription' | 'SaleAddSubscription' | 'SaleDeleteSubscription' | 'SaleEditSubscription' | 'StaffAddSubscription' | 'StaffDeleteSubscription' | 'SupplyAddSubscription' | 'SupplyDeleteSubscription' | 'SupplyEditSubscription' | 'WarehouseAddSubscription' | 'WarehouseDeleteSubscription' | 'WarehouseEditSubscription', ParentType, ContextType>;
   error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
@@ -1957,12 +1987,11 @@ export type QueryResolvers<ContextType = IResolverContext, ParentType extends Re
 }>;
 
 export type SaleResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['Sale'] = ResolversParentTypes['Sale']> = ResolversObject<{
-  balance?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  balance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   customer?: Resolver<ResolversTypes['Customer'], ParentType, ContextType>;
   customerID?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   discount?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  kind?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   paid?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   products?: Resolver<Array<ResolversTypes['SaleProduct']>, ParentType, ContextType>;
   profit?: Resolver<Maybe<ResolversTypes['SaleProfit']>, ParentType, ContextType>;
@@ -2022,11 +2051,10 @@ export type SalePayloadResolvers<ContextType = IResolverContext, ParentType exte
 }>;
 
 export type SaleProductResolvers<ContextType = IResolverContext, ParentType extends ResolversParentTypes['SaleProduct'] = ResolversParentTypes['SaleProduct']> = ResolversObject<{
-  category?: Resolver<ResolversTypes['Category'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   expirationDate?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   expired?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  images?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  features?: Resolver<Maybe<Array<Maybe<ResolversTypes['Feature']>>>, ParentType, ContextType>;
   inStock?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   kind?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -2034,7 +2062,7 @@ export type SaleProductResolvers<ContextType = IResolverContext, ParentType exte
   quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   retailPrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   subTotal?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  warehouse?: Resolver<Maybe<ResolversTypes['Warehouse']>, ParentType, ContextType>;
+  warehouses?: Resolver<Maybe<Array<ResolversTypes['Warehouse']>>, ParentType, ContextType>;
   wholesalePrice?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -2337,6 +2365,7 @@ export type Resolvers<ContextType = IResolverContext> = ResolversObject<{
   EnterpriseSocialAccounts?: EnterpriseSocialAccountsResolvers<ContextType>;
   Error?: ErrorResolvers<ContextType>;
   Feature?: FeatureResolvers<ContextType>;
+  IProduct?: IProductResolvers<ContextType>;
   ISubscription?: ISubscriptionResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Object?: GraphQLScalarType;

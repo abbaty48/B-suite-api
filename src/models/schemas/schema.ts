@@ -19,6 +19,19 @@ const Interfaces = `#graphql
     error: Error,
     payload: SubscriptionPayload!
   }
+  interface IProduct {
+    productID: ID!
+    name: String!
+    inStock: Boolean!
+    expired: Boolean
+    quantity: Int!
+    expirationDate: String
+    wholesalePrice: Float!
+    retailPrice: Float!
+    features: [Feature]
+    description: String
+    warehouses: [Warehouse!]
+  }
 `;
 
 const Enums = `#graphql
@@ -263,7 +276,7 @@ input searchStaffInput {
 `;
 
 const Product = `#graphql
-type Product {
+type Product implements IProduct {
   productID: ID!
   name: String!
   inStock: Boolean!
@@ -467,205 +480,204 @@ input warehouseSearchInput {
 
 const Sale = `#graphql
 type Sale {
-  saleID: ID!
-  staffID: ID!
-  customerID: ID!
-  warehouseID: ID
-  date: String!
-  time: String!
-  kind: String!
-  discount: Float
-  profit: SaleProfit
-  paid: Float!
-  balance: Float!
-  totalPrice: Float!
-  totalQuantity: Int!
-  staff: Staff!
-  customer: Customer!
-  warehouse: Warehouse
+  saleID: ID!,
+  staffID: ID!,
+  customerID: ID!,
+  warehouseID: ID,
+  date: String!,
+  time: String!,
+  discount: Float,
+  profit: SaleProfit,
+  paid: Float!,
+  balance: Float,
+  totalPrice: Float!,
+  totalQuantity: Int!,
+  staff: Staff!,
+  customer: Customer!,
+  warehouse: Warehouse,
   products: [SaleProduct!]!
 }
-type SaleProduct {
-  productID: ID!
-  name: String!
-  images: [String]
-  inStock: Boolean!
-  expired: Boolean
-  quantity: Int!
-  kind: String!
-  subTotal: Float!
-  category: Category!
-  expirationDate: String
-  wholesalePrice: Float!
-  retailPrice: Float!
-  description: String
-  warehouse: Warehouse
+type SaleProduct implements IProduct {
+  productID: ID!,
+  name: String!,
+  features: [Feature],
+  inStock: Boolean!,
+  expired: Boolean,
+  quantity: Int!,
+  kind: String!,
+  subTotal: Float!,
+  expirationDate: String,
+  wholesalePrice: Float!,
+  retailPrice: Float!,
+  description: String,
+  warehouses: [Warehouse!]
 }
 type SaleProfit {
-  percentage: Float!
+  percentage: Float!,
   status: String!
 }
 type SalePayload {
-  error: String
+  error: String,
   sale: Sale
 }
 type SalesPayload {
-  error: String
-  sales: [Sale!]!
+  error: String,
+  sales: [Sale!]!,
   pagins: Pagins
 }
 type SaleAddPayload {
-  error: String
-  added: Boolean
+  error: String,
+  added: Boolean,
   newAdded: Sale
 }
 type SaleEditPayload {
-  error: String
-  edited: Boolean
+  error: String,
+  edited: Boolean,
   newEdited: Sale
 }
 type SaleDeletePayload {
-  error: String
+  error: String,
   deleted: Boolean!
 }
 type SaleAddSubscription implements ISubscription {
-  error: Error
+  error: Error,
   payload: SubscriptionPayload!
 }
 type SaleEditSubscription implements ISubscription {
-  error: Error
+  error: Error,
   payload: SubscriptionPayload!
 }
 type SaleDeleteSubscription implements ISubscription {
-  error: Error
+  error: Error,
   payload: SubscriptionPayload!
 }
 input saleProductMetaInput {
-  productID: ID!
+  productID: ID!,
   quantity: Int!
 }
 input addSaleProfitInput {
-  percentage: Float!
+  percentage: Float!,
   status: String!
 }
 input saleAddInput {
-  date: String
-  time: String
-  paid: Float
-  discount: Float
-  balance: Float
-  customerID: ID
-  warehouseID: ID
-  productMetas: [saleProductMetaInput!]!
+  date: String,
+  time: String,
+  paid: Float,
+  discount: Float,
+  balance: Float,
+  customerID: ID,
+  warehouseID: ID,
+  productMetas: [saleProductMetaInput!]!,
   addCustomer: customerAddInput
 }
 input saleEditInput {
-  saleID: ID!
-  date: String
-  time: String
-  paid: Float
-  balance: Float
-  discount: Float
-  customerID: ID!
-  warehouseID: ID
+  saleID: ID!,
+  date: String,
+  time: String,
+  paid: Float,
+  balance: Float,
+  discount: Float,
+  customerID: ID,
+  warehouseID: ID,
+  addCustomer: customerAddInput
   productMetas: [saleProductMetaInput!]
 }
 input searchSaleInput {
-  saleID: ID
-  date: String
-  time: String
-  staffID: ID
-  productID: ID
-  customerID: ID
-  productName: String
+  saleID: ID,
+  date: String,
+  time: String,
+  staffID: ID,
+  productID: ID,
+  customerID: ID,
+  productName: String,
   paidPrice: Float
 }
 `;
 
 const Customer = `#graphql
 type Customer {
-  customerID: ID!
-  warehouseID: ID
-  name: String!
-  email: String
-  address: String
-  phoneNumber: String
-  beneficiary: Boolean
-  purchases: [Sale!]!
-  warehouse: Warehouse
+  customerID: ID!,
+  warehouseID: ID,
+  name: String!,
+  email: String,
+  address: String,
+  phoneNumber: String,
+  beneficiary: Boolean,
+  purchases: [Sale!]!,
+  warehouse: Warehouse,
   metas: CustomerMetaData
 }
 type CustomerSocialMedia {
-  facebook: String
-  twitter: String
+  facebook: String,
+  twitter: String,
   instagram: String
 }
 type CustomerMetaData {
-  avatarURL: String
-  dateOfBirth: String
+  avatarURL: String,
+  dateOfBirth: String,
   socialMedia: CustomerSocialMedia
 }
 type CustomerAddPayload {
-  error: String
-  added: Boolean
+  error: String,
+  added: Boolean,
   newAdded: Customer
 }
 type CustomerEditPayload {
-  error: String
-  edited: Boolean
+  error: String,
+  edited: Boolean,
   newEdited: Customer
 }
 type CustomerDeletePayload {
-  error: String
+  error: String,
   deleted: Boolean!
 }
 type CustomerPayload {
-  error: String
+  error: String,
   customer: Customer
 }
 type CustomersPayload {
-  error: String
-  customers: [Customer!]!
+  error: String,
+  customers: [Customer!]!,
   pagins: Pagins
 }
 input searchCustomerInput {
-  name: String
-  customerID: ID
-  email: String
-  address: String
-  dateOfBirth: String
+  name: String,
+  customerID: ID,
+  email: String,
+  address: String,
+  dateOfBirth: String,
   beneficiaries: Boolean
 }
 input customerSocialMediaInput {
-  facebook: String
-  twitter: String
+  facebook: String,
+  twitter: String,
   instagram: String
 }
 input customerMetasInput {
-  avatarURL: String
-  dateOfBirth: String
+  avatarURL: String,
+  dateOfBirth: String,
   socialMedia: customerSocialMediaInput
 }
 input customerAddInput {
-  name: String!
-  email: String
-  address: String
-  phoneNumber: String
-  beneficiary: Boolean
-  saleIDs: [ID!]!
-  metas: customerMetasInput
+  name: String!,
+  email: String,
+  address: String,
+  phoneNumber: String,
+  beneficiary: Boolean,
+  saleIDs: [ID!]!,
+  metas: customerMetasInput,
   warehouseID: ID
 }
 input customerEditInput {
-  customerID: ID!
-  warehouseID: ID
-  name: String
-  email: String
-  address: String
-  phoneNumber: String
-  dateOfBirth: String
-  beneficiary: Boolean
-  saleIDs: [ID!]
+  customerID: ID!,
+  warehouseID: ID,
+  name: String,
+  email: String,
+  address: String,
+  phoneNumber: String,
+  dateOfBirth: String,
+  beneficiary: Boolean,
+  saleIDs: [ID!],
   metas: customerMetasInput
 }
 input customerDeleteInput {
