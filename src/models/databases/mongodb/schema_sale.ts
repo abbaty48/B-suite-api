@@ -1,54 +1,11 @@
-import { Model, Schema, model, models } from 'mongoose';
+import { Model, Schema, UpdateQuery, model, models } from 'mongoose';
 import {
   ISale,
   ISaleProduct,
 } from '@server-databases/mongodb/interfaces/ISale';
-import {
-  productModel,
-  productSchema,
-} from '@server-databases/mongodb/schema_product';
+import { productModel } from '@server-databases/mongodb/schema_product';
 import { IProduct } from '@server-databases/mongodb/interfaces/IProduct';
-
-const SaleProductSchema = new Schema<ISaleProduct>({
-  ...productSchema.paths,
-  kind: {
-    type: 'string',
-    required: false,
-    default: function (this: ISaleProduct) {
-      return this.category.name;
-    },
-  },
-  quantity: {
-    type: 'number',
-    required: true,
-  },
-  subTotal: {
-    type: 'number',
-    required: false,
-    default: function (this: ISaleProduct) {
-      return this.retailPrice * this.quantity;
-    }, // end function
-  }, // end subTotal
-});
-
-SaleProductSchema.pre('save', async function (this: ISaleProduct) {
-  // DECREASE THE PRODUCT QUANTITY
-  const _product = await productModel.findOne<IProduct>({
-    productID: this.productID,
-  });
-
-  if (_product.quantity <= 0) {
-    throw new Error(
-      `[OUT OF STOCK]: The product "${_product.name}" is currently unavailable in the products stock records.`
-    );
-  } // end meta check
-
-  if (this.quantity > _product.quantity) {
-    throw new Error(
-      `[OUT OF STOCK]: The available quantity (${_product.quantity}) of product "${_product.name}" in the stock record is less than the sale quantity (${this.quantity}), please provide the quantity for "${_product.name}" to be less than or equal to ${_product.quantity}`
-    );
-  }
-});
+import { SaleProductSchema } from '@server-databases/mongodb/schema_saleProduct';
 
 const SaleSchema = new Schema<ISale>(
   {
@@ -69,54 +26,27 @@ const SaleSchema = new Schema<ISale>(
       required: true,
       default: new Date(Date.now()).toLocaleTimeString(),
     },
+    paid: { type: 'number', required: true },
+    discount: { type: 'number', required: false, default: 0 },
     profit: {
       type: { percentage: 'number', status: 'string' },
       required: false,
       default: function (this: ISale) {
-        // total all subtotal
-        // e.g 1800
-        const _totalSubtotal = this.products.reduce(
-          (total, cProduct) => (total += cProduct.subTotal),
-          0
-        );
-        // total with discount
-        // eg 1800 - ((5% / 100) * 100) = 1795
-        const _total = _totalSubtotal - (this.discount / 100) * 100;
-        // differences 1795 - 1700PAID = 95
-        const _diff = _total - this.paid;
-        // Percentage
-        // e.g 1700/1795 * 100 = 94.707521 ceil will round up and remove the decimal part = 95
-        // Math.min constraint the value from ranging over 100
-        const percentage = Math.min(
-          Math.floor((this.paid / _total) * 100),
-          100
-        );
-
-        return {
-          percentage,
-          status: percentage >= 90 ? 'Gain' : 'Lost',
-        }; // end return
+        return _computePercentage(this);
       }, // end default
     }, // end profit
-    paid: { type: 'number', required: true },
     totalPrice: {
       type: 'number',
       required: false,
       default: function (this: ISale) {
-        return this.products.reduce((total, cProduct) => {
-          return (total += cProduct.subTotal);
-        }, 0);
+        return _computeTotalPrice(this);
       },
     }, // end totalPrice
-    discount: { type: 'number', required: false, default: 0 },
     totalQuantity: {
       type: 'number',
       required: false,
       default: function (this: ISale) {
-        return this.products.reduce(
-          (total, cProduct) => (total += cProduct.quantity),
-          0
-        );
+        return _computeTotalQuantity(this);
       }, // end default
     }, // end totalQuantity
     products: [SaleProductSchema],
@@ -151,9 +81,48 @@ SaleSchema.virtual('warehouse', {
   foreignField: 'warehouseID',
   options: { populate: 'Staffs Products' },
 });
-SaleSchema.pre('save', function (this: ISale) {
+
+function _computeTotalPrice(_this: any) {
+  return _this.products.reduce((total: number, cProduct: ISaleProduct) => {
+    return (total += cProduct.subTotal);
+  }, 0);
+}
+
+function _computeTotalQuantity(_this: any) {
+  return _this.products.reduce((total: number, cProduct: ISaleProduct) => {
+    return (total += cProduct.quantity);
+  }, 0);
+}
+
+function _computePercentage(updateSale: any) {
+  // total all subtotal
+  // e.g 1800
+  const _totalSubtotal = updateSale.products.reduce(
+    (total: any, cProduct: { subTotal: any }) => (total += cProduct.subTotal),
+    0
+  );
+  // total with discount
+  // eg 1800 - ((5% / 100) * 100) = 1795
+  const _total = _totalSubtotal - (updateSale.discount ?? 0 / 100) * 100;
+  // differences 1795 - 1700PAID = 95
+  const _diff = _total - updateSale.paid;
+  // Percentage
+  // e.g 1700/1795 * 100 = 94.707521 ceil will round up and remove the decimal part = 95
+  // Math.min constraint the value from ranging over 100
+  const percentage = Math.min(
+    Math.floor((updateSale.paid / _total) * 100),
+    100
+  );
+
+  return {
+    percentage,
+    status: percentage >= 90 ? 'Gain' : 'Lost',
+  }; // end return
+}
+
+const _saveUpdate = (_this: any) => {
   // DECREASE THE PRODUCT QUANTITY RECORD IN THE STORE
-  this.products.forEach(
+  _this.products.forEach(
     async ({ productID, quantity }: ISaleProduct) => {
       const _product = await productModel.findOne<IProduct>({
         productID,
@@ -162,6 +131,23 @@ SaleSchema.pre('save', function (this: ISale) {
       _product.save({ validateBeforeSave: false });
     } // end async
   ); // end each
+};
+
+SaleSchema.pre('findOneAndUpdate', function () {
+  const _updates = this.getUpdate() as UpdateQuery<ISale>;
+  // recompute the profit
+  this.set('profit', _computePercentage(_updates));
+  // recompute the totalQuantity
+  this.set('totalQuantity', _computeTotalQuantity(_updates));
+  // recompute the totalPrice
+  this.set('totalPrice', _computeTotalPrice(_updates));
+  // saveUpdate
+  _saveUpdate(_updates);
+});
+
+// PRE save
+SaleSchema.pre('save', function () {
+  _saveUpdate(this);
 });
 
 export const saleModel =

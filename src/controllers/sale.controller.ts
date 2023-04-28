@@ -14,7 +14,6 @@ import {
   SaleProduct,
   SalesPayload,
   SaleAddInput,
-  SaleEditInput,
   SaleAddPayload,
   SaleEditPayload,
   SearchSaleInput,
@@ -188,7 +187,7 @@ export const SaleController = {
         // SALEID
         const saleID = `SALE${genRandom(10)}`;
         /** PRODUCTS */
-        const products = addSaleInput.productMetas.reduce(
+        const products = (await addSaleInput.productMetas.reduce(
           async (
             accumulator: any,
             meta: { productID: string; quantity: number }
@@ -201,6 +200,7 @@ export const SaleController = {
             if (product !== null) {
               (await Promise.resolve(accumulator)).push({
                 ...product._doc,
+                kind: product.category.name,
                 quantity: meta.quantity,
                 subTotal: meta.quantity * product.retailPrice,
               });
@@ -208,7 +208,7 @@ export const SaleController = {
             return await accumulator;
           },
           []
-        ) as unknown as SaleProduct[];
+        )) as SaleProduct[];
 
         if ((await products).length <= 0) {
           return resolve({
@@ -248,14 +248,13 @@ export const SaleController = {
               {
                 ...addSaleInput,
                 saleID,
-                products: await products,
+                products,
                 staffID: authenticatedStaff.staffID,
                 customerID: _customer.customerID,
               },
             ],
             { validateBeforeSave: false }
           );
-
           // SAVE the Customer
           _customer.balance
             ? (_customer.balance += addSaleInput.balance)
@@ -295,6 +294,7 @@ export const SaleController = {
           });
         } catch (error) {
           if (error) {
+            console.log('ERROR: ', error);
             return resolve({
               added: false,
               newAdded: null,
@@ -317,34 +317,63 @@ export const SaleController = {
   ) => {
     return new Promise<SaleEditPayload>(async (resolve) => {
       try {
+        const { saleID, productMetas } = editSaleInput;
         // editSaleInput.productMetas
-        if (editSaleInput.productMetas) {
-          const products = editSaleInput.productMetas.reduce(
-            async (
-              accumulator: any,
-              meta: { productID: string; quantity: number }
-            ) => {
-              const product = await productModel.findOne(
-                { productID: meta.productID },
-                {},
-                { populate: 'category' }
-              );
-              if (product !== null) {
-                (await Promise.resolve(accumulator)).push({
-                  ...product._doc,
-                  quantity: meta.quantity,
-                  subTotal: meta.quantity * product.retailPrice,
-                });
-              } // end  product
-              return await accumulator;
-            },
-            []
-          );
-          editSaleInput.productIDs = (await products).map(
+        if (productMetas) {
+          let salesProducts: SaleProduct[] = (
+            await saleModel.findOne({
+              saleID,
+            })
+          ).products as SaleProduct[];
+
+          productMetas.forEach(
+            async (meta: { productID: string; quantity: number }) => {
+              if (
+                salesProducts.find((p) => p.productID === meta.productID) ===
+                undefined
+              ) {
+                const product = await productModel.findOne(
+                  { productID: meta.productID },
+                  {},
+                  { populate: 'category' }
+                );
+                if (product) {
+                  salesProducts = salesProducts.reduce(
+                    (_saleProducts: SaleProduct[], _product: SaleProduct) => {
+                      _saleProducts.push({
+                        ...(product._doc as unknown as SaleProduct),
+                        quantity: meta.quantity,
+                        kind: product.category.name,
+                        subTotal: meta.quantity * product.retailPrice,
+                      });
+                      return _saleProducts;
+                    },
+                    salesProducts
+                  );
+                } // end product
+              } // end if not meta
+              else {
+                return salesProducts.map((product: any) => {
+                  if (product.productID === meta.productID) {
+                    return Object.assign(
+                      { ...product._doc },
+                      {
+                        quantity: meta.quantity,
+                        subTotal: product.retailPrice * meta.quantity,
+                      }
+                    );
+                  } // end product.ID == meta.productID
+                  return product;
+                }); // end map
+              } // end forEach
+            } // end forEach
+          ); // end productMetas.forEach
+
+          editSaleInput.productIDs = salesProducts.map(
             (product: any) => product.productID
           );
           //
-          if ((await products).length <= 0) {
+          if (salesProducts.length <= 0) {
             return resolve({
               edited: false,
               newEdited: null,
@@ -352,6 +381,8 @@ export const SaleController = {
                 "[ERROR ADDING PRODUCT]: The product(`s) you're about to sell does not exist in the products records.",
             });
           }
+
+          editSaleInput.products = salesProducts;
         } // end editSaleInput.productMetas
 
         /** CUSTOMER */
@@ -365,7 +396,7 @@ export const SaleController = {
           });
 
           if (!_customer) {
-            resolve({
+            return resolve({
               edited: false,
               error: `A customer with the ID: ${editSaleInput.customerID} does not exists in the customers record, please provide an existing customer ID or create a new customer.`,
               newEdited: null,
@@ -375,8 +406,6 @@ export const SaleController = {
               _customer.balance += editSaleInput.balance;
             } // end if
           } // end else
-
-          _customer.saleIDs.push(editSaleInput.saleID);
         } else if (editSaleInput.addCustomer) {
           // create the new customer
           const customerID = `CIN${genRandom().slice(0, 5).toUpperCase()}`;
@@ -386,16 +415,21 @@ export const SaleController = {
             saleIDs: [editSaleInput.saleID],
           }); // end new customerModel
         }
-        // UPDATE
+
+        // UPDATE SALE
         const newEdited = await saleModel.findOneAndUpdate<Sale>(
           { saleID: editSaleInput.saleID },
-          { ...editSaleInput },
+          {
+            ...editSaleInput,
+          }, // end $set
           {
             new: true,
-            runValidators: true,
+            runValidators: false,
             populate: 'staff products customer',
           }
         );
+
+        // console.log('NEWEDITED: ', newEdited);
         // SAVE CUSTOMER AFTER UPDATE
         _customer.save();
         /** Publish Subscription on LISTEN_EDIT_SALE */

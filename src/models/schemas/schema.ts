@@ -22,7 +22,6 @@ const Interfaces = `#graphql
   interface IProduct {
     productID: ID!
     name: String!
-    inStock: Boolean!
     expired: Boolean
     quantity: Int!
     expirationDate: String
@@ -173,6 +172,7 @@ const Commons = `#graphql
       actionBy: Staff!,
       actionResult: Type!,
       actionType: SubscriptionActionType,
+      # __typeName: String! #return the type name and use it in utype to differenciate each return type
     }
 `;
 
@@ -501,7 +501,6 @@ type SaleProduct implements IProduct {
   productID: ID!,
   name: String!,
   features: [Feature],
-  inStock: Boolean!,
   expired: Boolean,
   quantity: Int!,
   kind: String!,
